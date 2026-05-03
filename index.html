@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEURON AI — The Intelligence Layer of Crypto</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple: #7C3AED;
+    --cyan: #06B6D4;
+    --dark: #050508;
+    --card: #0D0D1A;
+    --border: rgba(124,58,237,0.3);
+    --text: #E2E8F0;
+    --muted: #94A3B8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* BACKGROUND */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 20% 20%, rgba(124,58,237,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(6,182,212,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAVBAR */
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(5,5,8,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.4rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .logo img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 30px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+  }
+
+  .nav-links a:hover { color: var(--cyan); }
+
+  .nav-btn {
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: opacity 0.3s, transform 0.3s;
+  }
+
+  .nav-btn:hover { opacity: 0.85; transform: translateY(-2px); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 20px 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(124,58,237,0.15);
+    border: 1px solid var(--border);
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    color: var(--cyan);
+    margin-bottom: 30px;
+    animation: fadeInDown 0.8s ease;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: var(--cyan);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+  }
+
+  .hero h1 {
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 10px;
+    animation: fadeInUp 0.8s ease 0.2s both;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    color: var(--muted);
+    margin-bottom: 20px;
+    animation: fadeInUp 0.8s ease 0.3s both;
+  }
+
+  .hero-tagline {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(0.8rem, 1.5vw, 1rem);
+    color: var(--cyan);
+    margin-bottom: 40px;
+    animation: fadeInUp 0.8s ease 0.4s both;
+  }
+
+  .hero-btns {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeInUp 0.8s ease 0.5s both;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.3s, transform 0.3s;
+  }
+
+  .btn-primary:hover { opacity: 0.85; transform: translateY(-3px); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--cyan);
+    color: var(--cyan);
+    transform: translateY(-3px);
+  }
+
+  /* STATS */
+  .stats {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 60px 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 30px 40px;
+    text-align: center;
+    min-width: 160px;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--cyan);
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 5px;
+  }
+
+  /* FEATURES */
+  .section {
+    padding: 80px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-title {
+    text-align: center;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 60px;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .feature-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--purple);
+  }
+
+  .feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+  }
+
+  .feature-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+
+  .feature-desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* TOKENOMICS */
+  .tokenomics {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 50px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .token-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+  }
+
+  .token-item {
+    text-align: center;
+    padding: 20px;
+    border-radius: 12px;
+    background: rgba(124,58,237,0.08);
+    border: 1px solid rgba(124,58,237,0.2);
+  }
+
+  .token-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--cyan);
+  }
+
+  .token-label {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 5px;
+  }
+
+  /* ROADMAP */
+  .roadmap {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+  }
+
+  .phase-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .phase-card.active {
+    border-color: var(--purple);
+  }
+
+  .phase-card.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--purple), var(--cyan));
+  }
+
+  .phase-label {
+    font-size: 0.75rem;
+    color: var(--cyan);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 8px;
+  }
+
+  .phase-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .phase-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .phase-items li {
+    font-size: 0.85rem;
+    color: var(--muted);
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .phase-items li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--purple);
+  }
+
+  .phase-items li.done {
+    color: var(--cyan);
+  }
+
+  .phase-items li.done::before { content: '✓'; color: var(--cyan); }
+
+  /* BOT SECTION */
+  .bot-section {
+    background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(6,182,212,0.1));
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 60px;
+    text-align: center;
+  }
+
+  .bot-commands {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 30px;
+  }
+
+  .command-tag {
+    background: rgba(124,58,237,0.15);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--cyan);
+  }
+
+  /* LINKS */
+  .links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .link-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.3s;
+  }
+
+  .link-card:hover {
+    border-color: var(--cyan);
+    transform: translateY(-3px);
+    color: var(--cyan);
+  }
+
+  .link-card-icon { font-size: 2rem; margin-bottom: 12px; }
+  .link-card-title { font-weight: 700; font-size: 1rem; }
+  .link-card-desc { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  footer .footer-logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* DISCLAIMER */
+  .disclaimer {
+    font-size: 0.75rem;
+    color: var(--muted);
+    max-width: 600px;
+    margin: 20px auto 0;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .section { padding: 60px 20px; }
+    .tokenomics { padding: 30px 20px; }
+    .bot-section { padding: 40px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="logo">
+    <img src="https://i.imgur.com/p1MYY7V.png" alt="NEURON">
+    NEURON AI
+  </div>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#tokenomics">Tokenomics</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#bot">AI Bot</a></li>
+  </ul>
+  <a href="https://t.me/Neuronaicoinoffical" target="_blank" class="nav-btn">Join Community</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🧠 Pre-Launch — Still Early</div>
+  <h1>
+    <span class="gradient-text">NEURON</span><br>
+    <span style="color: var(--text)">AI</span>
+  </h1>
+  <p class="hero-sub">The Intelligence Layer of Crypto</p>
+  <p class="hero-tagline">// While humans sleep, NEURON thinks.</p>
+  <div class="hero-btns">
+    <a href="https://t.me/Neuronaicoinoffical" target="_blank" class="btn-primary">Join Telegram</a>
+    <a href="https://x.com/neuronaicoin" target="_blank" class="btn-secondary">Follow on X</a>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-card">
+    <div class="stat-number">1B</div>
+    <div class="stat-label">Total Supply</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">0%</div>
+    <div class="stat-label">Tax</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">SOL</div>
+    <div class="stat-label">Network</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">24/7</div>
+    <div class="stat-label">AI Bot Active</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <h2 class="section-title">Why <span class="gradient-text">NEURON?</span></h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🧠</div>
+      <div class="feature-title">AI Powered</div>
+      <div class="feature-desc">The first memecoin with a real AI agent. Our bot answers any question, analyzes markets, and thinks 24/7.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <div class="feature-title">100% Safe</div>
+      <div class="feature-desc">Contract renounced. Liquidity locked. No team tokens. No hidden wallets. Complete transparency.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">Solana Speed</div>
+      <div class="feature-desc">Built on the fastest blockchain. Near-zero fees. Thousands of transactions per second.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌍</div>
+      <div class="feature-title">Global Community</div>
+      <div class="feature-desc">AI Bot supports 11 languages. A truly global community united by intelligence.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🚀</div>
+      <div class="feature-title">Fair Launch</div>
+      <div class="feature-desc">No presale. No whitelist. No VC funding. Everyone enters at the same price. True decentralization.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📈</div>
+      <div class="feature-title">AI Narrative</div>
+      <div class="feature-desc">The strongest narrative in crypto. AI is the biggest technological shift of our generation.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TOKENOMICS -->
+<section class="section" id="tokenomics">
+  <h2 class="section-title"><span class="gradient-text">Tokenomics</span></h2>
+  <div class="tokenomics">
+    <div class="token-grid">
+      <div class="token-item">
+        <div class="token-value">1,000,000,000</div>
+        <div class="token-label">Total Supply</div>
+      </div>
+      <div class="token-item">
+        <div class="token-value">0%</div>
+        <div class="token-label">Buy Tax</div>
+      </div>
+      <div class="token-item">
+        <div class="token-value">0%</div>
+        <div class="token-label">Sell Tax</div>
+      </div>
+      <div class="token-item">
+        <div class="token-value">✅</div>
+        <div class="token-label">Renounced</div>
+      </div>
+      <div class="token-item">
+        <div class="token-value">✅</div>
+        <div class="token-label">Locked LP</div>
+      </div>
+      <div class="token-item">
+        <div class="token-value">0%</div>
+        <div class="token-label">Team Tokens</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="section" id="roadmap">
+  <h2 class="section-title">Road<span class="gradient-text">map</span></h2>
+  <div class="roadmap">
+    <div class="phase-card active">
+      <div class="phase-label">PHASE 1</div>
+      <div class="phase-title">The Awakening ✅</div>
+      <ul class="phase-items">
+        <li class="done">Website launched</li>
+        <li class="done">Whitepaper published</li>
+        <li class="done">X & Telegram launched</li>
+        <li class="done">AI Bot live 24/7</li>
+        <li class="done">Verified account</li>
+      </ul>
+    </div>
+    <div class="phase-card">
+      <div class="phase-label">PHASE 2</div>
+      <div class="phase-title">The Launch 🚀</div>
+      <ul class="phase-items">
+        <li>Pump.fun fair launch</li>
+        <li>Raydium listing</li>
+        <li>CoinGecko listing</li>
+        <li>CMC listing</li>
+        <li>10,000 holders</li>
+      </ul>
+    </div>
+    <div class="phase-card">
+      <div class="phase-label">PHASE 3</div>
+      <div class="phase-title">The Intelligence 🧠</div>
+      <ul class="phase-items">
+        <li>CEX listings</li>
+        <li>NEURON AI Dashboard</li>
+        <li>Staking system</li>
+        <li>NFT collection</li>
+        <li>$100M market cap</li>
+      </ul>
+    </div>
+    <div class="phase-card">
+      <div class="phase-label">PHASE 4</div>
+      <div class="phase-title">The Singularity 👑</div>
+      <ul class="phase-items">
+        <li>Tier-1 CEX listings</li>
+        <li>Global AI partnerships</li>
+        <li>DAO governance</li>
+        <li>Binance listing</li>
+        <li>$1B market cap vision</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- BOT -->
+<section class="section" id="bot">
+  <div class="bot-section">
+    <h2 class="section-title" style="margin-bottom: 20px;">NEURON <span class="gradient-text">AI Bot</span></h2>
+    <p style="color: var(--muted); max-width: 600px; margin: 0 auto;">The most intelligent crypto AI assistant. Ask anything — get instant answers in your language.</p>
+    <div class="bot-commands">
+      <span class="command-tag">/price bitcoin</span>
+      <span class="command-tag">/signal solana</span>
+      <span class="command-tag">/gainers</span>
+      <span class="command-tag">/fear</span>
+      <span class="command-tag">/trending</span>
+      <span class="command-tag">/convert 100 usd btc</span>
+      <span class="command-tag">/portfolio btc 0.5</span>
+      <span class="command-tag">/chat anything</span>
+      <span class="command-tag">/news bitcoin</span>
+      <span class="command-tag">/report</span>
+    </div>
+    <div style="margin-top: 30px;">
+      <a href="https://t.me/NEURON_AIbot" target="_blank" class="btn-primary">Try AI Bot Free →</a>
+    </div>
+    <p style="color: var(--muted); font-size: 0.8rem; margin-top: 16px;">Works in 11 languages • 24/7 Active • Free Forever</p>
+  </div>
+</section>
+
+<!-- LINKS -->
+<section class="section">
+  <h2 class="section-title"><span class="gradient-text">Community</span></h2>
+  <div class="links-grid">
+    <a href="https://t.me/Neuronaicoinoffical" target="_blank" class="link-card">
+      <div class="link-card-icon">✈️</div>
+      <div class="link-card-title">Telegram</div>
+      <div class="link-card-desc">Join the community</div>
+    </a>
+    <a href="https://x.com/neuronaicoin" target="_blank" class="link-card">
+      <div class="link-card-icon">𝕏</div>
+      <div class="link-card-title">Twitter / X</div>
+      <div class="link-card-desc">Follow for updates</div>
+    </a>
+    <a href="https://t.me/NEURON_AIbot" target="_blank" class="link-card">
+      <div class="link-card-icon">🤖</div>
+      <div class="link-card-title">AI Bot</div>
+      <div class="link-card-desc">Try NEURON AI</div>
+    </a>
+    <a href="https://github.com/neuronaicoin" target="_blank" class="link-card">
+      <div class="link-card-icon">💻</div>
+      <div class="link-card-title">GitHub</div>
+      <div class="link-card-desc">Open source code</div>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">🧠 NEURON AI</div>
+  <p>The Intelligence Layer of Crypto</p>
+  <p style="margin-top: 8px;">© 2026 NEURON AI — All rights reserved</p>
+  <p class="disclaimer">This is not financial advice. Cryptocurrency investments carry significant risk. Only invest what you can afford to lose. Always do your own research (DYOR).</p>
+</footer>
+
+</body>
+</html>
