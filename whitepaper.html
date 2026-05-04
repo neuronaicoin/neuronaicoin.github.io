@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEURON AI — Whitepaper</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple: #7C3AED;
+    --cyan: #06B6D4;
+    --dark: #050508;
+    --card: #0D0D1A;
+    --border: rgba(124,58,237,0.3);
+    --text: #E2E8F0;
+    --muted: #94A3B8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.8;
+  }
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(5,5,8,0.9);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+  }
+  .logo {
+    font-size: 1.4rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: none;
+  }
+  .nav-btn {
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 120px 40px 80px;
+  }
+  .wp-header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+  .wp-badge {
+    display: inline-block;
+    background: rgba(124,58,237,0.15);
+    border: 1px solid var(--border);
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    color: var(--cyan);
+    margin-bottom: 24px;
+    font-family: 'Space Mono', monospace;
+  }
+  .wp-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+  .wp-subtitle {
+    color: var(--muted);
+    font-size: 1rem;
+  }
+  .wp-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 40px 0;
+  }
+  h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+    margin-top: 48px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+    color: var(--cyan);
+    margin-bottom: 12px;
+    margin-top: 28px;
+  }
+  p {
+    color: var(--muted);
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+  }
+  .highlight {
+    color: var(--text);
+    font-weight: 700;
+  }
+  .info-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin: 24px 0;
+  }
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .info-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .info-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .info-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  ul {
+    list-style: none;
+    margin-bottom: 16px;
+  }
+  ul li {
+    color: var(--muted);
+    padding: 6px 0;
+    font-size: 0.95rem;
+    padding-left: 20px;
+    position: relative;
+  }
+  ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--purple);
+  }
+  .phase-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .phase-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .phase-card.active {
+    border-color: var(--purple);
+  }
+  .phase-label {
+    font-size: 0.75rem;
+    color: var(--cyan);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 8px;
+  }
+  .phase-title {
+    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+  }
+  .phase-item {
+    font-size: 0.85rem;
+    color: var(--muted);
+    padding: 3px 0;
+  }
+  .phase-item.done {
+    color: var(--cyan);
+  }
+  .disclaimer {
+    background: rgba(124,58,237,0.08);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 40px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-align: center;
+  }
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 30px 40px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .container { padding: 100px 20px 60px; }
+    .wp-title { font-size: 2.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">🧠 NEURON AI</a>
+  <a href="https://t.me/Neuronaicoinoffical" target="_blank" class="nav-btn">Join Community</a>
+</nav>
+
+<div class="container">
+
+  <div class="wp-header">
+    <div class="wp-badge">// WHITEPAPER v1.0 — 2026</div>
+    <h1 class="wp-title">NEURON AI</h1>
+    <p class="wp-subtitle">The Intelligence Layer of Crypto<br>A Technical & Vision Document</p>
+  </div>
+
+  <hr class="wp-divider">
+
+  <h2>1. Abstract</h2>
+  <p>NEURON AI is the first AI-powered memecoin built on the Solana blockchain. It combines the viral nature of memecoins with real artificial intelligence utility — creating a project that is both culturally relevant and practically useful.</p>
+  <p>While most memecoins offer nothing beyond speculation, NEURON AI delivers a working AI assistant available to anyone, anywhere, for free. The NEURON AI Bot answers any question in any language, analyzes markets, finds the best prices, and provides real-time data — all powered by advanced language models.</p>
+  <p><span class="highlight">While humans sleep, NEURON thinks.</span></p>
+
+  <h2>2. The Problem</h2>
+  <p>The cryptocurrency market is flooded with projects that promise utility but deliver nothing. Memecoins rise and fall based on hype alone. Meanwhile, AI tools remain expensive, fragmented, and inaccessible to most people globally.</p>
+  <ul>
+    <li>Most memecoins have zero real utility</li>
+    <li>AI tools are expensive and require technical knowledge</li>
+    <li>Crypto communities lack intelligent tools to support their decisions</li>
+    <li>Language barriers prevent global participation in crypto</li>
+    <li>There is no bridge between AI intelligence and crypto culture</li>
+  </ul>
+
+  <h2>3. The Solution</h2>
+  <p>NEURON AI solves these problems by combining three powerful forces:</p>
+
+  <h3>3.1 AI-Powered Utility</h3>
+  <p>The NEURON AI Bot is a free, always-on artificial intelligence assistant that anyone can use. It requires no signup, no payment, and no technical knowledge. Just ask anything and get an instant, intelligent answer.</p>
+
+  <h3>3.2 Solana Speed</h3>
+  <p>Built on Solana — the fastest, cheapest blockchain in existence. Near-zero transaction fees. Thousands of transactions per second. The perfect infrastructure for a global AI memecoin.</p>
+
+  <h3>3.3 Community Ownership</h3>
+  <p>NEURON AI is launched as a fair launch with zero team tokens, zero tax, and a renounced contract. The community owns the project. There are no hidden wallets, no insider allocations, and no backdoors.</p>
+
+  <h2>4. The NEURON AI Bot</h2>
+  <p>The flagship product of the NEURON AI ecosystem is the Telegram AI Bot — available 24/7 at <span class="highlight">@NEURON_AIbot</span>.</p>
+
+  <div class="info-box">
+    <h3 style="margin-top:0">Bot Capabilities</h3>
+    <ul>
+      <li>Live cryptocurrency prices (30+ coins)</li>
+      <li>Top gainers & losers in real-time</li>
+      <li>AI-powered buy/sell signals</li>
+      <li>Shopping assistant — find best prices</li>
+      <li>Latest news with AI analysis</li>
+      <li>Currency converter (crypto + fiat)</li>
+      <li>Portfolio tracker</li>
+      <li>Fear & Greed Index</li>
+      <li>Trending coins</li>
+      <li>General AI assistant for any question</li>
+      <li>Works in 11+ languages</li>
+      <li>Free forever — no subscription required</li>
+    </ul>
+  </div>
+
+  <h2>5. Tokenomics</h2>
+  <div class="info-grid">
+    <div class="info-item">
+      <div class="info-value">1B</div>
+      <div class="info-label">Total Supply</div>
+    </div>
+    <div class="info-item">
+      <div class="info-value">0%</div>
+      <div class="info-label">Buy Tax</div>
+    </div>
+    <div class="info-item">
+      <div class="info-value">0%</div>
+      <div class="info-label">Sell Tax</div>
+    </div>
+    <div class="info-item">
+      <div class="info-value">0%</div>
+      <div class="info-label">Team Tokens</div>
+    </div>
+    <div class="info-item">
+      <div class="info-value">✅</div>
+      <div class="info-label">Renounced</div>
+    </div>
+    <div class="info-item">
+      <div class="info-value">✅</div>
+      <div class="info-label">Locked LP</div>
+    </div>
+  </div>
+
+  <p>NEURON AI launches as a completely fair launch on Pump.fun. Every token is available to the public at the same price. No presale. No whitelist. No venture capital. True decentralization from day one.</p>
+
+  <h2>6. Roadmap</h2>
+  <div class="phase-grid">
+    <div class="phase-card active">
+      <div class="phase-label">PHASE 1</div>
+      <div class="phase-title">The Awakening ✅</div>
+      <div class="phase-item done">✓ Website launched</div>
+      <div class="phase-item done">✓ Whitepaper published</div>
+      <div class="phase-item done">✓ X & Telegram launched</div>
+      <div class="phase-item done">✓ AI Bot live 24/7</div>
+      <div class="phase-item done">✓ Verified X account</div>
+      <div class="phase-item done">✓ Domain secured</div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-label">PHASE 2</div>
+      <div class="phase-title">The Launch 🚀</div>
+      <div class="phase-item">→ Pump.fun fair launch</div>
+      <div class="phase-item">→ Raydium listing</div>
+      <div class="phase-item">→ CoinGecko listing</div>
+      <div class="phase-item">→ CMC listing</div>
+      <div class="phase-item">→ 10,000 holders</div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-label">PHASE 3</div>
+      <div class="phase-title">The Intelligence 🧠</div>
+      <div class="phase-item">→ CEX listings</div>
+      <div class="phase-item">→ NEURON Dashboard</div>
+      <div class="phase-item">→ Staking system</div>
+      <div class="phase-item">→ NFT collection</div>
+      <div class="phase-item">→ $100M market cap</div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-label">PHASE 4</div>
+      <div class="phase-title">The Singularity 👑</div>
+      <div class="phase-item">→ Tier-1 CEX listings</div>
+      <div class="phase-item">→ Global AI partnerships</div>
+      <div class="phase-item">→ DAO governance</div>
+      <div class="phase-item">→ Binance listing</div>
+      <div class="phase-item">→ $1B market cap</div>
+    </div>
+  </div>
+
+  <h2>7. Technology Stack</h2>
+  <ul>
+    <li>Blockchain: Solana (fastest, cheapest, most scalable)</li>
+    <li>AI Engine: Large Language Models via Groq API</li>
+    <li>Bot Platform: Telegram (2B+ users globally)</li>
+    <li>Data Sources: CoinGecko, Google Custom Search, Alternative.me</li>
+    <li>Hosting: Railway (99.9% uptime, 24/7)</li>
+    <li>Website: GitHub Pages + Custom Domain</li>
+  </ul>
+
+  <h2>8. Community & Vision</h2>
+  <p>NEURON AI is more than a token. It is a movement. A belief that intelligence should be accessible to everyone, everywhere, for free.</p>
+  <p>We are building at the intersection of two of the most powerful forces in the world — artificial intelligence and decentralized finance. The convergence of these two technologies will reshape how humans interact with money, information, and each other.</p>
+  <p><span class="highlight">NEURON AI was built for that moment.</span></p>
+
+  <h2>9. Official Links</h2>
+  <ul>
+    <li>Website: neuronaicoin.com</li>
+    <li>Twitter: @neuronaicoin</li>
+    <li>Telegram: t.me/Neuronaicoinoffical</li>
+    <li>AI Bot: @NEURON_AIbot</li>
+    <li>GitHub: github.com/neuronaicoin</li>
+  </ul>
+
+  <div class="disclaimer">
+    <strong>Disclaimer:</strong> This whitepaper is for informational purposes only. Nothing in this document constitutes financial advice. Cryptocurrency investments carry significant risk. Always do your own research (DYOR) before making any investment decisions.
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2026 NEURON AI — While humans sleep, NEURON thinks. 🧠</p>
+</footer>
+
+</body>
+</html>
