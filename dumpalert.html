@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="NEURON Dump Alert — live crash watch. Biggest drops, danger zone and exit signals across chains. Free.">
+<title>Dump Alert — NEURON AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#100708;--panel:#1a0c0e;--panel2:#241012;--line:#3a1a1e;--line2:#502428;
+    --red:#ff5f6d;--red2:#d64550;--green:#2fe08a;--amber:#ffc24a;
+    --text:#f5e6e8;--muted:#b88a90;--faint:#6e4a50;
+  }
+  body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+    background-image:radial-gradient(ellipse at 50% -5%,rgba(255,95,109,.1),transparent 50%)}
+  .wrap{max-width:860px;margin:0 auto;padding:22px 16px 60px}
+
+  header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .da-ic{width:44px;height:44px;border-radius:11px;background:linear-gradient(145deg,var(--red),var(--red2));
+    display:grid;place-items:center;overflow:hidden;position:relative}
+  .da-ic::after{content:'';position:absolute;inset:0;background:conic-gradient(from 0deg,transparent 0deg,rgba(16,7,8,.5) 65deg,transparent 95deg);animation:sweep 3s linear infinite}
+  @keyframes sweep{to{transform:rotate(360deg)}}
+  .da-ic span{color:#100708;font-weight:700;font-size:19px;z-index:1}
+  .brand h1{font-size:20px;font-weight:700}
+  .brand h1 b{color:var(--red)}
+  .brand p{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);letter-spacing:.05em}
+  .hlinks{display:flex;gap:8px;flex-wrap:wrap}
+  .back{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);text-decoration:none;
+    border:1px solid var(--line);border-radius:9px;padding:8px 12px;transition:.15s}
+  .back:hover{color:var(--red);border-color:var(--red)}
+
+  .intro{background:linear-gradient(135deg,rgba(255,95,109,.08),var(--panel));border:1px solid var(--line);
+    border-radius:16px;padding:20px 22px;margin-bottom:14px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .intro-txt{flex:1;min-width:220px}
+  .intro h2{font-size:17px;font-weight:700;margin-bottom:4px}
+  .intro p{font-size:13px;color:var(--muted);line-height:1.5}
+  .controls{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+  .chain-pick{background:var(--bg);border:1px solid var(--line2);color:var(--text);padding:11px 13px;border-radius:10px;
+    font-family:'Space Grotesk';font-weight:600;font-size:13px;cursor:pointer;outline:none}
+  .tw-btn{background:var(--red);color:#100708;border:none;border-radius:10px;padding:11px 18px;
+    font-family:'Space Grotesk';font-weight:700;font-size:13px;cursor:pointer;transition:.15s;white-space:nowrap}
+  .tw-btn:hover{background:var(--red2)}
+  .tw-btn.done{background:var(--amber)}
+
+  .status{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);margin:12px 2px}
+  .status .live{color:var(--red)}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:14px}
+  .p-title{font-size:15px;font-weight:700;margin-bottom:4px}
+  .p-sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);margin-bottom:12px}
+  .row{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid rgba(58,26,30,.6);
+    text-decoration:none;color:inherit;transition:.12s}
+  .row:last-child{border-bottom:none}
+  .row:hover{background:rgba(255,95,109,.04)}
+  .sc{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;
+    font-weight:700;font-size:16px;flex-shrink:0}
+  .sc.hi{background:rgba(47,224,138,.12);color:var(--green)}
+  .sc.mid{background:rgba(255,194,74,.12);color:var(--amber)}
+  .sc.lo{background:rgba(255,95,109,.14);color:var(--red)}
+  .sym{font-weight:600;font-size:15px;min-width:78px}
+  .meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint)}
+  .chg{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;margin-left:auto}
+  .chg.down{color:var(--red)}
+  .chg.up{color:var(--green)}
+  .flags{display:flex;gap:4px;flex-wrap:wrap}
+  .flag{font-family:'IBM Plex Mono',monospace;font-size:9.5px;padding:2px 6px;border-radius:4px;font-weight:600}
+  .flag.bad{background:rgba(255,95,109,.14);color:var(--red)}
+  .flag.warn{background:rgba(255,194,74,.12);color:var(--amber)}
+  .flag.ok{background:rgba(47,224,138,.12);color:var(--green)}
+  .sellbar{width:80px}
+  .sb-track{height:6px;background:rgba(47,224,138,.15);border-radius:4px;overflow:hidden}
+  .sb-fill{height:100%;background:var(--red)}
+  .sb-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--faint);margin-top:3px;text-align:right}
+  .empty{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--faint);padding:8px 0}
+
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .tb-link{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;
+    border:1px solid var(--line);border-radius:8px;padding:7px 11px}
+  .tb-link:hover{color:var(--red);border-color:var(--red)}
+
+  .disclaimer{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);line-height:1.6;text-align:center;margin-top:18px}
+
+  .donate{margin-top:24px;padding:18px 20px;background:linear-gradient(135deg,rgba(255,95,109,.06),var(--panel));
+    border:1px solid var(--line);border-radius:14px;text-align:center}
+  .donate h3{font-size:15px;font-weight:700;margin-bottom:5px}
+  .donate p{font-size:12px;color:var(--muted);margin-bottom:13px}
+  .addr-row{display:inline-flex;align-items:center;gap:9px;background:var(--bg);border:1.5px solid var(--red);
+    border-radius:11px;padding:8px 8px 8px 13px;flex-wrap:wrap;justify-content:center;max-width:100%}
+  .addr-row code{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--text);word-break:break-all}
+  .copy-btn{background:var(--red);color:#100708;border:none;border-radius:8px;padding:8px 14px;
+    font-family:'Space Grotesk';font-weight:700;font-size:12px;cursor:pointer}
+  .net-warn{margin-top:9px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#100708;background:var(--amber);
+    border-radius:8px;padding:7px 12px;font-weight:600;display:inline-block}
+  @media(max-width:560px){ .sellbar{display:none} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="da-ic"><span>🚨</span></div>
+      <div>
+        <h1>Dump <b>Alert</b></h1>
+        <p>live crash watch · by NEURON AI</p>
+      </div>
+    </div>
+    <div class="hlinks">
+      <a class="back" href="/chainradar.html">📡 Chain Radar</a>
+      <a class="back" href="/rugcheck.html">🛡️ Rug Check</a>
+      <a class="back" href="/whalewatch.html">🐋 Whale Watch</a>
+    </div>
+  </header>
+
+  <div class="intro">
+    <div class="intro-txt">
+      <h2>🚨 What to stay away from — right now</h2>
+      <p>Everyone shows you what's pumping. We show you what's collapsing: the biggest drops, the weakest structures and the pools where money is heading for the exit.</p>
+    </div>
+    <div class="controls">
+      <select id="chain" class="chain-pick">
+        <option value="robinhood" selected>Robinhood Chain</option>
+        <option value="solana">Solana</option>
+        <option value="eth">Ethereum</option>
+        <option value="base">Base</option>
+        <option value="arbitrum">Arbitrum</option>
+        <option value="bsc">BSC</option>
+        <option value="polygon_pos">Polygon</option>
+      </select>
+      <button class="tw-btn" id="tw">📋 Copy as tweet</button>
+    </div>
+  </div>
+
+  <div class="status" id="status">Scanning…</div>
+
+  <div class="panel">
+    <div class="p-title">📉 Crash Watch</div>
+    <div class="p-sub">BIGGEST 24H DROPS AMONG ACTIVE POOLS</div>
+    <div id="crash"><div class="empty">Loading…</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="p-title">☠️ Danger Zone</div>
+    <div class="p-sub">LOWEST HEALTH SCORES RIGHT NOW</div>
+    <div id="danger"><div class="empty">Loading…</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="p-title">🚪 Exit Signals</div>
+    <div class="p-sub">HEAVIEST SELL PRESSURE — MONEY LEAVING</div>
+    <div id="exit"><div class="empty">Loading…</div></div>
+  </div>
+
+  <div class="toolbar">
+    <a class="tb-link" href="/chainradar.html">Scan the full chain on Chain Radar →</a>
+    <a class="tb-link" href="/rugcheck.html">Safety-check a token on Rug Check →</a>
+  </div>
+
+  <div class="donate">
+    <h3>Support us to build more tools 🙏</h3>
+    <p>Dump Alert is free and will stay free. Your USDT donation helps us build and add new tools.</p>
+    <div class="addr-row">
+      <code id="daddr">0xD20DC98870a1731b287f9C16ba8FB0AaA448fbDA</code>
+      <button class="copy-btn" id="dcopy">COPY</button>
+    </div>
+    <div><span class="net-warn">⚠️ USDT on ARBITRUM ONE network only</span></div>
+  </div>
+
+  <div class="disclaimer">Live data via GeckoTerminal. Drops and scores reflect current activity — not predictions.<br>Informational only. Not financial advice. Always DYOR.</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const API='https://api.geckoterminal.com/api/v2';
+const CHAINS={robinhood:'Robinhood Chain',solana:'Solana',eth:'Ethereum',base:'Base',arbitrum:'Arbitrum',bsc:'BSC',polygon_pos:'Polygon'};
+let DATA={crash:[],danger:[],exit:[]};
+
+const fmt=n=>{ if(n==null||isNaN(n))return '—';
+  if(n>=1e6)return '$'+(n/1e6).toFixed(2)+'M'; if(n>=1e3)return '$'+(n/1e3).toFixed(0)+'K'; return '$'+n.toFixed(0); };
+
+function scorePool(a){
+  let s=50; const flags=[];
+  const liq=parseFloat(a.reserve_in_usd)||0;
+  const vol=parseFloat(a.volume_usd?.h24)||0;
+  const mcap=parseFloat(a.market_cap_usd||a.fdv_usd)||0;
+  const ch24=parseFloat(a.price_change_percentage?.h24)||0;
+  const buys=a.transactions?.h24?.buys||0, sells=a.transactions?.h24?.sells||0;
+  const tot=buys+sells; const bp=tot>0?buys/tot:.5;
+  if(liq>=250000){s+=15;flags.push(['ok','LIQ OK']);}
+  else if(liq>=50000){s-=5;flags.push(['warn','LOW LIQ']);}
+  else {s-=25;flags.push(['bad','MICRO LIQ']);}
+  if(bp>=.58){s+=12;}
+  else if(bp<=.42){s-=12;flags.push(['bad','SELL>BUY']);}
+  const ageH=a.pool_created_at?(Date.now()-new Date(a.pool_created_at))/3600000:999;
+  if(ageH<24){s-=8;flags.push(['warn','FRESH']);}
+  if(mcap>0&&vol>mcap){s-=5;flags.push(['warn','HOT VOL']);}
+  if(ch24<=-40){s-=15;flags.push(['bad','DUMP RISK']);}
+  return {score:Math.max(0,Math.min(100,Math.round(s))),flags,liq,ch24,sellPct:tot>0?Math.round(sells/tot*100):50};
+}
+
+function row(p){
+  const cls=p.score>=65?'hi':(p.score>=45?'mid':'lo');
+  const fl=p.flags.slice(0,2).map(f=>'<span class="flag '+f[0]+'">'+f[1]+'</span>').join('');
+  return '<a class="row" href="/chainradar.html">'+
+    '<span class="sc '+cls+'">'+p.score+'</span>'+
+    '<div><div class="sym">'+p.sym+'</div><div class="meta">'+fmt(p.liq)+' liq</div></div>'+
+    '<div class="flags">'+fl+'</div>'+
+    '<div class="sellbar"><div class="sb-track"><div class="sb-fill" style="width:'+p.sellPct+'%"></div></div><div class="sb-lbl">'+p.sellPct+'% sells</div></div>'+
+    '<span class="chg '+(p.ch24>=0?'up':'down')+'">'+(p.ch24>=0?'+':'')+p.ch24.toFixed(1)+'%</span></a>';
+}
+
+async function load(){
+  const net=$('chain').value;
+  $('status').innerHTML='Scanning '+CHAINS[net]+'…';
+  try{
+    const r=await fetch(API+'/networks/'+net+'/pools?include=base_token&sort=h24_volume_usd_desc&page=1');
+    if(!r.ok) throw 0;
+    const j=await r.json();
+    const inc={}; (j.included||[]).forEach(x=>inc[x.id]=x.attributes);
+    let pools=(j.data||[]).map(p=>{
+      const a=p.attributes;
+      const bid=p.relationships?.base_token?.data?.id;
+      const sym=(bid&&inc[bid]?.symbol)||(a.name||'?').split('/')[0].trim();
+      return {sym,...scorePool(a)};
+    }).filter(p=>p.sym&&p.sym!=='?');
+    const seen={}; const uniq=[];
+    pools.forEach(p=>{ if(!seen[p.sym]){seen[p.sym]=1;uniq.push(p);} });
+
+    DATA.crash=[...uniq].filter(p=>p.ch24<0).sort((a,b)=>a.ch24-b.ch24).slice(0,5);
+    DATA.danger=[...uniq].sort((a,b)=>a.score-b.score).slice(0,5);
+    DATA.exit=[...uniq].filter(p=>p.sellPct>=55).sort((a,b)=>b.sellPct-a.sellPct).slice(0,5);
+
+    $('crash').innerHTML=DATA.crash.length?DATA.crash.map(row).join(''):'<div class="empty">No major drops right now — quiet chain.</div>';
+    $('danger').innerHTML=DATA.danger.map(row).join('');
+    $('exit').innerHTML=DATA.exit.length?DATA.exit.map(row).join(''):'<div class="empty">No heavy sell pressure detected right now.</div>';
+    $('status').innerHTML='<span class="live">●</span> '+uniq.length+' pools scanned · '+CHAINS[net]+' · '+new Date().toLocaleTimeString();
+  }catch(e){
+    $('status').innerHTML='⚠ Data unavailable — retry in a moment.';
+  }
+}
+$('chain').onchange=load;
+load();
+setInterval(load,90000);
+
+// copy as tweet
+$('tw').onclick=async function(){
+  const net=$('chain').value;
+  if(!DATA.danger.length){ return; }
+  const c=DATA.crash[0], d=DATA.danger[0];
+  let txt='Dump Alert 🚨 '+CHAINS[net]+'\n\n';
+  if(c) txt+='📉 Biggest drop: $'+c.sym+' '+c.ch24.toFixed(1)+'% (24h)\n';
+  txt+='☠️ Weakest structure: $'+d.sym+' — score '+d.score+(d.flags.length?' ('+d.flags.map(f=>f[1]).join(', ')+')':'')+'\n\n'+
+    'Know what to avoid, free:\n🔗 neuronaicoin.com/dumpalert.html\n\n#DumpAlert #'+(net==='robinhood'?'RobinhoodChain':'DeFi')+' #CryptoSafety';
+  try{ await navigator.clipboard.writeText(txt); }
+  catch(e){ const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e2){}document.body.removeChild(ta); }
+  this.textContent='COPIED ✓'; this.classList.add('done');
+  const b=this; setTimeout(()=>{b.textContent='📋 Copy as tweet';b.classList.remove('done');},1800);
+};
+
+// donate copy
+$('dcopy').onclick=async function(){
+  const t=$('daddr').textContent;
+  try{ await navigator.clipboard.writeText(t); }catch(e){
+    const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select();
+    try{document.execCommand('copy');}catch(e2){} document.body.removeChild(ta);
+  }
+  this.textContent='COPIED ✓'; const b=this; setTimeout(()=>b.textContent='COPY',1500);
+};
+</script>
+</body>
+</html>
