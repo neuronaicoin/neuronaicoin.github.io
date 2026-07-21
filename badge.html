@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="NEURON Score Badge — embed a live token health score anywhere. Free.">
+<title>NEURON Score Badge</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#07100c;--panel:#0c1a13;--panel2:#0f241a;--line:#1a3a2a;--line2:#245038;
+    --green:#2fe08a;--green2:#19b56b;--amber:#ffc24a;--red:#ff5f6d;
+    --text:#e6f5ec;--muted:#7fa38f;--faint:#4a6b58;
+  }
+  body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+  /* ============ BADGE MODE ============ */
+  body.badge-mode{background:transparent;display:grid;place-items:center;min-height:100vh;overflow:hidden}
+  .badge{width:300px;border-radius:16px;padding:16px 18px;position:relative;overflow:hidden;
+    background:linear-gradient(145deg,#0c1a13,#07100c);border:1px solid var(--line2);
+    display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--text);
+    box-shadow:0 8px 32px rgba(0,0,0,.5);transition:.2s;cursor:pointer}
+  .badge:hover{transform:translateY(-2px)}
+  .badge::before{content:'';position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse at 20% 0%,rgba(47,224,138,.12),transparent 60%)}
+  .badge.b-hi{border-color:rgba(47,224,138,.5);box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 24px rgba(47,224,138,.15)}
+  .badge.b-mid{border-color:rgba(255,194,74,.5);box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 24px rgba(255,194,74,.12)}
+  .badge.b-lo{border-color:rgba(255,95,109,.5);box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 24px rgba(255,95,109,.12)}
+  .b-score{width:58px;height:58px;border-radius:14px;display:grid;place-items:center;flex-shrink:0;position:relative;overflow:hidden;
+    font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:24px}
+  .b-score::after{content:'';position:absolute;inset:0;background:conic-gradient(from 0deg,transparent 0deg,rgba(255,255,255,.15) 60deg,transparent 90deg);
+    animation:sweep 3s linear infinite}
+  @keyframes sweep{to{transform:rotate(360deg)}}
+  .b-hi .b-score{background:rgba(47,224,138,.15);color:var(--green);border:1px solid rgba(47,224,138,.4)}
+  .b-mid .b-score{background:rgba(255,194,74,.13);color:var(--amber);border:1px solid rgba(255,194,74,.38)}
+  .b-lo .b-score{background:rgba(255,95,109,.14);color:var(--red);border:1px solid rgba(255,95,109,.4)}
+  .b-info{flex:1;min-width:0}
+  .b-sym{font-weight:700;font-size:17px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .b-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;color:var(--muted);margin-bottom:3px}
+  .b-verdict{font-family:'IBM Plex Mono',monospace;font-size:10px;margin-top:4px;font-weight:600}
+  .b-hi .b-verdict{color:var(--green)}
+  .b-mid .b-verdict{color:var(--amber)}
+  .b-lo .b-verdict{color:var(--red)}
+  .b-brand{position:absolute;bottom:6px;right:12px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--faint);letter-spacing:.06em}
+  .b-loading{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:8px}
+  .b-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  /* ============ GENERATOR MODE ============ */
+  .wrap{max-width:760px;margin:0 auto;padding:26px 16px 60px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .gb-ic{width:44px;height:44px;border-radius:11px;background:linear-gradient(145deg,var(--green),var(--green2));
+    display:grid;place-items:center;overflow:hidden}
+  .gb-ic img{width:100%;height:100%;object-fit:cover;border-radius:11px}
+  .gb-ic span{color:#07100c;font-weight:700;font-size:20px}
+  .brand h1{font-size:20px;font-weight:700}
+  .brand h1 b{color:var(--green)}
+  .brand p{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);letter-spacing:.05em}
+  .back{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);text-decoration:none;
+    border:1px solid var(--line);border-radius:9px;padding:8px 12px}
+  .back:hover{color:var(--green);border-color:var(--green)}
+
+  .hero-txt{margin-bottom:22px}
+  .hero-txt h2{font-size:clamp(1.5rem,4vw,2.1rem);font-weight:700;letter-spacing:-.02em;line-height:1.15;margin-bottom:8px}
+  .hero-txt h2 .g{color:var(--green)}
+  .hero-txt p{font-size:14px;color:var(--muted);line-height:1.6;max-width:56ch}
+
+  .gen-box{background:linear-gradient(135deg,rgba(47,224,138,.07),var(--panel));border:1px solid var(--line);
+    border-radius:16px;padding:20px;margin-bottom:16px}
+  .gen-row{display:flex;gap:9px;flex-wrap:wrap}
+  .chain-pick{background:var(--bg);border:1px solid var(--line2);color:var(--text);padding:12px 14px;border-radius:10px;
+    font-family:'Space Grotesk';font-weight:600;font-size:13px;cursor:pointer;outline:none}
+  .gen-row input{flex:1;min-width:220px;background:var(--bg);border:1px solid var(--line2);border-radius:10px;
+    color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:12px 14px;outline:none}
+  .gen-row input:focus{border-color:var(--green)}
+  .gen-btn{background:var(--green);color:#07100c;border:none;border-radius:10px;padding:12px 24px;
+    font-family:'Space Grotesk';font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap}
+  .gen-btn:hover{background:var(--green2)}
+  .hint{margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint)}
+
+  .status{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);margin:12px 2px}
+
+  .out{display:none}
+  .preview-box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:14px;
+    display:grid;place-items:center}
+  .pv-label{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--faint);letter-spacing:.1em;margin-bottom:16px;text-align:center}
+  .code-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px}
+  .cb-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .cb-title{font-size:13px;font-weight:700}
+  .cb-copy{background:var(--green);color:#07100c;border:none;border-radius:8px;padding:7px 14px;
+    font-family:'Space Grotesk';font-weight:700;font-size:12px;cursor:pointer}
+  .cb-copy.done{background:var(--amber)}
+  .code-box pre{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);white-space:pre-wrap;
+    word-break:break-all;line-height:1.6;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:12px}
+  .why{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-top:16px}
+  .why h3{font-size:14px;font-weight:700;margin-bottom:8px}
+  .why p{font-size:12.5px;color:var(--muted);line-height:1.65}
+  .disclaimer{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);text-align:center;margin-top:20px;line-height:1.6}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const P=new URLSearchParams(location.search);
+const NET_TOKEN=P.get('token'); const NET_CHAIN=P.get('chain')||'robinhood';
+const API='https://api.geckoterminal.com/api/v2';
+const CHAINS={robinhood:'Robinhood Chain',solana:'Solana',eth:'Ethereum',base:'Base',arbitrum:'Arbitrum',bsc:'BSC',polygon_pos:'Polygon'};
+
+function scorePool(a){
+  let s=50; const liq=parseFloat(a.reserve_in_usd)||0;
+  const vol=parseFloat(a.volume_usd?.h24)||0;
+  const mcap=parseFloat(a.market_cap_usd||a.fdv_usd)||0;
+  const ch24=parseFloat(a.price_change_percentage?.h24)||0;
+  const buys=a.transactions?.h24?.buys||0, sells=a.transactions?.h24?.sells||0;
+  const tot=buys+sells; const bp=tot>0?buys/tot:.5;
+  if(liq>=250000)s+=15; else if(liq>=50000)s-=5; else s-=25;
+  if(bp>=.58)s+=12; else if(bp<=.42)s-=12;
+  const ageH=a.pool_created_at?(Date.now()-new Date(a.pool_created_at))/3600000:999;
+  if(ageH<24)s-=8;
+  if(mcap>0&&vol>mcap)s-=5;
+  if(ch24<=-40)s-=15;
+  return Math.max(0,Math.min(100,Math.round(s)));
+}
+
+/* ============ BADGE MODE ============ */
+async function renderBadge(){
+  document.body.className='badge-mode';
+  const app=document.getElementById('app');
+  app.innerHTML='<div class="badge b-hi" style="justify-content:center"><div class="b-loading"><span class="b-dot"></span> NEURON scanning…</div></div>';
+  try{
+    const r=await fetch(API+'/networks/'+NET_CHAIN+'/tokens/'+encodeURIComponent(NET_TOKEN)+'/pools?page=1');
+    if(!r.ok) throw 0;
+    const j=await r.json();
+    const pools=j.data||[];
+    if(!pools.length) throw 0;
+    // en yüksek likiditeli pool
+    pools.sort((x,y)=>(parseFloat(y.attributes.reserve_in_usd)||0)-(parseFloat(x.attributes.reserve_in_usd)||0));
+    const a=pools[0].attributes;
+    const score=scorePool(a);
+    const sym=(a.name||'?').split('/')[0].trim();
+    const cls=score>=65?'b-hi':(score>=45?'b-mid':'b-lo');
+    const verdict=score>=65?'HEALTHY ACTIVITY':(score>=45?'MIXED SIGNALS':'HIGH RISK');
+    app.innerHTML='<a class="badge '+cls+'" href="https://neuronaicoin.com/chainradar.html" target="_blank" rel="noopener">'+
+      '<div class="b-score">'+score+'</div>'+
+      '<div class="b-info"><div class="b-label">NEURON SCORE · '+(CHAINS[NET_CHAIN]||NET_CHAIN).toUpperCase()+'</div>'+
+      '<div class="b-sym">'+sym.replace(/</g,'&lt;')+'</div>'+
+      '<div class="b-verdict">'+verdict+'</div></div>'+
+      '<div class="b-brand">neuronaicoin.com</div></a>';
+  }catch(e){
+    app.innerHTML='<a class="badge b-mid" href="https://neuronaicoin.com" target="_blank" style="justify-content:center">'+
+      '<div class="b-loading">⚠ token not found — neuronaicoin.com</div></a>';
+  }
+}
+
+/* ============ GENERATOR MODE ============ */
+function renderGenerator(){
+  const app=document.getElementById('app');
+  app.innerHTML=
+  '<div class="wrap">'+
+    '<header><div class="brand">'+
+      '<div class="gb-ic"><img src="logo.png" alt="N" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span>N</span>\'"></div>'+
+      '<div><h1>Score <b>Badge</b></h1><p>embed live scores · by NEURON AI</p></div></div>'+
+      '<a class="back" href="/chainradar.html">📡 Chain Radar</a></header>'+
+    '<div class="hero-txt"><h2>Put a <span class="g">live NEURON Score</span> on any website</h2>'+
+      '<p>Writing about a token? Listing one on your site? Embed its live health score — it updates automatically and shows your readers the real risk picture. Free, no signup.</p></div>'+
+    '<div class="gen-box"><div class="gen-row">'+
+      '<select id="g-chain" class="chain-pick">'+
+        Object.entries(CHAINS).map(([k,v])=>'<option value="'+k+'"'+(k==='robinhood'?' selected':'')+'>'+v+'</option>').join('')+
+      '</select>'+
+      '<input id="g-addr" placeholder="Paste token address or GeckoTerminal link" autocomplete="off" spellcheck="false">'+
+      '<button class="gen-btn" id="g-go">Generate</button></div>'+
+      '<div class="hint">Works with a token contract address, a pool address, or a full GeckoTerminal URL.</div></div>'+
+    '<div class="status" id="g-status">Paste a token to generate your badge.</div>'+
+    '<div class="out" id="g-out">'+
+      '<div class="preview-box"><div><div class="pv-label">LIVE PREVIEW</div><iframe id="g-frame" width="320" height="110" frameborder="0" scrolling="no" style="border:0;overflow:hidden"></iframe></div></div>'+
+      '<div class="code-box"><div class="cb-head"><span class="cb-title">Embed code — paste anywhere</span>'+
+      '<button class="cb-copy" id="g-copy">COPY</button></div><pre id="g-code"></pre></div>'+
+      '<div class="why"><h3>Why embed it?</h3><p>The badge pulls live data on every view — liquidity, buy/sell pressure, volume and risk flags, scored 0-100. Green means healthy activity, red means the data says caution. Your readers see the risk picture instantly, and the score always stays current.</p></div>'+
+    '</div>'+
+    '<div class="disclaimer">Scores rate activity health — not price predictions. Not financial advice. DYOR.<br>© NEURON AI · neuronaicoin.com</div>'+
+  '</div>';
+
+  const go=async()=>{
+    let addr=document.getElementById('g-addr').value.trim();
+    let chain=document.getElementById('g-chain').value;
+    const st=document.getElementById('g-status');
+    if(!addr){ st.textContent='Paste a token address first.'; return; }
+    // GeckoTerminal URL çözümle
+    const gm=addr.match(/geckoterminal\.com\/([a-z0-9_-]+)\/(pools|tokens)\/([A-Za-z0-9]{20,})/i);
+    let isPool=false;
+    if(gm){ if(CHAINS[gm[1]]){chain=gm[1];document.getElementById('g-chain').value=gm[1];}
+      addr=gm[3]; isPool=(gm[2]==='pools'); document.getElementById('g-addr').value=addr; }
+    st.textContent='⚡ Resolving token…';
+    try{
+      // pool ise token'a çevir; değilse token'ı doğrula
+      let tokenAddr=addr;
+      if(isPool||!(await tokenExists(chain,addr))){
+        const t=await poolToToken(chain,addr);
+        if(t) tokenAddr=t; else throw new Error('Token not found on '+CHAINS[chain]+'. Check the address & chain.');
+      }
+      const base=location.origin+location.pathname;
+      const url=base+'?chain='+chain+'&token='+tokenAddr;
+      const code='<iframe src="'+url+'" width="320" height="110" frameborder="0" scrolling="no" style="border:0;overflow:hidden"></iframe>';
+      document.getElementById('g-frame').src=url;
+      document.getElementById('g-code').textContent=code;
+      document.getElementById('g-out').style.display='block';
+      st.innerHTML='<span style="color:var(--green)">●</span> Badge ready — copy the code below.';
+    }catch(e){ st.textContent='⚠ '+(e.message||'Could not resolve token.'); document.getElementById('g-out').style.display='none'; }
+  };
+  document.getElementById('g-go').onclick=go;
+  document.getElementById('g-addr').addEventListener('keypress',e=>{if(e.key==='Enter')go();});
+  document.getElementById('g-copy').onclick=async function(){
+    const t=document.getElementById('g-code').textContent;
+    try{await navigator.clipboard.writeText(t);}catch(e){
+      const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');}catch(e2){}document.body.removeChild(ta);}
+    this.textContent='COPIED ✓';this.classList.add('done');
+    const b=this;setTimeout(()=>{b.textContent='COPY';b.classList.remove('done');},1600);
+  };
+}
+async function tokenExists(chain,addr){
+  try{ const r=await fetch(API+'/networks/'+chain+'/tokens/'+encodeURIComponent(addr)); return r.ok; }catch(e){ return false; }
+}
+async function poolToToken(chain,poolAddr){
+  try{
+    const r=await fetch(API+'/networks/'+chain+'/pools/'+encodeURIComponent(poolAddr));
+    if(!r.ok) return null;
+    const j=await r.json();
+    const bid=j.data?.relationships?.base_token?.data?.id;
+    return bid? bid.split('_').slice(1).join('_'):null;
+  }catch(e){ return null; }
+}
+
+if(NET_TOKEN) renderBadge(); else renderGenerator();
+</script>
+</body>
+</html>
