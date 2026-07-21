@@ -81,6 +81,34 @@
   .an-metric{font-family:'IBM Plex Mono',monospace;font-size:12px}
   .an-metric .l{color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
   .an-metric .v{color:var(--text);font-weight:600;font-size:14px}
+  .an-verdict{font-family:'Space Grotesk';font-weight:700;font-size:15px;margin-bottom:10px;padding:8px 12px;border-radius:9px;display:inline-block}
+  .an-verdict.vr-ok{background:rgba(47,224,138,.12);color:var(--green)}
+  .an-verdict.vr-mid{background:rgba(255,194,74,.13);color:var(--amber)}
+  .an-verdict.vr-bad{background:rgba(255,95,109,.13);color:var(--red)}
+  .an-body{font-size:14px;color:var(--muted);line-height:1.6;margin:10px 0}
+  .an-body b{color:var(--text)}
+  .an-final{color:var(--text);font-weight:500}
+  .an-obs{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;line-height:1.5;color:var(--text);margin:7px 0}
+  .an-obs .dot{width:7px;height:7px;border-radius:50%;margin-top:6px;flex-shrink:0}
+  .an-obs.ok .dot{background:var(--green)}
+  .an-obs.mid .dot{background:var(--amber)}
+  .an-obs.bad .dot{background:var(--red)}
+  .an-coin+.an-coin{margin-top:14px}
+  .an-list{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+  .an-lrow{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--panel2);border-radius:8px;
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;cursor:pointer;transition:.15s}
+  .an-lrow:hover{background:var(--panel);outline:1px solid var(--line2)}
+  .an-lscore{width:30px;height:24px;border-radius:6px;display:grid;place-items:center;font-weight:700;font-size:12px}
+  .an-lscore.hi{background:rgba(47,224,138,.14);color:var(--green)}
+  .an-lscore.mid{background:rgba(255,194,74,.12);color:var(--amber)}
+  .an-lscore.lo{background:rgba(255,95,109,.13);color:var(--red)}
+  .an-lsym{font-family:'Space Grotesk';font-weight:600;font-size:13px;color:var(--text);min-width:70px}
+  .an-lchg.up{color:var(--green)}.an-lchg.down{color:var(--red)}
+  .an-lliq{color:var(--faint);margin-left:auto}
+  .an-lflags{display:flex;gap:5px}
+  .an-lflag{font-size:10px;padding:2px 6px;border-radius:4px}
+  .an-lflag.ok{background:rgba(47,224,138,.12);color:var(--green)}
+  .an-lflag.bad{background:rgba(255,95,109,.13);color:var(--red)}
   @media(max-width:820px){
     .an-input-row{flex-direction:column}
     .an-btn{width:100%}
@@ -650,70 +678,131 @@ load();
 setInterval(load, 60000);
 
 // ============ NEURON ANALYST (Claude-powered) ============
-async function askAnalyst(question){
+function askAnalyst(question){
   const ansEl=document.getElementById('an-answer');
-  const askBtn=document.getElementById('an-ask');
   ansEl.style.display='block';
-  ansEl.innerHTML='<div class="an-loading">✦ NEURON is reading the chain…</div>';
-  askBtn.disabled=true; askBtn.textContent='Analyzing…';
-
-  // 1) veri hazırla — sorudaki coin(ler)i bul, yoksa tüm tabloyu özetle
-  const q=question.toLowerCase();
-  let matched=rowsData.filter(r=>q.includes((r.sym||'').toLowerCase()) && r.sym.length>1);
-  // eğer belirli coin yoksa, en alakalı 15 coini bağlam olarak ver
-  const context=(matched.length?matched:rowsData.slice(0,15)).map(r=>({
-    symbol:r.sym, score:r.signal, price:r.price, change24h:r.ch24,
-    volume24h:Math.round(r.vol||0), liquidity:Math.round(r.liq||0), mcap:Math.round(r.mcap||0),
-    buys:r.buys, sells:r.sells, ageHours: r.age? Math.round((Date.now()-new Date(r.age))/3600000):null,
-    flags:r.flags.map(f=>f[1])
-  }));
-
-  // tek coin varsa metrik kartları göster
-  let metricsHtml='';
-  if(matched.length===1){
-    const r=matched[0]; const tot=r.buys+r.sells; const bp=tot>0?Math.round(r.buys/tot*100):50;
-    metricsHtml='<div class="an-metrics">'+
-      '<div class="an-metric"><div class="l">Score</div><div class="v">'+r.signal+'</div></div>'+
-      '<div class="an-metric"><div class="l">Liquidity</div><div class="v">'+fmtUsd(r.liq)+'</div></div>'+
-      '<div class="an-metric"><div class="l">Vol 24h</div><div class="v">'+fmtUsd(r.vol)+'</div></div>'+
-      '<div class="an-metric"><div class="l">Buy pressure</div><div class="v">'+bp+'%</div></div>'+
-      '<div class="an-metric"><div class="l">24h</div><div class="v">'+pct(r.ch24)+'</div></div>'+
-    '</div>';
-  }
-
   const chainName=CHAIN_NAMES[NET]||NET;
-  const sys="You are NEURON Analyst, an onchain intelligence assistant for "+chainName+". "+
-    "You are given REAL live pool data as JSON. Answer the user's question using ONLY this data. "+
-    "Be concise (3-5 sentences), specific, and reference the actual numbers. "+
-    "Explain what the data means for risk: low liquidity = easy to manipulate/exit hard; "+
-    "volume much higher than mcap = overheated; sell pressure or big negative 24h = distribution/dump risk; "+
-    "very new age = unproven. NEVER tell someone to buy or sell. NEVER predict price. "+
-    "Always frame as 'the data shows…'. End with a short 'Not financial advice — always DYOR.' "+
-    "If the asked token isn't in the data, say it's not currently in the scan and suggest checking the live list.";
 
-  const userMsg="Live "+chainName+" pool data (JSON):\n"+JSON.stringify(context)+
-    "\n\nUser question: "+question;
-
-  try{
-    const resp=await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        model:"claude-sonnet-4-6", max_tokens:1000,
-        system:sys,
-        messages:[{role:"user",content:userMsg}]
-      })
-    });
-    const data=await resp.json();
-    let text=(data.content||[]).map(i=>i.text||"").join("\n").trim();
-    if(!text) text="Couldn't generate a read right now. Try again in a moment.";
-    ansEl.innerHTML=metricsHtml+
-      '<div>'+escapeHtml(text).replace(/\n/g,'<br>')+'</div>'+
-      '<div class="an-dis">✦ NEURON Analyst · reasoning over live '+chainName+' data · informational only</div>';
-  }catch(e){
-    ansEl.innerHTML='<div>NEURON Analyst is unavailable right now (the AI service can\'t be reached from this page). '+
-      'This feature works on the live site. Error: <code>'+escapeHtml(e.message)+'</code></div>';
+  if(!rowsData.length){
+    ansEl.innerHTML='<div>No live data loaded yet. Hit refresh and let the scan finish, then ask again.</div>';
+    return;
   }
-  askBtn.disabled=false; askBtn.textContent='Analyze';
+
+  const q=question.toLowerCase();
+  // sorudaki coin(ler)i bul
+  let matched=rowsData.filter(r=>r.sym && r.sym.length>1 && new RegExp('\\b'+r.sym.toLowerCase().replace(/[^a-z0-9]/g,'')+'\\b').test(q.replace(/[^a-z0-9 ]/g,'')));
+
+  // niyet tespiti (genel sorular)
+  const wantsHealthy=/health|best|safest|strong|top|good/.test(q);
+  const wantsRisk=/dump|risk|danger|scam|rug|avoid|worst|bad/.test(q);
+  const wantsNew=/new|fresh|latest|just launch/.test(q);
+  const wantsHot=/hot|volume|trending|active|momentum/.test(q);
+
+  let html='';
+
+  if(matched.length>=1){
+    // ── TEK/BELİRLİ COIN ANALİZİ ──
+    html=matched.slice(0,3).map(r=>analyzeCoin(r,chainName)).join('<div style="height:14px"></div>');
+  } else if(wantsRisk){
+    // ── EN RİSKLİ COINLER ──
+    const risky=[...rowsData].sort((a,b)=>a.signal-b.signal).slice(0,5);
+    html='<div class="an-verdict vr-bad">⚠ Highest risk right now on '+chainName+'</div>'+
+      '<div class="an-body">These pools carry the most red flags — low scores, thin liquidity, or heavy selling. The data says caution:</div>'+
+      list(risky)+
+      '<div class="an-body">Low score = weak activity health. Thin liquidity means a few sells can crater the price and exits get hard. Big negative 24h often signals distribution.</div>';
+  } else if(wantsHealthy){
+    // ── EN SAĞLIKLI COINLER ──
+    const healthy=[...rowsData].sort((a,b)=>b.signal-a.signal).slice(0,5);
+    html='<div class="an-verdict vr-ok">✓ Healthiest activity right now on '+chainName+'</div>'+
+      '<div class="an-body">These pools score highest on activity health — deeper liquidity, buy-side pressure, and no major red flags. Healthy ≠ guaranteed, but the data is cleaner here:</div>'+
+      list(healthy)+
+      '<div class="an-body">A high score means liquidity, buy/sell balance and volume look structurally sound. It says nothing about price direction.</div>';
+  } else if(wantsNew){
+    const fresh=[...rowsData].filter(r=>r.age).sort((a,b)=>new Date(b.age)-new Date(a.age)).slice(0,5);
+    html='<div class="an-verdict vr-mid">✦ Newest pools on '+chainName+'</div>'+
+      '<div class="an-body">Freshly launched — highest upside talk, highest risk. New pools are unproven and easiest to manipulate. Treat with extra caution:</div>'+
+      list(fresh);
+  } else if(wantsHot){
+    const hot=[...rowsData].sort((a,b)=>(b.vol||0)-(a.vol||0)).slice(0,5);
+    html='<div class="an-verdict vr-mid">✦ Hottest by volume on '+chainName+'</div>'+
+      '<div class="an-body">Most traded in the last 24h. High volume brings attention — and volume far above market cap often means the move is overheated:</div>'+
+      list(hot);
+  } else {
+    // ── ANLAŞILMADI: yardım + genel özet ──
+    const top=[...rowsData].sort((a,b)=>b.signal-a.signal).slice(0,3);
+    const bad=[...rowsData].sort((a,b)=>a.signal-b.signal).slice(0,3);
+    html='<div class="an-body">I read live '+chainName+' data. Try asking about a specific token (e.g. <b>"Is '+(rowsData[0]?.sym||'HMM')+' safe?"</b>) or use the quick questions above.</div>'+
+      '<div class="an-verdict vr-ok" style="margin-top:12px">✓ Top health right now</div>'+list(top)+
+      '<div class="an-verdict vr-bad" style="margin-top:12px">⚠ Watch out for</div>'+list(bad);
+  }
+
+  ansEl.innerHTML=html+
+    '<div class="an-dis">✦ NEURON Analyst · reasoning over live '+chainName+' data · Not financial advice — always DYOR.</div>';
+}
+
+// tek coin derin analizi — insan gibi cümlelerle
+function analyzeCoin(r,chainName){
+  const tot=r.buys+r.sells; const bp=tot>0?Math.round(r.buys/tot*100):50;
+  const vm = (r.mcap>0 && r.vol>0)? r.vol/r.mcap : 0;
+  const ageH = r.age? Math.round((Date.now()-new Date(r.age))/3600000):null;
+  const scoreCls=r.signal>=65?'hi':(r.signal>=45?'mid':'lo');
+
+  // gözlemler (kural-tabanlı)
+  let obs=[];
+  // likidite
+  if(r.liq>=250000) obs.push(["ok","Liquidity is solid at "+fmtUsd(r.liq)+" — harder to manipulate, easier to exit."]);
+  else if(r.liq>=50000) obs.push(["mid","Liquidity is moderate ("+fmtUsd(r.liq)+") — usable, but not deep."]);
+  else obs.push(["bad","Liquidity is thin ("+fmtUsd(r.liq)+") — a few sells can crater the price and exits get hard."]);
+  // buy/sell
+  if(bp>=58) obs.push(["ok","Buy pressure is strong ("+bp+"% buys) — more demand than supply right now."]);
+  else if(bp<=42) obs.push(["bad","Sell pressure dominates ("+(100-bp)+"% sells) — can signal distribution."]);
+  else obs.push(["mid","Buy/sell is fairly balanced ("+bp+"% buys)."]);
+  // hacim/mcap
+  if(vm>=1) obs.push(["mid","24h volume is "+vm.toFixed(1)+"x its market cap — very hot, often overheated and prone to sharp reversals."]);
+  else if(vm>0 && vm<0.05 && r.mcap>0) obs.push(["mid","Volume is low relative to size — limited attention right now."]);
+  // 24h
+  if(r.ch24<=-40) obs.push(["bad","Down "+Math.abs(Math.round(r.ch24))+"% in 24h — active dump risk."]);
+  else if(r.ch24>=80) obs.push(["mid","Up "+Math.round(r.ch24)+"% in 24h — big run already in; chasing is risky."]);
+  // yaş
+  if(ageH!=null && ageH<24) obs.push(["bad","Only ~"+ageH+"h old — brand new and unproven, easiest to manipulate."]);
+  else if(ageH!=null && ageH<24*7) obs.push(["mid","About "+Math.round(ageH/24)+"d old — still young."]);
+
+  // genel yargı
+  let verdict, vcls;
+  if(r.signal>=65){ verdict="Structurally healthy"; vcls="vr-ok"; }
+  else if(r.signal>=45){ verdict="Mixed — proceed with caution"; vcls="vr-mid"; }
+  else { verdict="High risk — the data says caution"; vcls="vr-bad"; }
+
+  const metrics='<div class="an-metrics">'+
+    '<div class="an-metric"><div class="l">Score</div><div class="v">'+r.signal+'</div></div>'+
+    '<div class="an-metric"><div class="l">Liquidity</div><div class="v">'+fmtUsd(r.liq)+'</div></div>'+
+    '<div class="an-metric"><div class="l">Vol 24h</div><div class="v">'+fmtUsd(r.vol)+'</div></div>'+
+    '<div class="an-metric"><div class="l">Buy pressure</div><div class="v">'+bp+'%</div></div>'+
+    '<div class="an-metric"><div class="l">24h</div><div class="v">'+pct(r.ch24)+'</div></div>'+
+  '</div>';
+
+  const obsHtml=obs.map(o=>'<div class="an-obs '+o[0]+'"><span class="dot"></span>'+o[1]+'</div>').join('');
+
+  return '<div class="an-coin">'+
+    '<div class="an-verdict '+vcls+'">'+r.sym+' · '+verdict+' (score '+r.signal+')</div>'+
+    metrics+ obsHtml+
+    '<div class="an-body an-final">Bottom line: the data '+(r.signal>=65?'looks clean, but that\'s about activity health — not a price call':(r.signal>=45?'is mixed. Some green, some red. Size accordingly and don\'t chase':'shows real risk here. Thin liquidity and red flags make this an easy place to get trapped'))+'.</div>'+
+  '</div>';
+}
+
+// coin listesi (mini satırlar)
+function list(arr){
+  return '<div class="an-list">'+arr.map(r=>{
+    const cls=r.signal>=65?'hi':(r.signal>=45?'mid':'lo');
+    const fl=r.flags.filter(f=>f[0]==='bad'||f[0]==='ok').slice(0,2).map(f=>'<span class="an-lflag '+f[0]+'">'+f[1]+'</span>').join('');
+    return '<div class="an-lrow" data-sym="'+r.sym+'">'+
+      '<span class="an-lscore '+cls+'">'+r.signal+'</span>'+
+      '<span class="an-lsym">'+r.sym+'</span>'+
+      '<span class="an-lchg '+(r.ch24>=0?'up':'down')+'">'+pct(r.ch24)+'</span>'+
+      '<span class="an-lliq">'+fmtUsd(r.liq)+' liq</span>'+
+      '<span class="an-lflags">'+fl+'</span>'+
+    '</div>';
+  }).join('')+'</div>';
 }
 function escapeHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
@@ -726,6 +815,11 @@ document.getElementById('an-input').addEventListener('keypress',e=>{
 });
 document.querySelectorAll('.an-chip').forEach(c=>{
   c.onclick=()=>{ document.getElementById('an-input').value=c.dataset.q; askAnalyst(c.dataset.q); };
+});
+// analyst listesindeki coine tıklayınca detay aç
+document.getElementById('an-answer').addEventListener('click',e=>{
+  const row=e.target.closest('.an-lrow');
+  if(row && row.dataset.sym) openDetail(row.dataset.sym);
 });
 
 
