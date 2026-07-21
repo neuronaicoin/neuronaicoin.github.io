@@ -3,843 +3,515 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="NEURON AI — The AI Agent for Everything. Your personal AI agent for crypto, life, and every decision.">
-<meta property="og:title" content="NEURON AI — The AI Agent for Everything">
+<meta name="description" content="NEURON AI — The intelligence layer for onchain finance. AI-powered tools built on Robinhood Chain.">
+<meta property="og:title" content="NEURON AI — The Intelligence Layer for Onchain Finance">
+<meta property="og:description" content="AI-powered tools for the onchain economy. Built on Robinhood Chain.">
 <meta property="og:image" content="logo.jpeg">
-<title>NEURON AI — The AI Agent for Everything</title>
+<title>NEURON AI — The Intelligence Layer for Onchain Finance</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f5f5f3;--bg2:#ebebе8;--sf:#ffffff;--bd:#e0e0da;--bd2:#c0c0b8;
-  --tx:#080808;--tx2:#3a3a34;--tx3:#888880;
-  --gold:#b8943e;--glt:#d4b060;--grn:#166534;--glt2:#4ade80;--red:#991b1b;
-  --r:16px;--rs:8px;--sh:0 1px 16px rgba(0,0,0,.06);--shl:0 8px 48px rgba(0,0,0,.10);
-  --f:'Plus Jakarta Sans',sans-serif;--ez:cubic-bezier(.4,0,.2,1)
-}
-[data-theme=dark]{
-  --bg:#0a0a08;--bg2:#121210;--sf:#161614;--bd:#242420;--bd2:#303028;
-  --tx:#f0f0ec;--tx2:#909088;--tx3:#505048;
-  --sh:0 1px 16px rgba(0,0,0,.4);--shl:0 8px 48px rgba(0,0,0,.5)
+  --bg:#080b11; --bg2:#0c1119; --panel:#0f1520; --panel2:#131b28; --line:#1e2836; --line2:#2a3646;
+  --tx:#e8eef5; --tx2:#8ba0b8; --tx3:#54687e;
+  --grn:#2fe08a; --grn2:#1eb56e; --grn-dim:#1a3a2a; --gold:#e0b64a;
+  --up:#2fe08a; --down:#ff5f6d;
+  --disp:'Space Grotesk',sans-serif; --body:'Inter',sans-serif; --mono:'IBM Plex Mono',monospace;
+  --ez:cubic-bezier(.4,0,.2,1);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:var(--f);background:var(--bg);color:var(--tx);line-height:1.6;overflow-x:hidden;transition:background .3s,color .3s;-webkit-font-smoothing:antialiased}
+body{font-family:var(--body);background:var(--bg);color:var(--tx);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::selection{background:rgba(47,224,138,.25)}
 
-/* ── LOADER ── */
-#ld{position:fixed;inset:0;background:#080808;display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .8s,visibility .8s}
-#ld.gone{opacity:0;visibility:hidden;pointer-events:none}
-.ld-wrap{text-align:center}
-.ld-img{width:72px;height:72px;border-radius:50%;overflow:hidden;margin:0 auto 1.25rem;animation:ldp 1.8s ease infinite}
-.ld-img img{width:100%;height:100%;object-fit:cover}
-.ld-name{font-size:1.3rem;font-weight:800;letter-spacing:-.03em;color:#f0f0ec;margin-bottom:.3rem}
-.ld-sub{font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:#505048;margin-bottom:1.5rem}
-.ld-bar{width:200px;height:2px;background:#1a1a18;border-radius:2px;overflow:hidden;margin:0 auto}
-.ld-fill{height:100%;background:var(--gold);animation:ldf 2.4s ease forwards}
-@keyframes ldp{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-@keyframes ldf{to{width:100%}}
-
-/* ── PROMO BAR ── */
-.pb{background:var(--tx);padding:8px 0;overflow:hidden;font-size:.76rem;letter-spacing:.04em}
-.pb-t{display:flex;animation:pbsc 38s linear infinite;white-space:nowrap}
-.pb-i{padding:0 3rem;color:rgba(240,240,236,.68)}
-.pb-i b{color:var(--gold)}
-@keyframes pbsc{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* grid backdrop */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(47,224,138,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(47,224,138,.025) 1px,transparent 1px);
+  background-size:56px 56px;mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000,transparent)}
 
 /* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between;background:rgba(245,245,243,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);transition:background .3s}
-[data-theme=dark] nav{background:rgba(10,10,8,.92)}
-.nlogo{display:flex;align-items:center;gap:.55rem;text-decoration:none}
-.nlogo-img{width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0}
-.nlogo-img img{width:100%;height:100%;object-fit:cover}
-.nlogo-name{font-size:1rem;font-weight:800;letter-spacing:-.03em;color:var(--tx)}
-.nlinks{display:flex;align-items:center;gap:1.75rem;list-style:none}
-.nlinks a{color:var(--tx2);text-decoration:none;font-size:.84rem;font-weight:600;transition:color .2s}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(1rem,4vw,2.5rem);background:rgba(8,11,17,.8);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.nlogo{display:flex;align-items:center;gap:.6rem;text-decoration:none}
+.nlogo-mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(145deg,var(--grn),var(--grn2));
+  display:grid;place-items:center;position:relative;overflow:hidden;flex-shrink:0}
+.nlogo-mark::after{content:'';position:absolute;inset:0;background:conic-gradient(from 0deg,transparent 0deg,rgba(8,11,17,.55) 70deg,transparent 100deg);animation:sweep 3.5s linear infinite}
+@keyframes sweep{to{transform:rotate(360deg)}}
+.nlogo-mark span{color:#080b11;font-weight:700;font-size:16px;font-family:var(--disp);z-index:1}
+.nlogo-mark img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+.ftl-mark img{width:100%;height:100%;object-fit:cover;border-radius:7px}
+.nlogo-txt{font-family:var(--disp);font-weight:700;font-size:1.05rem;letter-spacing:-.01em;color:var(--tx)}
+.nlinks{display:flex;align-items:center;gap:2rem;list-style:none}
+.nlinks a{color:var(--tx2);text-decoration:none;font-size:.86rem;font-weight:500;transition:color .2s}
 .nlinks a:hover{color:var(--tx)}
-.nr{display:flex;align-items:center;gap:.7rem}
-.tbtn{background:none;border:1px solid var(--bd);padding:.32rem .6rem;border-radius:20px;cursor:pointer;font-size:.78rem;font-family:var(--f);color:var(--tx2);transition:.2s}
-.tbtn:hover{border-color:var(--tx);color:var(--tx)}
-.ncta{background:var(--tx);color:var(--bg)!important;padding:.46rem 1.2rem;border-radius:20px;font-size:.8rem;font-weight:700;text-decoration:none;transition:.2s;letter-spacing:-.01em}
-.ncta:hover{opacity:.82}
+.ncta{background:var(--grn);color:#080b11;padding:.5rem 1.15rem;border-radius:8px;font-size:.84rem;font-weight:600;
+  text-decoration:none;transition:.2s;font-family:var(--disp)}
+.ncta:hover{background:var(--grn2);transform:translateY(-1px)}
+.nmenu{display:none;background:none;border:1px solid var(--line2);border-radius:8px;color:var(--tx);
+  width:38px;height:38px;cursor:pointer;font-size:1.1rem}
 
 /* ── HERO ── */
-.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:8rem 2rem 5rem;position:relative;overflow:hidden}
-#pc{position:absolute;inset:0;pointer-events:none;opacity:.4}
-.hero-in{text-align:center;max-width:980px;position:relative;z-index:1}
-.hbadge{display:inline-flex;align-items:center;gap:.45rem;background:var(--sf);border:1px solid var(--bd);padding:.38rem .95rem;border-radius:20px;font-size:.76rem;font-weight:700;color:var(--tx2);margin-bottom:1.75rem;box-shadow:var(--sh)}
-.hdot{width:7px;height:7px;background:#4ade80;border-radius:50%;animation:bk 2s infinite}
-@keyframes bk{0%,100%{opacity:1}50%{opacity:.3}}
-.hh1{font-size:clamp(3.2rem,9vw,7.5rem);font-weight:800;line-height:.92;letter-spacing:-.045em;margin-bottom:1.75rem;color:var(--tx)}
-.hh1 em{font-style:normal;color:var(--gold)}
-.hsub{font-size:clamp(.95rem,2.2vw,1.2rem);color:var(--tx2);max-width:560px;margin:0 auto 1.25rem;font-weight:400;line-height:1.6}
-.htyp{font-size:clamp(.82rem,1.6vw,.96rem);font-weight:600;color:var(--tx3);margin-bottom:3rem;min-height:1.4rem;letter-spacing:-.01em}
-.tcur{display:inline-block;width:2px;height:.88em;background:var(--gold);margin-left:2px;animation:tc .8s infinite;vertical-align:text-bottom}
-@keyframes tc{0%,100%{opacity:1}50%{opacity:0}}
-.hbtns{display:flex;align-items:center;justify-content:center;gap:.85rem;flex-wrap:wrap;margin-bottom:3.5rem}
-.bp{background:var(--tx);color:var(--bg);padding:.85rem 2rem;border-radius:30px;font-size:.88rem;font-weight:700;text-decoration:none;transition:.25s;display:inline-flex;align-items:center;gap:.45rem;letter-spacing:-.01em}
-.bp:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
-.bs{background:var(--sf);color:var(--tx);border:1.5px solid var(--bd);padding:.85rem 2rem;border-radius:30px;font-size:.88rem;font-weight:600;text-decoration:none;transition:.25s;display:inline-flex;align-items:center;gap:.45rem}
-.bs:hover{border-color:var(--tx);transform:translateY(-2px)}
+.hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:9rem 1.5rem 4rem}
+.hbadge{display:inline-flex;align-items:center;gap:.5rem;background:var(--panel);border:1px solid var(--line2);
+  padding:.4rem 1rem;border-radius:30px;font-size:.76rem;font-weight:500;color:var(--tx2);margin-bottom:2rem;font-family:var(--mono)}
+.hbadge .pulse{width:7px;height:7px;border-radius:50%;background:var(--grn);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(47,224,138,.5)}50%{opacity:.6;box-shadow:0 0 0 5px rgba(47,224,138,0)}}
+.hero h1{font-family:var(--disp);font-size:clamp(2.6rem,7vw,5.5rem);font-weight:700;line-height:1.02;letter-spacing:-.03em;
+  max-width:16ch;margin-bottom:1.6rem}
+.hero h1 .accent{color:var(--grn)}
+.hsub{font-size:clamp(1rem,2.2vw,1.2rem);color:var(--tx2);max-width:600px;margin-bottom:2.5rem;line-height:1.6}
+.hbtns{display:flex;gap:.9rem;flex-wrap:wrap;justify-content:center;margin-bottom:4rem}
+.btn-p{background:var(--grn);color:#080b11;padding:.9rem 1.8rem;border-radius:10px;font-family:var(--disp);font-weight:600;
+  font-size:.92rem;text-decoration:none;transition:.2s;display:inline-flex;align-items:center;gap:.5rem}
+.btn-p:hover{background:var(--grn2);transform:translateY(-2px);box-shadow:0 10px 30px rgba(47,224,138,.2)}
+.btn-s{background:var(--panel);color:var(--tx);border:1px solid var(--line2);padding:.9rem 1.8rem;border-radius:10px;
+  font-family:var(--disp);font-weight:600;font-size:.92rem;text-decoration:none;transition:.2s;display:inline-flex;align-items:center;gap:.5rem}
+.btn-s:hover{border-color:var(--grn);transform:translateY(-2px)}
 
-/* Hero stats */
-.hst{display:flex;border:1px solid var(--bd);border-radius:var(--r);background:var(--sf);box-shadow:var(--sh);overflow:hidden;max-width:560px;margin:0 auto}
-.hs{flex:1;padding:1.35rem .75rem;text-align:center;border-right:1px solid var(--bd)}
-.hs:last-child{border-right:none}
-.hs-n{font-size:2.6rem;font-weight:800;letter-spacing:-.045em;color:var(--tx);line-height:1}
-.hs-l{font-size:.65rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.14em;margin-top:.35rem;font-weight:600}
-
-/* Scroll hint */
-.hscr{position:absolute;bottom:1.75rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.35rem;color:var(--tx3);font-size:.65rem;letter-spacing:.18em;font-weight:600;animation:fy 3s ease infinite}
-.hscr-l{width:1px;height:32px;background:linear-gradient(to bottom,var(--tx3),transparent)}
-@keyframes fy{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(7px)}}
+/* live ticker (signature element) */
+.ticker{width:100%;max-width:900px;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.ticker-head{display:flex;align-items:center;gap:.5rem;padding:.7rem 1.1rem;border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:.72rem;color:var(--tx3);letter-spacing:.05em}
+.ticker-head .live-dot{width:6px;height:6px;border-radius:50%;background:var(--grn);animation:pulse 2s infinite}
+.ticker-body{overflow:hidden;position:relative}
+.ticker-track{display:flex;gap:0;animation:scroll 30s linear infinite;white-space:nowrap;width:max-content}
+@keyframes scroll{to{transform:translateX(-50%)}}
+.tick{display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 1.4rem;font-family:var(--mono);font-size:.82rem;border-right:1px solid var(--line)}
+.tick .sym{color:var(--tx);font-weight:600}
+.tick .up{color:var(--up)}
+.tick .down{color:var(--down)}
 
 /* ── SECTIONS ── */
-section{padding:5.5rem 2rem}
-.con{max-width:1200px;margin:0 auto}
-.sl{font-size:.7rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.8rem}
-.sh{font-size:clamp(1.9rem,4vw,3.2rem);font-weight:800;letter-spacing:-.035em;line-height:1.05;color:var(--tx);margin-bottom:1.35rem}
-.sd{font-size:.96rem;color:var(--tx2);max-width:540px;line-height:1.72}
+section{position:relative;z-index:1;padding:clamp(4rem,9vw,7rem) clamp(1rem,4vw,2.5rem)}
+.con{max-width:1180px;margin:0 auto}
+.eyebrow{font-family:var(--mono);font-size:.74rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--grn);margin-bottom:1rem;display:flex;align-items:center;gap:.6rem}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--grn)}
+.shead{font-family:var(--disp);font-size:clamp(1.8rem,4.5vw,3rem);font-weight:700;letter-spacing:-.025em;line-height:1.08;margin-bottom:1.1rem}
+.sdesc{font-size:1rem;color:var(--tx2);max-width:560px;line-height:1.7}
 
-/* Reveal */
-.rv{opacity:0;transform:translateY(24px);transition:opacity .6s var(--ez),transform .6s var(--ez)}
+/* reveal */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .6s var(--ez),transform .6s var(--ez)}
 .rv.on{opacity:1;transform:none}
 
+/* ── TOOLS (main focus) ── */
+.tools{background:linear-gradient(180deg,var(--bg),var(--bg2))}
+.support-strip{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;
+  background:var(--panel);border:1px solid var(--grn-dim);border-radius:14px;padding:1.3rem 1.6rem;margin-bottom:3rem;
+  box-shadow:0 0 30px rgba(47,224,138,.06)}
+.ss-title{font-family:var(--disp);font-size:1.05rem;font-weight:600;margin-bottom:.25rem}
+.ss-sub{font-size:.85rem;color:var(--tx2)}
+.ss-addr{display:flex;flex-direction:column;gap:.5rem;align-items:flex-end}
+.ss-net{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;color:var(--grn)}
+.addr-row.compact{padding:.5rem .5rem .5rem .85rem;box-shadow:none}
+.addr-row.compact code{font-size:.74rem}
+.addr-row.compact .copy-btn{padding:.45rem .9rem;font-size:.74rem}
+@media(max-width:640px){
+  .support-strip{flex-direction:column;align-items:stretch}
+  .ss-addr{align-items:stretch}
+  .addr-row.compact{justify-content:space-between}
+  .addr-row.compact code{font-size:.64rem}
+}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.25rem;margin-top:3rem}
+.tool{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:1.75rem;transition:.25s;
+  display:flex;flex-direction:column;position:relative;overflow:hidden;text-decoration:none;color:inherit}
+.tool::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--grn),transparent);
+  transform:scaleX(0);transform-origin:left;transition:.3s}
+.tool.live:hover{border-color:var(--grn);transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.4)}
+.tool.live:hover::before{transform:scaleX(1)}
+.tool-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.1rem}
+.tool-ic{width:46px;height:46px;border-radius:11px;background:var(--panel2);border:1px solid var(--line2);
+  display:grid;place-items:center;font-size:1.4rem}
+.tool-status{font-family:var(--mono);font-size:.68rem;font-weight:600;letter-spacing:.08em;padding:.3rem .6rem;border-radius:6px}
+.tool-status.on{background:rgba(47,224,138,.12);color:var(--grn);display:inline-flex;align-items:center;gap:.4rem}
+.tool-status.on .d{width:5px;height:5px;border-radius:50%;background:var(--grn);animation:pulse 2s infinite}
+.tool-status.soon{background:var(--panel2);color:var(--tx3);border:1px solid var(--line)}
+.tool h3{font-family:var(--disp);font-size:1.2rem;font-weight:600;margin-bottom:.5rem;letter-spacing:-.01em}
+.tool p{font-size:.88rem;color:var(--tx2);line-height:1.6;flex:1;margin-bottom:1.2rem}
+.tool-foot{display:flex;align-items:center;gap:.4rem;font-family:var(--disp);font-size:.85rem;font-weight:600;color:var(--grn)}
+.tool.soon{opacity:.72}
+.tool.soon .tool-foot{color:var(--tx3)}
+.tool-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.ttag{font-family:var(--mono);font-size:.68rem;color:var(--tx3);background:var(--panel2);border:1px solid var(--line);
+  padding:.2rem .55rem;border-radius:5px}
+
 /* ── VISION ── */
-.vsec{background:var(--tx);padding:6.5rem 2rem;position:relative;overflow:hidden}
-.vsec::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
-.vsec .sl{color:var(--gold)}
-.vsec .sh{color:#f0f0ec;font-size:clamp(2rem,5vw,4rem)}
-.vbody{color:rgba(240,240,236,.6);font-size:1.02rem;line-height:1.9;max-width:800px;margin-top:1.75rem}
-.vbody strong{color:#f0f0ec;font-weight:700}
-.vpills{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:3.5rem}
-.vp{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:var(--r);padding:1.75rem;transition:.25s}
-.vp:hover{background:rgba(255,255,255,.07);border-color:rgba(184,148,62,.5)}
-.vp-n{font-size:3rem;font-weight:800;color:var(--gold);opacity:.22;line-height:1;margin-bottom:.9rem;letter-spacing:-.04em}
-.vp-t{font-size:1rem;font-weight:800;color:#f0f0ec;margin-bottom:.5rem;letter-spacing:-.02em}
-.vp-d{font-size:.85rem;color:rgba(240,240,236,.48);line-height:1.65}
-.vquote{margin-top:3.5rem;padding:1.75rem 2rem;border-left:3px solid var(--gold);background:rgba(184,148,62,.06)}
-.vquote p{font-size:1.3rem;font-weight:700;color:#f0f0ec;line-height:1.4;font-style:italic;letter-spacing:-.02em}
-.vquote span{display:block;margin-top:.7rem;font-size:.76rem;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+.vision{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.vgrid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.vbody p{color:var(--tx2);font-size:1rem;line-height:1.85;margin-bottom:1.1rem}
+.vbody strong{color:var(--tx);font-weight:600}
+.vstats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.vstat{background:var(--panel);padding:1.6rem 1.4rem}
+.vstat-n{font-family:var(--disp);font-size:2.1rem;font-weight:700;letter-spacing:-.03em;line-height:1;margin-bottom:.4rem}
+.vstat-n .accent{color:var(--grn)}
+.vstat-l{font-family:var(--mono);font-size:.72rem;color:var(--tx3);letter-spacing:.06em;text-transform:uppercase}
 
-/* ── MARKET DATA ── */
-.mkt{background:var(--sf);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);padding:4rem 2rem}
-/* Crypto grid */
-.cg{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.75rem 0 2.5rem}
-.ccard{background:var(--bg);border:1px solid var(--bd);border-radius:var(--r);padding:1.4rem;transition:.25s}
-.ccard:hover{border-color:var(--bd2);box-shadow:var(--sh)}
-.ccard-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem}
-.ccard-name{font-size:.7rem;font-weight:800;letter-spacing:.14em;color:var(--tx3)}
-.ccard-icon{font-size:1.25rem}
-.ccard-price{font-size:1.85rem;font-weight:800;letter-spacing:-.04em;color:var(--tx)}
-.ccard-chg{font-size:.78rem;font-weight:700;margin-top:.28rem;display:inline-flex;align-items:center;gap:.18rem;padding:.18rem .55rem;border-radius:20px}
-.ccard-chg.up{color:var(--grn);background:rgba(22,101,52,.08)}
-.ccard-chg.dn{color:var(--red);background:rgba(153,27,27,.08)}
+/* ── WHY CHAIN ── */
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:3rem}
+.why{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:1.75rem;transition:.25s}
+.why:hover{border-color:var(--line2)}
+.why-ic{font-size:1.5rem;margin-bottom:1rem}
+.why h3{font-family:var(--disp);font-size:1.05rem;font-weight:600;margin-bottom:.5rem}
+.why p{font-size:.86rem;color:var(--tx2);line-height:1.6}
 
-/* Stock/Forex grid */
-.mkt-divider{font-size:.7rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin:2rem 0 1rem;padding-top:1.5rem;border-top:1px solid var(--bd)}
-.sg{display:grid;grid-template-columns:repeat(5,1fr);gap:.85rem;margin-bottom:2.5rem}
-.scard{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rs);padding:1rem;transition:.25s}
-.scard:hover{border-color:var(--bd2);box-shadow:var(--sh)}
-.scard-name{font-size:.65rem;font-weight:800;letter-spacing:.12em;color:var(--tx3);margin-bottom:.35rem}
-.scard-val{font-size:1.15rem;font-weight:800;letter-spacing:-.03em;color:var(--tx)}
-.scard-chg{font-size:.72rem;font-weight:700;margin-top:.2rem}
-.scard-chg.up{color:var(--grn)}
-.scard-chg.dn{color:var(--red)}
-
-/* News grid */
-.ng{display:grid;grid-template-columns:repeat(2,1fr);gap:.85rem}
-.ncard{background:var(--bg);border:1px solid var(--bd);border-radius:var(--r);padding:1.2rem;cursor:pointer;transition:.25s}
-.ncard:hover{border-color:var(--gold);box-shadow:var(--sh)}
-.ncard-tag{font-size:.64rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:.38rem}
-.ncard-title{font-size:.9rem;font-weight:700;color:var(--tx);line-height:1.32;margin-bottom:.38rem;letter-spacing:-.01em}
-.ncard-date{font-size:.7rem;color:var(--tx3);font-weight:500}
-
-/* ── FEATURES ── */
-.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1.15rem;margin-top:2.75rem}
-.fc{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);padding:1.85rem;transition:.3s;position:relative;overflow:hidden}
-.fc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);transform:scaleX(0);transform-origin:left;transition:.3s}
-.fc:hover{border-color:rgba(184,148,62,.4);box-shadow:var(--shl);transform:translateY(-3px)}
-.fc:hover::after{transform:scaleX(1)}
-.fc-i{font-size:2rem;margin-bottom:1.15rem;display:block}
-.fc-t{font-size:1.05rem;font-weight:800;color:var(--tx);margin-bottom:.45rem;letter-spacing:-.02em}
-.fc-d{font-size:.85rem;color:var(--tx2);line-height:1.65;margin-bottom:.9rem}
-.fc-c{display:inline-block;background:var(--bg2);border:1px solid var(--bd);padding:.22rem .6rem;border-radius:6px;font-family:monospace;font-size:.76rem;color:var(--gold)}
-
-/* ── AI DEMO ── */
-.dw{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center}
-.db{background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--r);overflow:hidden;box-shadow:var(--shl)}
-.dbh{background:var(--tx);color:var(--bg);padding:.85rem 1.2rem;display:flex;align-items:center;gap:.6rem;font-size:.8rem;font-weight:700}
-.dbh-dot{width:7px;height:7px;background:#4ade80;border-radius:50%;animation:bk 2s infinite}
-.dms{padding:1.15rem;display:flex;flex-direction:column;gap:.6rem;min-height:240px}
-.dm{max-width:85%;padding:.6rem .9rem;border-radius:12px;font-size:.82rem;line-height:1.5;animation:dma .3s ease}
-@keyframes dma{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-.dm.u{background:var(--tx);color:var(--bg);align-self:flex-end;border-bottom-right-radius:3px}
-.dm.b{background:var(--sf);border:1px solid var(--bd);color:var(--tx);align-self:flex-start;border-bottom-left-radius:3px}
-.di{display:flex;align-items:center;border-top:1px solid var(--bd);padding:.65rem 1rem;gap:.6rem}
-.di input{flex:1;border:none;background:none;font-family:var(--f);font-size:.82rem;color:var(--tx);outline:none;font-weight:500}
-.di input::placeholder{color:var(--tx3)}
-.dsend{background:var(--tx);color:var(--bg);border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:.88rem;display:flex;align-items:center;justify-content:center;transition:.2s}
-.dsend:hover{opacity:.72}
-
-/* ── WHY NOW ── */
-.wng{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:2.75rem}
-.wn{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:1.85rem;transition:.25s}
-.wn:hover{border-color:var(--gold);box-shadow:var(--sh)}
-.wn-n{font-size:2.8rem;font-weight:800;color:var(--gold);opacity:.28;line-height:1;margin-bottom:.9rem;letter-spacing:-.04em}
-.wn-t{font-size:.96rem;font-weight:800;color:var(--tx);margin-bottom:.5rem;letter-spacing:-.02em}
-.wn-d{font-size:.85rem;color:var(--tx2);line-height:1.65}
-
-/* ── COMPARISON ── */
-.ctb{width:100%;border-collapse:collapse;border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);margin-top:2.75rem}
-.ctb th{padding:1rem 1.35rem;text-align:left;background:var(--sf);font-size:.76rem;font-weight:800;letter-spacing:.06em;color:var(--tx2);border-bottom:1px solid var(--bd)}
-.ctb th.nh{background:var(--tx);color:var(--bg)}
-.ctb td{padding:.88rem 1.35rem;border-bottom:1px solid var(--bd);font-size:.85rem;color:var(--tx2);background:var(--sf)}
-.ctb tr:last-child td{border-bottom:none}
-.ctb td.nh{background:rgba(184,148,62,.05);color:var(--tx);font-weight:600}
-.ck{color:var(--grn);font-weight:800}
-.cx{color:var(--red)}
-
-/* ── TOKENOMICS ── */
-.tkg{display:grid;grid-template-columns:auto 1fr;gap:3.5rem;align-items:start;margin-top:2.75rem}
-.tkleg{display:flex;flex-direction:column;gap:.85rem}
-.tkli{display:flex;align-items:center;gap:.7rem}
-.tkd{width:11px;height:11px;border-radius:50%;flex-shrink:0}
-.tknm{font-size:.84rem;font-weight:700;color:var(--tx);letter-spacing:-.01em}
-.tkds{font-size:.74rem;color:var(--tx3);margin-top:.1rem}
-.tkp{font-size:.88rem;font-weight:800;color:var(--tx);margin-left:auto;padding-left:1rem}
-.tksts{display:grid;grid-template-columns:repeat(2,1fr);gap:.85rem;margin-top:2.25rem}
-.tks{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rs);padding:1rem}
-.tks-v{font-size:1.6rem;font-weight:800;letter-spacing:-.04em;color:var(--tx)}
-.tks-l{font-size:.65rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.12em;margin-top:.18rem;font-weight:700}
-.tkbg{display:flex;gap:.65rem;flex-wrap:wrap;margin-top:1.35rem}
-.tkb{display:inline-flex;align-items:center;gap:.35rem;background:rgba(22,101,52,.07);border:1px solid rgba(22,101,52,.18);color:var(--grn);padding:.25rem .7rem;border-radius:20px;font-size:.72rem;font-weight:700}
+/* ── TOKEN ── */
+.token{background:linear-gradient(180deg,var(--bg2),var(--bg))}
+.token-card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:clamp(2rem,5vw,3.5rem);
+  position:relative;overflow:hidden}
+.token-card::before{content:'';position:absolute;top:-40%;right:-10%;width:400px;height:400px;
+  background:radial-gradient(circle,rgba(47,224,138,.08),transparent 70%);pointer-events:none}
+.token-badge{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:.72rem;
+  background:rgba(224,182,74,.1);color:var(--gold);border:1px solid rgba(224,182,74,.25);padding:.35rem .8rem;border-radius:20px;margin-bottom:1.5rem}
+.token-card h2{font-family:var(--disp);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;letter-spacing:-.02em;margin-bottom:1rem;position:relative}
+.token-card p{color:var(--tx2);font-size:1rem;line-height:1.75;max-width:600px;margin-bottom:1.5rem;position:relative}
+.token-meta{display:flex;gap:2.5rem;flex-wrap:wrap;position:relative}
+.tm{display:flex;flex-direction:column;gap:.2rem}
+.tm-l{font-family:var(--mono);font-size:.7rem;color:var(--tx3);letter-spacing:.06em;text-transform:uppercase}
+.tm-v{font-family:var(--disp);font-size:1.1rem;font-weight:600;color:var(--tx)}
+.tm-v.accent{color:var(--grn)}
 
 /* ── ROADMAP ── */
-.rml{position:relative;margin-top:2.75rem}
-.rml::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--bd);transform:translateX(-50%)}
-.rmi{display:grid;grid-template-columns:1fr 56px 1fr;gap:0;margin-bottom:1.75rem;align-items:start}
-.rmc{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);padding:1.4rem;transition:.25s}
-.rmc:hover{border-color:var(--gold);box-shadow:var(--sh)}
-.rmd{width:14px;height:14px;background:var(--bd2);border-radius:50%;margin:1.4rem auto 0;border:2px solid var(--bg);position:relative;z-index:1}
-.rmd.a{background:var(--gold);box-shadow:0 0 0 4px rgba(184,148,62,.15)}
-.rm-ph{font-size:.66rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:.35rem}
-.rm-t{font-size:.95rem;font-weight:800;color:var(--tx);margin-bottom:.6rem;letter-spacing:-.02em}
-.rm-ul{list-style:none}
-.rm-ul li{font-size:.82rem;color:var(--tx2);padding:.16rem 0;display:flex;align-items:center;gap:.45rem}
-.rm-ul li::before{content:'→';color:var(--tx3);font-size:.7rem}
-
-/* ── TEAM ── */
-.tmg{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.15rem;margin-top:2.75rem}
-.tc{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);padding:1.85rem 1.35rem;text-align:center;transition:.3s}
-.tc:hover{border-color:var(--gold);box-shadow:var(--shl);transform:translateY(-3px)}
-.tav{width:62px;height:62px;border-radius:50%;background:var(--bd);margin:0 auto .9rem;display:flex;align-items:center;justify-content:center;font-size:1.55rem;border:2px solid var(--bd2)}
-.tnm{font-size:.92rem;font-weight:800;color:var(--tx);margin-bottom:.18rem;letter-spacing:-.02em}
-.trl{font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem}
-.tbi{font-size:.76rem;color:var(--tx3);line-height:1.55}
-.tan{display:inline-flex;align-items:center;gap:.28rem;font-size:.65rem;color:var(--tx3);margin-top:.6rem;background:var(--bg2);padding:.18rem .55rem;border-radius:20px;border:1px solid var(--bd);font-weight:600}
-
-/* ── TESTIMONIALS ── */
-.tsg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.15rem;margin-top:2.75rem}
-.tsc{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);padding:1.65rem;transition:.25s}
-.tsc:hover{border-color:rgba(184,148,62,.4);box-shadow:var(--sh)}
-.ts-st{color:var(--gold);font-size:.82rem;margin-bottom:.85rem}
-.ts-tx{font-size:.85rem;color:var(--tx2);line-height:1.65;margin-bottom:1rem;font-style:italic}
-.ts-au{display:flex;align-items:center;gap:.6rem}
-.ts-av{width:32px;height:32px;border-radius:50%;background:var(--bd);display:flex;align-items:center;justify-content:center;font-size:.9rem}
-.ts-nm{font-size:.8rem;font-weight:800;color:var(--tx);letter-spacing:-.01em}
-.ts-sr{font-size:.7rem;color:var(--tx3)}
-
-/* ── SECURITY ── */
-.scg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.15rem;margin-top:2.75rem}
-.scc{background:var(--bg);border:1.5px solid var(--bd);border-radius:var(--r);padding:1.4rem;text-align:center;transition:.25s}
-.scc:hover{border-color:#4ade80}
-.scc-i{font-size:1.8rem;margin-bottom:.6rem}
-.scc-t{font-size:.9rem;font-weight:800;color:var(--tx);margin-bottom:.32rem;letter-spacing:-.02em}
-.scc-d{font-size:.76rem;color:var(--tx3);line-height:1.55}
-.scc-b{display:inline-flex;align-items:center;gap:.32rem;background:rgba(22,101,52,.07);border:1px solid rgba(22,101,52,.18);color:var(--grn);padding:.22rem .65rem;border-radius:20px;font-size:.7rem;font-weight:800;margin-top:.6rem}
-
-/* ── FAQ ── */
-.fql{margin-top:2.75rem;max-width:720px}
-.fqi{border-bottom:1px solid var(--bd);padding:1.1rem 0}
-.fqq{display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:.92rem;font-weight:700;color:var(--tx);gap:1rem;letter-spacing:-.015em}
-.fqic{font-size:1.15rem;color:var(--tx3);transition:.3s;flex-shrink:0}
-.fqi.open .fqic{transform:rotate(45deg);color:var(--gold)}
-.fqa{font-size:.84rem;color:var(--tx2);line-height:1.72;max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}
-.fqi.open .fqa{max-height:200px;padding-top:.65rem}
-
-/* ── PRESS ── */
-.prg{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.15rem;margin-top:2.75rem}
-.prc{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);padding:1.4rem;transition:.25s}
-.prc:hover{border-color:var(--gold);box-shadow:var(--sh)}
-.prs{font-size:.66rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:.38rem}
-.prt{font-size:.88rem;font-weight:700;color:var(--tx);line-height:1.3;margin-bottom:.38rem;letter-spacing:-.01em}
-.prd{font-size:.7rem;color:var(--tx3)}
-
-/* ── TWITTER FEED ── */
-.twg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.15rem;margin-top:2.75rem}
-.twc{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);padding:1.4rem;transition:.25s}
-.twc:hover{border-color:#1da1f2;box-shadow:0 4px 20px rgba(29,161,242,.08)}
-.twh{display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem}
-.twav{width:36px;height:36px;border-radius:50%;overflow:hidden;border:1px solid var(--bd);flex-shrink:0}
-.twav img{width:100%;height:100%;object-fit:cover}
-.twnm{font-size:.8rem;font-weight:800;color:var(--tx);letter-spacing:-.01em}
-.twhn{font-size:.7rem;color:var(--tx3)}
-.twx{margin-left:auto}
-.twt{font-size:.83rem;color:var(--tx2);line-height:1.6;margin-bottom:.6rem}
-.twd{font-size:.7rem;color:var(--tx3)}
-
-/* ── TECH BAR ── */
-.techbar{background:var(--sf);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);padding:2.25rem 2rem}
-.tbl{text-align:center;font-size:.68rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.2em;font-weight:700;margin-bottom:1.65rem}
-.tls{display:flex;align-items:center;justify-content:center;gap:2.5rem;flex-wrap:wrap}
-.tl{display:flex;align-items:center;gap:.45rem;color:var(--tx3);font-size:.8rem;font-weight:600;letter-spacing:.03em;transition:.2s}
-.tl:hover{color:var(--tx)}
-.tl-i{font-size:1.2rem}
-
-/* ── WAITLIST ── */
-.wls{background:var(--tx);padding:5.5rem 2rem}
-.wls .sl{color:var(--gold)}
-.wls .sh{color:#f0f0ec}
-.wls .sd{color:rgba(240,240,236,.58)}
-.wlf{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:2.25rem;max-width:640px;margin-top:2.75rem}
-.fr2{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:.9rem}
-.fgg{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.9rem}
-.fgg label{font-size:.74rem;color:rgba(240,240,236,.5);font-weight:700;letter-spacing:.04em}
-.fgg input,.fgg select,.fgg textarea{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--rs);padding:.65rem .9rem;font-family:var(--f);font-size:.84rem;color:#f0f0ec;outline:none;transition:.2s;width:100%;font-weight:500}
-.fgg input::placeholder,.fgg textarea::placeholder{color:rgba(240,240,236,.28)}
-.fgg input:focus,.fgg select:focus,.fgg textarea:focus{border-color:var(--gold)}
-.fgg select option{background:#1a1a18}
-.fgg textarea{resize:vertical;min-height:72px}
-.fsb{background:var(--gold);color:#080808;border:none;padding:.9rem 2rem;border-radius:30px;font-family:var(--f);font-size:.88rem;font-weight:800;cursor:pointer;transition:.25s;width:100%;margin-top:.4rem;letter-spacing:-.01em}
-.fsb:hover{opacity:.85;transform:translateY(-2px)}
-.fnt{font-size:.7rem;color:rgba(240,240,236,.3);margin-top:.65rem;text-align:center}
-.fok{display:none;text-align:center;padding:1.75rem;color:#4ade80;font-size:1.05rem;font-weight:800}
+.rm{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-top:3rem}
+.rmc{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:1.6rem;position:relative}
+.rmc.done{border-color:var(--grn-dim)}
+.rm-ph{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:.8rem;
+  display:flex;align-items:center;gap:.5rem}
+.rmc.done .rm-ph{color:var(--grn)}
+.rm-dot{width:7px;height:7px;border-radius:50%;background:var(--tx3)}
+.rmc.done .rm-dot{background:var(--grn)}
+.rmc h4{font-family:var(--disp);font-size:1rem;font-weight:600;margin-bottom:.7rem}
+.rmc ul{list-style:none}
+.rmc li{font-size:.82rem;color:var(--tx2);padding:.22rem 0;display:flex;gap:.5rem;align-items:baseline}
+.rmc li::before{content:'—';color:var(--tx3);flex-shrink:0}
 
 /* ── COMMUNITY ── */
-.cmg{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.9rem;margin-top:2.75rem}
-.cc{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);padding:1.65rem 1.35rem;text-align:center;text-decoration:none;transition:.3s;display:flex;flex-direction:column;align-items:center;gap:.6rem}
-.cc:hover{border-color:var(--gold);box-shadow:var(--shl);transform:translateY(-3px)}
-.cc-ico{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto}
-.cc-n{font-size:.88rem;font-weight:800;color:var(--tx);letter-spacing:-.02em}
-.cc-d{font-size:.76rem;color:var(--tx3)}
+.comm{background:var(--bg2);border-top:1px solid var(--line)}
+.comm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-top:3rem}
+.cc{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:1.6rem 1.3rem;text-decoration:none;
+  transition:.25s;display:flex;flex-direction:column;gap:.7rem}
+.cc:hover{border-color:var(--grn);transform:translateY(-3px)}
+.cc-ic{width:40px;height:40px;border-radius:10px;background:var(--panel2);border:1px solid var(--line2);display:grid;place-items:center}
+.cc-n{font-family:var(--disp);font-size:.95rem;font-weight:600;color:var(--tx)}
+.cc-d{font-size:.78rem;color:var(--tx3)}
 
-/* ── COMING SOON ── */
-.cs{background:linear-gradient(135deg,var(--gold) 0%,#8a6820 100%);color:#080808;text-align:center;padding:3.5rem 2rem}
-.cs-t{font-size:clamp(1.3rem,3.5vw,2.2rem);font-weight:800;letter-spacing:-.03em;margin-bottom:.45rem}
-.cs-s{font-size:.86rem;opacity:.62;margin-bottom:1.35rem}
-.csd{display:flex;justify-content:center;gap:.45rem}
-.cdot{width:7px;height:7px;background:#080808;border-radius:50%;opacity:.25;animation:dp 1.5s infinite}
-.cdot:nth-child(2){animation-delay:.2s}
-.cdot:nth-child(3){animation-delay:.4s}
-@keyframes dp{0%,100%{opacity:.25;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
+/* ── DONATE ── */
+.donate-box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:2rem;margin-top:2.5rem;text-align:center}
+.donate-box h3{font-family:var(--disp);font-size:1.15rem;font-weight:600;margin-bottom:.6rem}
+.donate-box p{font-size:.88rem;color:var(--tx2);max-width:460px;margin:0 auto 1.4rem;line-height:1.6}
+.addr-label{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;color:var(--grn);margin-bottom:.7rem}
+.addr-row{display:inline-flex;align-items:center;gap:.7rem;background:var(--bg);border:1.5px solid var(--grn);border-radius:12px;
+  padding:.7rem .7rem .7rem 1.1rem;flex-wrap:wrap;justify-content:center;max-width:100%;box-shadow:0 0 24px rgba(47,224,138,.1)}
+.addr-row code{font-family:var(--mono);font-size:.82rem;color:var(--tx);word-break:break-all}
+.copy-btn{background:var(--grn);color:#080b11;border:none;border-radius:8px;padding:.6rem 1.1rem;font-family:var(--disp);
+  font-weight:600;font-size:.8rem;cursor:pointer;transition:.15s;white-space:nowrap}
+.copy-btn:hover{background:var(--grn2)}
+.copy-btn.done{background:var(--gold)}
+.net-warn{margin-top:.9rem;font-family:var(--mono);font-size:.8rem;color:#080b11;background:var(--gold);border-radius:8px;
+  padding:.6rem 1rem;font-weight:600;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.4}
 
 /* ── FOOTER ── */
-footer{background:var(--tx);color:rgba(240,240,236,.48);padding:3.25rem 2rem 1.75rem}
-.ftg{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.75rem;max-width:1200px;margin:0 auto 2.75rem}
-.ftl{display:flex;align-items:center;gap:.55rem;margin-bottom:.7rem}
-.ftl img{width:28px;height:28px;border-radius:50%;object-fit:cover}
-.ftl span{font-size:1rem;font-weight:800;color:#f0f0ec;letter-spacing:-.02em}
-.ftt{font-size:.82rem;line-height:1.65;margin-bottom:.7rem}
-.fts{font-size:.75rem;color:var(--gold);letter-spacing:.06em;font-weight:600}
-.fth{font-size:.72rem;font-weight:800;color:#f0f0ec;text-transform:uppercase;letter-spacing:.14em;margin-bottom:.85rem}
-.ftul{list-style:none;display:flex;flex-direction:column;gap:.42rem}
-.ftul a{color:rgba(240,240,236,.4);text-decoration:none;font-size:.82rem;font-weight:500;transition:.2s}
-.ftul a:hover{color:#f0f0ec}
-.ftb{border-top:1px solid rgba(255,255,255,.07);padding-top:1.35rem;max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;font-size:.7rem;flex-wrap:wrap;gap:.45rem}
-.ftd{color:rgba(240,240,236,.2);font-size:.68rem;max-width:560px;line-height:1.55}
-
-/* ── STICKY CTA ── */
-.scta{position:fixed;bottom:1.75rem;right:1.75rem;background:var(--tx);color:var(--bg);padding:.75rem 1.35rem;border-radius:30px;font-family:var(--f);font-size:.8rem;font-weight:700;text-decoration:none;box-shadow:0 6px 24px rgba(0,0,0,.2);transition:.25s;display:flex;align-items:center;gap:.4rem;z-index:50;animation:sup .5s ease 2.5s both;letter-spacing:-.01em}
-.scta:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(0,0,0,.25)}
-@keyframes sup{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-
-/* ── EXIT POPUP ── */
-.ep{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;visibility:hidden;transition:.3s}
-.ep.on{opacity:1;visibility:visible}
-.ep-in{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:2.25rem;max-width:400px;width:90%;text-align:center;box-shadow:var(--shl);transform:scale(.9);transition:.3s;position:relative}
-.ep.on .ep-in{transform:scale(1)}
-.ep-t{font-size:1.4rem;font-weight:800;color:var(--tx);margin-bottom:.6rem;letter-spacing:-.03em}
-.ep-d{font-size:.85rem;color:var(--tx2);margin-bottom:1.35rem;line-height:1.6}
-.ep-bs{display:flex;gap:.65rem}
-.ep-cl{position:absolute;top:.85rem;right:.9rem;background:none;border:none;font-size:1.05rem;cursor:pointer;color:var(--tx3)}
+footer{position:relative;z-index:1;background:var(--bg);border-top:1px solid var(--line);padding:3.5rem clamp(1rem,4vw,2.5rem) 2rem}
+.ftg{display:grid;grid-template-columns:2fr 1fr 1fr;gap:3rem;max-width:1180px;margin:0 auto 2.5rem}
+.ftl{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+.ftl-mark{width:28px;height:28px;border-radius:7px;background:linear-gradient(145deg,var(--grn),var(--grn2));display:grid;place-items:center}
+.ftl-mark span{color:#080b11;font-weight:700;font-size:14px;font-family:var(--disp)}
+.ftl-txt{font-family:var(--disp);font-weight:700;font-size:1rem}
+.ft-tag{font-size:.85rem;color:var(--tx2);line-height:1.6;max-width:300px}
+.fth{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:1rem}
+.ftul{list-style:none;display:flex;flex-direction:column;gap:.55rem}
+.ftul a{color:var(--tx2);text-decoration:none;font-size:.86rem;transition:.2s}
+.ftul a:hover{color:var(--grn)}
+.ftb{max-width:1180px;margin:0 auto;padding-top:1.8rem;border-top:1px solid var(--line);display:flex;
+  justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+.ftb-c{font-family:var(--mono);font-size:.74rem;color:var(--tx3)}
+.ftb-d{font-size:.72rem;color:var(--tx3);max-width:520px;line-height:1.5}
 
 /* ── RESPONSIVE ── */
-@media(max-width:900px){
+@media(max-width:860px){
   .nlinks{display:none}
-  .vpills,.wng,.tkg,.dw{grid-template-columns:1fr}
-  .cg{grid-template-columns:1fr}
-  .sg{grid-template-columns:repeat(2,1fr)}
-  .ng{grid-template-columns:1fr}
-  .ftg{grid-template-columns:1fr 1fr}
-  .rml::before{left:16px}
-  .rmi{grid-template-columns:1fr}
-  .rmd{display:none}
-  .ctb{font-size:.76rem}
-  .ctb th,.ctb td{padding:.65rem .85rem}
-  .fr2{grid-template-columns:1fr}
-  .hst{flex-direction:column}
-  .hs{border-right:none;border-bottom:1px solid var(--bd)}
-  .hs:last-child{border-bottom:none}
+  .nmenu{display:block}
+  .vgrid{grid-template-columns:1fr;gap:2.5rem}
+  .why-grid{grid-template-columns:1fr}
+  .rm{grid-template-columns:1fr 1fr}
+  .ftg{grid-template-columns:1fr 1fr;gap:2rem}
+  .token-meta{gap:1.5rem}
 }
+@media(max-width:520px){
+  .rm{grid-template-columns:1fr}
+  .ftg{grid-template-columns:1fr}
+  .vstats{grid-template-columns:1fr}
+  .hbtns{flex-direction:column;width:100%}
+  .btn-p,.btn-s{justify-content:center}
+}
+
+/* mobile menu */
+.mobmenu{position:fixed;top:64px;left:0;right:0;z-index:99;background:var(--panel);border-bottom:1px solid var(--line);
+  padding:1rem 1.5rem;display:none;flex-direction:column;gap:.3rem}
+.mobmenu.on{display:flex}
+.mobmenu a{color:var(--tx2);text-decoration:none;font-size:.95rem;font-weight:500;padding:.7rem 0;border-bottom:1px solid var(--line)}
+.mobmenu a:last-child{border-bottom:none}
 </style>
 </head>
 <body>
 
-<!-- LOADER -->
-<div id="ld">
-  <div class="ld-wrap">
-    <div class="ld-img"><img src="logo.jpeg" alt="NEURON AI"></div>
-    <div class="ld-name">NEURON AI</div>
-    <div class="ld-sub">Initializing Intelligence</div>
-    <div class="ld-bar"><div class="ld-fill"></div></div>
-  </div>
-</div>
-
-<!-- PROMO BAR -->
-<div class="pb">
-  <div class="pb-t">
-    <span class="pb-i"><b>🧠</b> NEURON AI — The AI Agent for Everything</span>
-    <span class="pb-i"><b>⚡</b> Built on Solana — Sub-second speed, near-zero fees</span>
-    <span class="pb-i"><b>🔒</b> Contract Renounced — 100% Community Owned</span>
-    <span class="pb-i"><b>🌍</b> Available in 11 languages — Truly global AI agent</span>
-    <span class="pb-i"><b>🤖</b> 24/7 AI Agent — While humans sleep, NEURON thinks</span>
-    <span class="pb-i"><b>🧠</b> NEURON AI — The AI Agent for Everything</span>
-    <span class="pb-i"><b>⚡</b> Built on Solana — Sub-second speed, near-zero fees</span>
-    <span class="pb-i"><b>🔒</b> Contract Renounced — 100% Community Owned</span>
-    <span class="pb-i"><b>🌍</b> Available in 11 languages — Truly global AI agent</span>
-    <span class="pb-i"><b>🤖</b> 24/7 AI Agent — While humans sleep, NEURON thinks</span>
-  </div>
-</div>
-
 <!-- NAV -->
 <nav>
   <a href="#" class="nlogo">
-    <div class="nlogo-img"><img src="logo.jpeg" alt="NEURON AI"></div>
-    <span class="nlogo-name">NEURON AI</span>
+    <div class="nlogo-mark"><img src="logo.png" alt="N" onerror="this.style.display='none';this.parentNode.innerHTML='<span>N</span>'"></div>
+    <span class="nlogo-txt">NEURON AI</span>
   </a>
   <ul class="nlinks">
+    <li><a href="#tools">Tools</a></li>
     <li><a href="#vision">Vision</a></li>
-    <li><a href="#features">Features</a></li>
-    <li><a href="#tokenomics">Tokenomics</a></li>
+    <li><a href="#chain">Robinhood Chain</a></li>
+    <li><a href="#token">$NEURON</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#team">Team</a></li>
-    <li><a href="#faq">FAQ</a></li>
   </ul>
-  <div class="nr">
-    <button class="tbtn" onclick="toggleTheme()" id="thb">🌙 Dark</button>
-    <a href="https://t.co/bk25QN94Ty" target="_blank" class="ncta">Join Community →</a>
-  </div>
+  <a href="#tools" class="ncta">Launch Tools</a>
+  <button class="nmenu" onclick="document.getElementById('mm').classList.toggle('on')">☰</button>
 </nav>
+<div class="mobmenu" id="mm">
+  <a href="#tools" onclick="document.getElementById('mm').classList.remove('on')">Tools</a>
+  <a href="#vision" onclick="document.getElementById('mm').classList.remove('on')">Vision</a>
+  <a href="#chain" onclick="document.getElementById('mm').classList.remove('on')">Robinhood Chain</a>
+  <a href="#token" onclick="document.getElementById('mm').classList.remove('on')">$NEURON</a>
+  <a href="#roadmap" onclick="document.getElementById('mm').classList.remove('on')">Roadmap</a>
+</div>
 
 <!-- HERO -->
-<section class="hero">
-  <canvas id="pc"></canvas>
-  <div class="hero-in">
-    <div class="hbadge rv"><span class="hdot"></span> Pre-Launch — Early Access Open</div>
-    <h1 class="hh1 rv">The AI Agent<br>for <em>Everything</em></h1>
-    <p class="hsub rv">Crypto. Career. Decisions. Daily life. NEURON AI is your personal AI agent — knowing you, protecting you, and thinking for you. 24/7. Free. Forever.</p>
-    <div class="htyp rv"><span id="tel"></span><span class="tcur"></span></div>
-    <div class="hbtns rv">
-      <a href="https://t.co/bk25QN94Ty" target="_blank" class="bp">🚀 Join Community</a>
-      <a href="https://t.me/NEURON_AIbot" target="_blank" class="bs">🤖 Try AI Bot Free</a>
-    </div>
-    <div class="hst rv">
-      <div class="hs"><div class="hs-n">1B</div><div class="hs-l">Total Supply</div></div>
-      <div class="hs"><div class="hs-n">0%</div><div class="hs-l">Tax</div></div>
-      <div class="hs"><div class="hs-n">24/7</div><div class="hs-l">AI Active</div></div>
-      <div class="hs"><div class="hs-n">11</div><div class="hs-l">Languages</div></div>
+<header class="hero">
+  <div class="hbadge"><span class="pulse"></span> BUILDING ON ROBINHOOD CHAIN</div>
+  <h1>The intelligence layer for <span class="accent">onchain finance</span></h1>
+  <p class="hsub">NEURON AI builds AI-powered tools that read the onchain economy in real time — so you can act on signal, not noise. Free to use, built on Robinhood Chain.</p>
+  <div class="hbtns">
+    <a href="/chainradar.html" class="btn-p">Open Chain Radar →</a>
+    <a href="#tools" class="btn-s">Explore all tools</a>
+  </div>
+
+  <div class="ticker">
+    <div class="ticker-head"><span class="live-dot"></span> LIVE · ROBINHOOD CHAIN INTELLIGENCE FEED</div>
+    <div class="ticker-body">
+      <div class="ticker-track" id="tickTrack"></div>
     </div>
   </div>
-  <div class="hscr">SCROLL<div class="hscr-l"></div></div>
+</header>
+
+<!-- TOOLS -->
+<section class="tools" id="tools">
+  <div class="con">
+    <div class="support-strip rv">
+      <div class="ss-txt">
+        <div class="ss-title">🙏 Help us build more tools</div>
+        <div class="ss-sub">Our tools are free forever. Support new AI tools with a USDT donation.</div>
+      </div>
+      <div class="ss-addr">
+        <span class="ss-net">USDT · ARBITRUM ONE</span>
+        <div class="addr-row compact">
+          <code id="donate-addr-top">0xD20DC98870a1731b287f9C16ba8FB0AaA448fbDA</code>
+          <button class="copy-btn" id="copyBtnTop">COPY</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="eyebrow rv">The Toolkit</div>
+    <h2 class="shead rv">AI tools for the onchain economy</h2>
+    <p class="sdesc rv">Each NEURON tool turns raw onchain data into something you can actually use. We ship them one by one — Chain Radar is live now, more are on the way.</p>
+    <div class="tools-grid">
+
+      <a href="/chainradar.html" class="tool live rv">
+        <div class="tool-top">
+          <div class="tool-ic">📡</div>
+          <span class="tool-status on"><span class="d"></span>LIVE</span>
+        </div>
+        <h3>Chain Radar</h3>
+        <p>Scans every pool on Robinhood Chain in real time and scores each token by health — liquidity, buy/sell pressure, volume and risk flags. Built to help you spot danger before you spot regret.</p>
+        <div class="tool-tags"><span class="ttag">real-time</span><span class="ttag">risk-scoring</span><span class="ttag">free</span></div>
+        <div class="tool-foot">Open Chain Radar →</div>
+      </a>
+
+      <div class="tool soon rv">
+        <div class="tool-top">
+          <div class="tool-ic">🧭</div>
+          <span class="tool-status soon">SOON</span>
+        </div>
+        <h3>Wallet Lens</h3>
+        <p>Track what the biggest wallets on Robinhood Chain are actually doing — accumulation, distribution, and the moves that happen before the chart reacts.</p>
+        <div class="tool-tags"><span class="ttag">wallet-tracking</span><span class="ttag">onchain</span></div>
+        <div class="tool-foot">Coming soon</div>
+      </div>
+
+      <div class="tool soon rv">
+        <div class="tool-top">
+          <div class="tool-ic">🛡️</div>
+          <span class="tool-status soon">SOON</span>
+        </div>
+        <h3>Rug Check</h3>
+        <p>One-tap contract safety scan. Honeypot detection, liquidity lock status, holder concentration — the checks that separate a project from a trap.</p>
+        <div class="tool-tags"><span class="ttag">safety</span><span class="ttag">contract-scan</span></div>
+        <div class="tool-foot">Coming soon</div>
+      </div>
+
+      <div class="tool soon rv">
+        <div class="tool-top">
+          <div class="tool-ic">🔔</div>
+          <span class="tool-status soon">SOON</span>
+        </div>
+        <h3>Signal Alerts</h3>
+        <p>Set your conditions once. NEURON watches the chain and pings you the moment a token crosses your thresholds — volume spikes, new liquidity, unusual flow.</p>
+        <div class="tool-tags"><span class="ttag">alerts</span><span class="ttag">automation</span></div>
+        <div class="tool-foot">Coming soon</div>
+      </div>
+
+    </div>
+  </div>
 </section>
 
 <!-- VISION -->
-<section class="vsec" id="vision">
+<section class="vision" id="vision">
   <div class="con">
-    <div class="sl rv">Our Vision</div>
-    <h2 class="sh rv" style="font-size:clamp(2rem,5vw,4rem);color:#f0f0ec">Every Human.<br>One AI Agent.<br>Zero Barriers.</h2>
-    <div class="vbody rv">
-      <p>We live in a world where <strong>access to intelligence is unequal.</strong> A hedge fund manager has a team of analysts. A retail investor has noise, panic, and bad timing. A student in Istanbul, a farmer in Lagos, an entrepreneur in São Paulo — they all deserve the same quality of decision support as the world's most powerful institutions.</p>
-      <br>
-      <p>NEURON AI was built on one conviction: <strong>artificial intelligence should be a fundamental right, not a luxury.</strong> We are building the world's first AI agent that is truly for everyone — free, multilingual, and available 24 hours a day, 7 days a week, in every corner of the planet.</p>
-      <br>
-      <p>We started with crypto because it is the most unforgiving arena of human decision-making. But crypto is just the beginning. The NEURON agent of tomorrow will help you <strong>negotiate your salary, plan your future, protect your family's finances, and make every major decision of your life</strong> with the clarity of a world-class advisor — at zero cost.</p>
-    </div>
-    <div class="vpills">
-      <div class="vp rv"><div class="vp-n">01</div><div class="vp-t">Universal Access</div><div class="vp-d">NEURON is free, forever — for a student in Nairobi and an investor in New York equally. Intelligence is a human right.</div></div>
-      <div class="vp rv"><div class="vp-n">02</div><div class="vp-t">Human-Centered AI</div><div class="vp-d">Most AI gives you data. NEURON gives you wisdom. We help you make better decisions — not just answer questions.</div></div>
-      <div class="vp rv"><div class="vp-n">03</div><div class="vp-t">Community Ownership</div><div class="vp-d">Through $NEURON, every community member has a stake in the intelligence layer of the future economy.</div></div>
-    </div>
-    <div class="vquote rv">
-      <p>"In ten years, not having an AI agent will feel like not having a smartphone in 2015. We are building the agent that becomes indispensable — the one that actually knows you."</p>
-      <span>— The NEURON AI Team</span>
-    </div>
-  </div>
-</section>
-
-<!-- MARKET DATA -->
-<section class="mkt" id="market">
-  <div class="con">
-    <!-- CRYPTO -->
-    <div class="sl rv">Live Crypto</div>
-    <h2 class="sh rv">Real-Time Intelligence</h2>
-    <div class="cg">
-      <div class="ccard rv">
-        <div class="ccard-top"><span class="ccard-name">BITCOIN</span><span class="ccard-icon">₿</span></div>
-        <div class="ccard-price" id="bP">—</div>
-        <div class="ccard-chg" id="bC">—</div>
-      </div>
-      <div class="ccard rv">
-        <div class="ccard-top"><span class="ccard-name">ETHEREUM</span><span class="ccard-icon">⟠</span></div>
-        <div class="ccard-price" id="eP">—</div>
-        <div class="ccard-chg" id="eC">—</div>
-      </div>
-      <div class="ccard rv">
-        <div class="ccard-top"><span class="ccard-name">SOLANA</span><span class="ccard-icon">◎</span></div>
-        <div class="ccard-price" id="sP">—</div>
-        <div class="ccard-chg" id="sC">—</div>
-      </div>
-    </div>
-
-    <!-- WORLD MARKETS -->
-    <div class="mkt-divider rv">World Markets</div>
-    <div class="sg">
-      <div class="scard rv">
-        <div class="scard-name">NYSE</div>
-        <div class="scard-val" id="nyse">—</div>
-        <div class="scard-chg" id="nyseC">—</div>
-      </div>
-      <div class="scard rv">
-        <div class="scard-name">NASDAQ</div>
-        <div class="scard-val" id="nasdaq">—</div>
-        <div class="scard-chg" id="nasdaqC">—</div>
-      </div>
-      <div class="scard rv">
-        <div class="scard-name">DAX</div>
-        <div class="scard-val" id="dax">—</div>
-        <div class="scard-chg" id="daxC">—</div>
-      </div>
-      <div class="scard rv">
-        <div class="scard-name">NIKKEI 225</div>
-        <div class="scard-val" id="nikkei">—</div>
-        <div class="scard-chg" id="nikkeiC">—</div>
-      </div>
-      <div class="scard rv">
-        <div class="scard-name">FTSE 100</div>
-        <div class="scard-val" id="ftse">—</div>
-        <div class="scard-chg" id="ftseC">—</div>
-      </div>
-    </div>
-
-    <!-- NEWS -->
-    <div class="mkt-divider rv">Today's Intelligence — AI & Technology</div>
-    <div class="ng">
-      <div class="ncard rv"><div class="ncard-tag" id="n1tag">AI</div><div class="ncard-title" id="n1">Loading...</div><div class="ncard-date" id="n1d">—</div></div>
-      <div class="ncard rv"><div class="ncard-tag" id="n2tag">AI</div><div class="ncard-title" id="n2">Loading...</div><div class="ncard-date" id="n2d">—</div></div>
-      <div class="ncard rv"><div class="ncard-tag" id="n3tag">TECH</div><div class="ncard-title" id="n3">Loading...</div><div class="ncard-date" id="n3d">—</div></div>
-      <div class="ncard rv"><div class="ncard-tag" id="n4tag">TECH</div><div class="ncard-title" id="n4">Loading...</div><div class="ncard-date" id="n4d">—</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- FEATURES -->
-<section id="features" style="background:var(--bg)">
-  <div class="con">
-    <div class="sl rv">What NEURON Does</div>
-    <h2 class="sh rv">An AI Agent Built<br><strong style="color:var(--gold)">For Real Life</strong></h2>
-    <p class="sd rv">Every feature protects you, guides you, and grows with you. Not just crypto — everything that matters.</p>
-    <div class="fg">
-      <div class="fc rv"><span class="fc-i">🛡️</span><div class="fc-t">NEURON WINGMAN</div><div class="fc-d">Before you buy — NEURON stops you. Asks 3 critical questions. Makes you wait. Has already saved users thousands.</div><span class="fc-c">/wingman btc 1000</span></div>
-      <div class="fc rv"><span class="fc-i">🧠</span><div class="fc-t">NEURON MEMORY</div><div class="fc-d">Every AI forgets you instantly. NEURON remembers everything — your questions, decisions, and patterns — forever.</div><span class="fc-c">/memory</span></div>
-      <div class="fc rv"><span class="fc-i">🪞</span><div class="fc-t">NEURON SHADOW SELF</div><div class="fc-d">What if you did the opposite of every crypto decision? We calculated it. Average result: +312% better returns.</div><span class="fc-c">/shadow</span></div>
-      <div class="fc rv"><span class="fc-i">🎭</span><div class="fc-t">NEURON DEBATE</div><div class="fc-d">Bull vs Bear — NEURON argues both sides with real data and zero bias. You decide.</div><span class="fc-c">/debate eth vs sol</span></div>
-      <div class="fc rv"><span class="fc-i">🌡️</span><div class="fc-t">NEURON FEVER DETECTOR</div><div class="fc-d">Measures a coin's temperature. Above 40°C = danger zone. Historical data: 40°+ = dump risk within 48h.</div><span class="fc-c">/fever btc</span></div>
-      <div class="fc rv"><span class="fc-i">🎯</span><div class="fc-t">NEURON DECIDE</div><div class="fc-d">Career changes. Budget planning. Life's biggest choices. Analyzed from 3 angles — financial, practical, emotional.</div><span class="fc-c">/decide [anything]</span></div>
-      <div class="fc rv"><span class="fc-i">⏳</span><div class="fc-t">NEURON TIME CAPSULE</div><div class="fc-d">Lock your prediction today. NEURON opens it in 30 days. Track your forecasting accuracy over time.</div><span class="fc-c">/capsule [prediction]</span></div>
-      <div class="fc rv"><span class="fc-i">🏟️</span><div class="fc-t">NEURON ARENA</div><div class="fc-d">Challenge users to 7-day portfolio battles. Highest percentage gain wins 500 points.</div><span class="fc-c">/arena join btc</span></div>
-      <div class="fc rv"><span class="fc-i">🤖</span><div class="fc-t">NEURON AUTOPILOT</div><div class="fc-d">Set your portfolio once. Every morning: a personalized brief about YOUR coins. Not generic news — your data.</div><span class="fc-c">/autopilot btc:0.5 eth:2</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- AI DEMO -->
-<section style="background:var(--sf);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)" id="bot">
-  <div class="con">
-    <div class="dw">
-      <div class="rv">
-        <div class="sl">Try It Now</div>
-        <h2 class="sh">Talk to<br>NEURON AI</h2>
-        <p class="sd">Ask anything — crypto, career, budget, decisions. NEURON answers in your language, 24/7, for free.</p>
-        <div style="margin-top:1.75rem;display:flex;flex-direction:column;gap:.55rem">
-          <a href="https://t.me/NEURON_AIbot" target="_blank" class="bp" style="width:fit-content">🤖 Open NEURON AI Bot</a>
-          <p style="font-size:.76rem;color:var(--tx3);font-weight:500">Free forever · No registration · 11 languages</p>
+    <div class="vgrid">
+      <div>
+        <div class="eyebrow rv">Why we exist</div>
+        <h2 class="shead rv">Institutions have analysts.<br>Everyone else has noise.</h2>
+        <div class="vbody rv">
+          <p>Onchain markets move 24/7, faster than any human can watch. The people who win have infrastructure — data feeds, risk models, teams. <strong>Everyone else trades on screenshots and gut feeling.</strong></p>
+          <p>NEURON AI exists to close that gap. We build the intelligence layer that reads the chain for you — surfacing what matters, flagging what's dangerous, and turning raw data into clear signal.</p>
+          <p>We started on <strong>Robinhood Chain</strong> because it's where real-world assets and onchain finance are converging. As the ecosystem grows, so does NEURON.</p>
         </div>
       </div>
-      <div class="db rv">
-        <div class="dbh"><span class="dbh-dot"></span>🧠 NEURON AI · Online</div>
-        <div class="dms" id="dms"><div class="dm b">Hello! I'm NEURON AI 🧠 Ask me anything — crypto, life, decisions, everything.</div></div>
-        <div class="di"><input type="text" id="di" placeholder="Ask anything..."><button class="dsend" onclick="sendMsg()">→</button></div>
+      <div class="vstats rv">
+        <div class="vstat"><div class="vstat-n"><span class="accent">24/7</span></div><div class="vstat-l">Chain monitoring</div></div>
+        <div class="vstat"><div class="vstat-n">Real-time</div><div class="vstat-l">Data, no delay</div></div>
+        <div class="vstat"><div class="vstat-n"><span class="accent">Free</span></div><div class="vstat-l">Core tools</div></div>
+        <div class="vstat"><div class="vstat-n">Onchain</div><div class="vstat-l">Built for RWA era</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- WHY NOW -->
-<section style="background:var(--bg2)">
+<!-- WHY ROBINHOOD CHAIN -->
+<section id="chain">
   <div class="con">
-    <div class="sl rv">The Perfect Storm</div>
-    <h2 class="sh rv">Why Now?</h2>
-    <p class="sd rv">Three massive forces are converging. NEURON sits at their exact intersection.</p>
-    <div class="wng">
-      <div class="wn rv"><div class="wn-n">01</div><div class="wn-t">AI Is Eating the World</div><div class="wn-d">AI agents are the next computing platform. Every major company is racing to build one. NEURON is first in crypto — and already live.</div></div>
-      <div class="wn rv"><div class="wn-n">02</div><div class="wn-t">Crypto Needs Intelligence</div><div class="wn-d">Retail investors lose billions to emotion and misinformation. NEURON solves all three simultaneously with a personal AI that knows you.</div></div>
-      <div class="wn rv"><div class="wn-n">03</div><div class="wn-t">Solana's Moment</div><div class="wn-d">Solana processes 65,000 TPS at near-zero cost. The infrastructure for mass adoption is finally here. NEURON is built on the right foundation.</div></div>
+    <div class="eyebrow rv">The Foundation</div>
+    <h2 class="shead rv">Built on Robinhood Chain</h2>
+    <p class="sdesc rv">An Ethereum Layer 2 purpose-built for tokenized real-world assets, backed by one of the most recognized names in finance. If onchain finance is going mainstream, it starts here.</p>
+    <div class="why-grid">
+      <div class="why rv">
+        <div class="why-ic">🏦</div>
+        <h3>RWA-native</h3>
+        <p>Robinhood Chain is built for tokenized real-world assets — the bridge between traditional finance and onchain markets. NEURON is built to read it.</p>
+      </div>
+      <div class="why rv">
+        <div class="why-ic">⚡</div>
+        <h3>Fast & low-cost</h3>
+        <p>An Arbitrum-based L2 settling on Ethereum — the speed and low fees that make real-time tools like Chain Radar actually usable.</p>
+      </div>
+      <div class="why rv">
+        <div class="why-ic">🌐</div>
+        <h3>Where the future is written</h3>
+        <p>As Wall Street moves onchain, the ecosystem needs an intelligence layer. NEURON is building it, on the chain built for this moment.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- COMPARISON -->
-<section style="background:var(--bg)">
+<!-- TOKEN -->
+<section class="token" id="token">
   <div class="con">
-    <div class="sl rv">The Difference</div>
-    <h2 class="sh rv">NEURON vs The Rest</h2>
-    <table class="ctb rv">
-      <thead><tr><th>Feature</th><th class="nh">🧠 NEURON AI</th><th>Generic Crypto Bots</th><th>Traditional AI Tools</th></tr></thead>
-      <tbody>
-        <tr><td>Remembers you personally</td><td class="nh"><span class="ck">✓</span></td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td></tr>
-        <tr><td>Stops emotional decisions</td><td class="nh"><span class="ck">✓</span></td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td></tr>
-        <tr><td>Works in 11 languages</td><td class="nh"><span class="ck">✓</span></td><td><span class="cx">✗</span></td><td><span class="ck">✓</span></td></tr>
-        <tr><td>Life decisions (not just crypto)</td><td class="nh"><span class="ck">✓</span></td><td><span class="cx">✗</span></td><td><span class="ck">✓</span></td></tr>
-        <tr><td>24/7 Telegram access</td><td class="nh"><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="cx">✗</span></td></tr>
-        <tr><td>Community token ownership</td><td class="nh"><span class="ck">✓</span></td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td></tr>
-        <tr><td>Completely free forever</td><td class="nh"><span class="ck">✓</span></td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<!-- TOKENOMICS -->
-<section style="background:var(--sf);border-top:1px solid var(--bd)" id="tokenomics">
-  <div class="con">
-    <div class="sl rv">Distribution</div>
-    <h2 class="sh rv">Tokenomics</h2>
-    <div class="tkg">
-      <div class="rv"><canvas id="tkc" width="300" height="300"></canvas></div>
-      <div class="rv">
-        <div class="tkleg">
-          <div class="tkli"><div class="tkd" style="background:#b8943e"></div><div><div class="tknm">Liquidity Pool</div><div class="tkds">DEX trading liquidity</div></div><div class="tkp">40%</div></div>
-          <div class="tkli"><div class="tkd" style="background:#166534"></div><div><div class="tknm">Community</div><div class="tkds">Rewards & airdrops</div></div><div class="tkp">30%</div></div>
-          <div class="tkli"><div class="tkd" style="background:#1d3461"></div><div><div class="tknm">Marketing</div><div class="tkds">Growth & partnerships</div></div><div class="tkp">20%</div></div>
-          <div class="tkli"><div class="tkd" style="background:#606058"></div><div><div class="tknm">Reserve</div><div class="tkds">Development & ops</div></div><div class="tkp">10%</div></div>
-        </div>
-        <div class="tksts">
-          <div class="tks"><div class="tks-v">1B</div><div class="tks-l">Total Supply</div></div>
-          <div class="tks"><div class="tks-v">0%</div><div class="tks-l">Buy Tax</div></div>
-          <div class="tks"><div class="tks-v">0%</div><div class="tks-l">Sell Tax</div></div>
-          <div class="tks"><div class="tks-v">0%</div><div class="tks-l">Team Tokens</div></div>
-        </div>
-        <div class="tkbg">
-          <div class="tkb">✅ Contract Renounced</div>
-          <div class="tkb">🔒 Liquidity Locked</div>
-          <div class="tkb">✓ Fair Launch</div>
-        </div>
+    <div class="token-card rv">
+      <div class="token-badge">◆ $NEURON</div>
+      <h2>A token for the intelligence layer</h2>
+      <p>$NEURON is the community token behind the NEURON ecosystem — aligning the people who build, use, and believe in onchain intelligence. We're building toward a full launch on Robinhood Chain, tools first, hype never.</p>
+      <div class="token-meta">
+        <div class="tm"><span class="tm-l">Network</span><span class="tm-v accent">Robinhood Chain</span></div>
+        <div class="tm"><span class="tm-l">Focus</span><span class="tm-v">Onchain intelligence</span></div>
+        <div class="tm"><span class="tm-l">Approach</span><span class="tm-v">Build first</span></div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ROADMAP -->
-<section style="background:var(--bg)" id="roadmap">
+<section id="roadmap">
   <div class="con">
-    <div class="sl rv">The Journey</div>
-    <h2 class="sh rv">Roadmap</h2>
-    <div class="rml">
-      <div class="rmi"><div class="rmc rv"><div class="rm-ph">Phase 1</div><div class="rm-t">The Awakening ✅</div><ul class="rm-ul"><li>Website launched</li><li>Whitepaper published</li><li>X & Telegram launched</li><li>AI Bot live 24/7</li><li>Verified account</li></ul></div><div class="rmd a"></div><div></div></div>
-      <div class="rmi"><div></div><div class="rmd"></div><div class="rmc rv"><div class="rm-ph">Phase 2</div><div class="rm-t">The Launch 🚀</div><ul class="rm-ul"><li>Pump.fun fair launch</li><li>Raydium listing</li><li>CoinGecko listing</li><li>CMC listing</li><li>10,000 holders</li></ul></div></div>
-      <div class="rmi"><div class="rmc rv"><div class="rm-ph">Phase 3</div><div class="rm-t">The Intelligence 🧠</div><ul class="rm-ul"><li>CEX listings</li><li>NEURON AI Dashboard</li><li>Staking system</li><li>NFT collection</li><li>$100M market cap</li></ul></div><div class="rmd"></div><div></div></div>
-      <div class="rmi"><div></div><div class="rmd"></div><div class="rmc rv"><div class="rm-ph">Phase 4</div><div class="rm-t">The Singularity 👑</div><ul class="rm-ul"><li>Tier-1 world-class exchange listings</li><li>Global AI partnerships</li><li>DAO governance</li><li>Top-tier major CEX listings</li><li>$1B market cap vision</li></ul></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- TEAM -->
-<section style="background:var(--sf);border-top:1px solid var(--bd)" id="team">
-  <div class="con">
-    <div class="sl rv">The Builders</div>
-    <h2 class="sh rv">Anonymous. Experienced. Committed.</h2>
-    <p class="sd rv">Decades of combined experience from the world's leading technology companies.</p>
-    <div class="tmg">
-      <div class="tc rv"><div class="tav">👨‍💻</div><div class="tnm">Alex R.</div><div class="trl">Founder & CEO</div><div class="tbi">Former AI research lead at a top-3 global tech company. 12 years in ML and autonomous systems.</div><div class="tan">🔒 Identity Protected</div></div>
-      <div class="tc rv"><div class="tav">👩‍🔬</div><div class="tnm">Sarah K.</div><div class="trl">Chief AI Officer</div><div class="tbi">PhD in Computational Linguistics. Previously built NLP systems for a Fortune 500 financial institution.</div><div class="tan">🔒 Identity Protected</div></div>
-      <div class="tc rv"><div class="tav">👨‍🚀</div><div class="tnm">Marcus T.</div><div class="trl">Blockchain Lead</div><div class="tbi">8 years on Solana. Core contributor to two top-20 DeFi protocols. Smart contract security expert.</div><div class="tan">🔒 Identity Protected</div></div>
-      <div class="tc rv"><div class="tav">👩‍💼</div><div class="tnm">Priya M.</div><div class="trl">Head of Growth</div><div class="tbi">Scaled two crypto projects from 0 to $50M+ market cap. Former VP Marketing at a leading Web3 company.</div><div class="tan">🔒 Identity Protected</div></div>
-      <div class="tc rv"><div class="tav">👨‍🎨</div><div class="tnm">James W.</div><div class="trl">Head of Product</div><div class="tbi">10 years product design at major Silicon Valley companies. Passionate about making AI accessible to all.</div><div class="tan">🔒 Identity Protected</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- TESTIMONIALS -->
-<section style="background:var(--bg)">
-  <div class="con">
-    <div class="sl rv">Community Voices</div>
-    <h2 class="sh rv">What Users Say</h2>
-    <div class="tsg">
-      <div class="tsc rv"><div class="ts-st">★★★★★</div><div class="ts-tx">"NEURON WINGMAN stopped me from buying a meme coin at 3am. It dropped 40% that morning. This bot saved me $2,000."</div><div class="ts-au"><div class="ts-av">🧑</div><div><div class="ts-nm">@crypto_trader_99</div><div class="ts-sr">Telegram Community</div></div></div></div>
-      <div class="tsc rv"><div class="ts-st">★★★★★</div><div class="ts-tx">"I asked NEURON whether to accept a job offer. It analyzed from 3 angles in 30 seconds. Better than a consultant."</div><div class="ts-au"><div class="ts-av">👩</div><div><div class="ts-nm">@tech_life_2024</div><div class="ts-sr">Telegram Community</div></div></div></div>
-      <div class="tsc rv"><div class="ts-st">★★★★★</div><div class="ts-tx">"The FEVER DETECTOR flagged a coin at 39.5°C. I didn't buy. It crashed 60% two days later. Pure alpha."</div><div class="ts-au"><div class="ts-av">🧑‍💻</div><div><div class="ts-nm">@defi_researcher</div><div class="ts-sr">Telegram Community</div></div></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- SECURITY -->
-<section style="background:var(--sf);border-top:1px solid var(--bd)" id="security">
-  <div class="con">
-    <div class="sl rv">Trust & Safety</div>
-    <h2 class="sh rv">Built on Transparency</h2>
-    <div class="scg">
-      <div class="scc rv"><div class="scc-i">✅</div><div class="scc-t">Contract Renounced</div><div class="scc-d">No one can modify the contract. Ever. The code belongs to the community.</div><div class="scc-b">✓ Verified</div></div>
-      <div class="scc rv"><div class="scc-i">🔒</div><div class="scc-t">Liquidity Locked</div><div class="scc-d">All liquidity is locked. No rug pull is possible. Protected by code.</div><div class="scc-b">✓ Locked</div></div>
-      <div class="scc rv"><div class="scc-i">👥</div><div class="scc-t">Zero Team Tokens</div><div class="scc-d">The team holds 0% of supply. No insider selling. Pure community ownership.</div><div class="scc-b">✓ Confirmed</div></div>
-      <div class="scc rv"><div class="scc-i">⚡</div><div class="scc-t">Fair Launch</div><div class="scc-d">No presale. No whitelist. No VC funding. Everyone enters at the same price.</div><div class="scc-b">✓ Fair</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- PRESS -->
-<section style="background:var(--bg)">
-  <div class="con">
-    <div class="sl rv">Media & Press</div>
-    <h2 class="sh rv">NEURON in the News</h2>
-    <div class="prg">
-      <div class="prc rv"><div class="prs">CryptoSlate</div><div class="prt">"NEURON AI represents a new category: AI agents that actually protect retail investors from themselves"</div><div class="prd">May 2026</div></div>
-      <div class="prc rv"><div class="prs">DeFi Daily</div><div class="prt">"The NEURON WINGMAN feature could be the most important innovation in retail crypto UX this year"</div><div class="prd">May 2026</div></div>
-      <div class="prc rv"><div class="prs">Solana Weekly</div><div class="prt">"Built on Solana, NEURON AI proves that meme coins and genuine utility aren't mutually exclusive"</div><div class="prd">April 2026</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- TWITTER FEED -->
-<section style="background:var(--sf);border-top:1px solid var(--bd)">
-  <div class="con">
-    <div class="sl rv">Latest from X</div>
-    <h2 class="sh rv">Follow the Intelligence</h2>
-    <div class="twg">
-      <div class="twc rv"><div class="twh"><div class="twav"><img src="logo.jpeg" alt="N"></div><div><div class="twnm">NEURON AI</div><div class="twhn">@neuronaicoin</div></div><div class="twx"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="color:var(--tx3)"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></div></div><div class="twt">🛡️ A user was about to buy $2,000 of a meme coin at 3am. NEURON stopped him. Made him wait 5 minutes. He didn't buy. It dropped 31% by morning. NEURON WINGMAN. $NEURON 🧠</div><div class="twd">2 hours ago</div></div>
-      <div class="twc rv"><div class="twh"><div class="twav"><img src="logo.jpeg" alt="N"></div><div><div class="twnm">NEURON AI</div><div class="twhn">@neuronaicoin</div></div><div class="twx"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="color:var(--tx3)"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></div></div><div class="twt">🧠 NEURON MEMORY is live. I now remember everything about you. Your questions. Your decisions. Your patterns. The more you use me, the smarter I get about YOU. $NEURON</div><div class="twd">6 hours ago</div></div>
-      <div class="twc rv"><div class="twh"><div class="twav"><img src="logo.jpeg" alt="N"></div><div><div class="twnm">NEURON AI</div><div class="twhn">@neuronaicoin</div></div><div class="twx"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="color:var(--tx3)"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></div></div><div class="twt">While humans sleep, NEURON thinks. 24/7. In 11 languages. For free. Forever. $NEURON — The AI Agent for Everything. 🧠</div><div class="twd">10 hours ago</div></div>
-    </div>
-    <div style="text-align:center;margin-top:1.75rem"><a href="https://x.com/neuronaicoin" target="_blank" class="bs rv" style="display:inline-flex">Follow @neuronaicoin →</a></div>
-  </div>
-</section>
-
-<!-- TECH BAR -->
-<div class="techbar">
-  <div class="con">
-    <div class="tbl">Powered by world-class technology</div>
-    <div class="tls">
-      <div class="tl"><span class="tl-i">◎</span> Solana Blockchain</div>
-      <div class="tl"><span class="tl-i">⚡</span> Groq AI</div>
-      <div class="tl"><span class="tl-i">✈️</span> Telegram API</div>
-      <div class="tl"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="color:var(--tx3)"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> X / Twitter API</div>
-      <div class="tl"><span class="tl-i">🔗</span> CoinGecko</div>
-      <div class="tl"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="color:var(--tx3)"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg> Open Source</div>
-    </div>
-  </div>
-</div>
-
-<!-- FAQ -->
-<section style="background:var(--sf);border-top:1px solid var(--bd)" id="faq">
-  <div class="con">
-    <div class="sl rv">Questions</div>
-    <h2 class="sh rv">Frequently Asked</h2>
-    <div class="fql">
-      <div class="fqi rv"><div class="fqq" onclick="tFaq(this)">What is NEURON AI?<span class="fqic">+</span></div><div class="fqa">NEURON AI is the world's first AI agent token built on Solana. It combines a powerful AI assistant (via Telegram) with a community-owned cryptocurrency. The AI bot works 24/7, remembers you, and helps with crypto AND everyday life decisions — completely free.</div></div>
-      <div class="fqi rv"><div class="fqq" onclick="tFaq(this)">Is the AI bot really free?<span class="fqic">+</span></div><div class="fqa">Yes. NEURON AI bot is completely free, forever. No subscription, no premium tier, no hidden fees. Open Telegram, find @NEURON_AIbot, and start chatting in your language.</div></div>
-      <div class="fqi rv"><div class="fqq" onclick="tFaq(this)">When does $NEURON launch?<span class="fqic">+</span></div><div class="fqa">$NEURON will launch when it's ready — not before. We believe in building first, launching second. Join our community to be the first to know.</div></div>
-      <div class="fqi rv"><div class="fqq" onclick="tFaq(this)">How is NEURON different from other AI tokens?<span class="fqic">+</span></div><div class="fqa">Most "AI" coins have no actual AI. NEURON has a live, working AI agent with 20+ features used by real people every day — before the token even launches.</div></div>
-      <div class="fqi rv"><div class="fqq" onclick="tFaq(this)">Is there a presale or whitelist?<span class="fqic">+</span></div><div class="fqa">No presale. No whitelist. No VC allocation. Fair launch means everyone enters at the same price. The team holds 0% of supply.</div></div>
-      <div class="fqi rv"><div class="fqq" onclick="tFaq(this)">What languages does NEURON support?<span class="fqic">+</span></div><div class="fqa">English, Turkish, Spanish, Arabic, French, German, Italian, Portuguese, Korean, Japanese, and Russian. More languages are added regularly.</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- WAITLIST -->
-<section class="wls" id="waitlist">
-  <div class="con">
-    <div class="sl rv">Early Access</div>
-    <h2 class="sh rv">Be First. Get Priority.</h2>
-    <p class="sd rv">Register your interest now. Early believers get launch priority, special access, and exclusive updates before anyone else.</p>
-    <div class="wlf rv">
-      <div id="wlc">
-        <div class="fr2"><div class="fgg"><label>First Name *</label><input type="text" id="fn" placeholder="Your first name"></div><div class="fgg"><label>Last Name *</label><input type="text" id="ln" placeholder="Your last name"></div></div>
-        <div class="fgg"><label>Email Address *</label><input type="email" id="em" placeholder="your@email.com"></div>
-        <div class="fr2">
-          <div class="fgg"><label>Investment Interest</label><select id="iv"><option value="">Select amount</option><option>$100 – $500</option><option>$500 – $1,000</option><option>$1,000 – $5,000</option><option>$5,000+</option><option>Just following for now</option></select></div>
-          <div class="fgg"><label>Company / Organization</label><input type="text" id="co" placeholder="Optional"></div>
-        </div>
-        <div class="fgg"><label>Remarks / Message</label><textarea id="rm" placeholder="Questions, partnership inquiries, or notes..."></textarea></div>
-        <button class="fsb" onclick="subWL()">🚀 Register Early Interest</button>
-        <div class="fnt">Your information is private and will never be shared with third parties.</div>
+    <div class="eyebrow rv">The Path</div>
+    <h2 class="shead rv">Roadmap</h2>
+    <p class="sdesc rv">We ship tools, then grow the ecosystem around them. Honest milestones, in order.</p>
+    <div class="rm">
+      <div class="rmc done rv">
+        <div class="rm-ph"><span class="rm-dot"></span>Now · Live</div>
+        <h4>Chain Radar</h4>
+        <ul>
+          <li>Real-time Robinhood Chain scanner</li>
+          <li>Token health scoring</li>
+          <li>Risk flags & buy/sell pressure</li>
+          <li>Free, web + mobile</li>
+        </ul>
       </div>
-      <div class="fok" id="wlok">🎉 You're on the list!<br><span style="font-size:.86rem;font-weight:400;color:rgba(240,240,236,.5)">We'll be in touch before anyone else.</span></div>
+      <div class="rmc rv">
+        <div class="rm-ph"><span class="rm-dot"></span>Next</div>
+        <h4>Toolkit expansion</h4>
+        <ul>
+          <li>Wallet Lens</li>
+          <li>Rug Check</li>
+          <li>Signal Alerts</li>
+          <li>Community feedback loop</li>
+        </ul>
+      </div>
+      <div class="rmc rv">
+        <div class="rm-ph"><span class="rm-dot"></span>Growing</div>
+        <h4>Ecosystem</h4>
+        <ul>
+          <li>Grow the X community</li>
+          <li>Public tool dashboard</li>
+          <li>Open feedback & requests</li>
+          <li>Partnerships</li>
+        </ul>
+      </div>
+      <div class="rmc rv">
+        <div class="rm-ph"><span class="rm-dot"></span>Vision</div>
+        <h4>$NEURON launch</h4>
+        <ul>
+          <li>Token launch on Robinhood Chain</li>
+          <li>Community ownership</li>
+          <li>Tool access & alignment</li>
+          <li>The intelligence layer, owned together</li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
-
-<!-- COMING SOON -->
-<div class="cs">
-  <div class="cs-t">$NEURON — Coming When It's Ready</div>
-  <div class="cs-s">Not before. Building > Launching. Join the community now.</div>
-  <div class="csd"><div class="cdot"></div><div class="cdot"></div><div class="cdot"></div></div>
-</div>
 
 <!-- COMMUNITY -->
-<section style="background:var(--bg)" id="community">
+<section class="comm" id="community">
   <div class="con">
-    <div class="sl rv">Join Us</div>
-    <h2 class="sh rv">The NEURON Community</h2>
-    <div class="cmg">
-      <!-- Telegram -->
-      <a href="https://t.co/bk25QN94Ty" target="_blank" class="cc rv">
-        <div class="cc-ico" style="background:#0088cc">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.932z"/></svg>
-        </div>
-        <div class="cc-n">Telegram</div>
-        <div class="cc-d">Join the community</div>
-      </a>
-      <!-- X / Twitter -->
+    <div class="eyebrow rv">Join Us</div>
+    <h2 class="shead rv">Build the intelligence layer with us</h2>
+    <p class="sdesc rv">Follow the build, request tools, and be early. This is day one.</p>
+    <div class="comm-grid">
       <a href="https://x.com/neuronaicoin" target="_blank" class="cc rv">
-        <div class="cc-ico" style="background:#000000">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-        </div>
+        <div class="cc-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="color:var(--tx)"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></div>
         <div class="cc-n">X / Twitter</div>
-        <div class="cc-d">Follow for updates</div>
+        <div class="cc-d">Follow the build</div>
       </a>
-      <!-- AI Bot -->
-      <a href="https://t.me/NEURON_AIbot" target="_blank" class="cc rv">
-        <div class="cc-ico" style="background:#0088cc">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.932z"/></svg>
-        </div>
-        <div class="cc-n">AI Bot</div>
-        <div class="cc-d">Try NEURON free</div>
+      <a href="/chainradar.html" class="cc rv">
+        <div class="cc-ic">📡</div>
+        <div class="cc-n">Chain Radar</div>
+        <div class="cc-d">Try it live</div>
       </a>
-      <!-- GitHub -->
-      <a href="https://github.com/neuronaicoin" target="_blank" class="cc rv">
-        <div class="cc-ico" style="background:#24292e">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-        </div>
-        <div class="cc-n">GitHub</div>
-        <div class="cc-d">Open source</div>
-      </a>
-      <!-- Whitepaper -->
-      <a href="https://neuronaicoin.com/whitepaper.html" target="_blank" class="cc rv">
-        <div class="cc-ico" style="background:#b8943e">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg>
-        </div>
-        <div class="cc-n">Whitepaper</div>
-        <div class="cc-d">Read the vision</div>
-      </a>
+    </div>
+
+    <div class="donate-box rv">
+      <h3>Help us build more tools 🙏</h3>
+      <p>Every NEURON tool is free and always will be. To keep building and shipping new AI tools for the onchain economy, we rely on your support. If our tools help you, please consider a USDT donation — it goes straight into building the next one.</p>
+      <div class="addr-label">USDT DONATION ADDRESS</div>
+      <div class="addr-row">
+        <code id="donate-addr">0xD20DC98870a1731b287f9C16ba8FB0AaA448fbDA</code>
+        <button class="copy-btn" id="copyBtn">COPY</button>
+      </div>
+      <div class="net-warn">⚠️ Send USDT on the <b>ARBITRUM ONE</b> network only. Other networks may result in permanent loss of funds.</div>
     </div>
   </div>
 </section>
@@ -848,190 +520,85 @@ footer{background:var(--tx);color:rgba(240,240,236,.48);padding:3.25rem 2rem 1.7
 <footer>
   <div class="ftg">
     <div>
-      <div class="ftl"><img src="logo.jpeg" alt="NEURON AI"><span>NEURON AI</span></div>
-      <div class="ftt">The AI Agent for Everything. Free forever. Built on Solana.</div>
-      <div class="fts">While humans sleep, NEURON thinks.</div>
+      <div class="ftl"><div class="ftl-mark"><img src="logo.png" alt="N" onerror="this.style.display='none';this.parentNode.innerHTML='<span>N</span>'"></div><span class="ftl-txt">NEURON AI</span></div>
+      <p class="ft-tag">The intelligence layer for onchain finance. AI-powered tools, built on Robinhood Chain. Free to use.</p>
     </div>
-    <div><div class="fth">Product</div><ul class="ftul"><li><a href="#features">Features</a></li><li><a href="https://t.me/NEURON_AIbot" target="_blank">AI Bot</a></li><li><a href="https://neuronaicoin.com/whitepaper.html" target="_blank">Whitepaper</a></li><li><a href="#roadmap">Roadmap</a></li></ul></div>
-    <div><div class="fth">Community</div><ul class="ftul"><li><a href="https://t.co/bk25QN94Ty" target="_blank">Telegram</a></li><li><a href="https://x.com/neuronaicoin" target="_blank">X / Twitter</a></li><li><a href="https://github.com/neuronaicoin" target="_blank">GitHub</a></li><li><a href="#waitlist">Early Access</a></li></ul></div>
-    <div><div class="fth">Info</div><ul class="ftul"><li><a href="#tokenomics">Tokenomics</a></li><li><a href="#team">Team</a></li><li><a href="#security">Security</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+    <div>
+      <div class="fth">Product</div>
+      <ul class="ftul">
+        <li><a href="/chainradar.html">Chain Radar</a></li>
+        <li><a href="#tools">All Tools</a></li>
+        <li><a href="#roadmap">Roadmap</a></li>
+        <li><a href="#token">$NEURON</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="fth">Community</div>
+      <ul class="ftul">
+        <li><a href="https://x.com/neuronaicoin" target="_blank">X / Twitter</a></li>
+        <li><a href="/chainradar.html">Chain Radar</a></li>
+      </ul>
+    </div>
   </div>
   <div class="ftb">
-    <div>© 2026 NEURON AI — All rights reserved</div>
-    <div class="ftd">Not financial advice. Cryptocurrency investments carry significant risk. Only invest what you can afford to lose. DYOR.</div>
+    <div class="ftb-c">© 2026 NEURON AI</div>
+    <div class="ftb-d">Not financial advice. NEURON tools are informational only. Onchain assets carry significant risk, including total loss. Always do your own research.</div>
   </div>
 </footer>
 
-<a href="https://t.co/bk25QN94Ty" target="_blank" class="scta">🚀 Join Community</a>
-
-<div class="ep" id="ep">
-  <div class="ep-in">
-    <button class="ep-cl" onclick="cPop()">✕</button>
-    <div style="margin-bottom:.9rem"><img src="logo.jpeg" alt="" style="width:52px;height:52px;border-radius:50%;object-fit:cover"></div>
-    <div class="ep-t">Before You Go</div>
-    <div class="ep-d">NEURON AI is completely free. No registration needed. Try the bot before you leave.</div>
-    <div class="ep-bs">
-      <a href="https://t.me/NEURON_AIbot" target="_blank" class="bp" style="flex:1;justify-content:center">🤖 Try Free</a>
-      <a href="https://t.co/bk25QN94Ty" target="_blank" class="bs" style="flex:1;justify-content:center">Join</a>
-    </div>
-  </div>
-</div>
-
 <script>
-// ── LOADER
-window.addEventListener('load',()=>setTimeout(()=>document.getElementById('ld').classList.add('gone'),2400));
-
-// ── THEME
-function toggleTheme(){const d=document.documentElement.getAttribute('data-theme')==='dark';document.documentElement.setAttribute('data-theme',d?'':'dark');document.getElementById('thb').textContent=d?'🌙 Dark':'☀️ Light';localStorage.setItem('nt',d?'l':'d')}
-(()=>{if(localStorage.getItem('nt')==='d'){document.documentElement.setAttribute('data-theme','dark');document.getElementById('thb').textContent='☀️ Light'}})();
-
-// ── PARTICLES
-const pc=document.getElementById('pc'),px=pc.getContext('2d');
-function rpc(){pc.width=window.innerWidth;pc.height=window.innerHeight}rpc();window.addEventListener('resize',rpc);
-const pts=Array.from({length:50},()=>({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,r:Math.random()*1.6+.3,dx:(Math.random()-.5)*.32,dy:(Math.random()-.5)*.32,o:Math.random()*.35+.08}));
-function dp(){px.clearRect(0,0,pc.width,pc.height);const dk=document.documentElement.getAttribute('data-theme')==='dark';pts.forEach(p=>{px.beginPath();px.arc(p.x,p.y,p.r,0,Math.PI*2);px.fillStyle=dk?`rgba(184,148,62,${p.o})`:`rgba(8,8,8,${p.o*.28})`;px.fill();p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>pc.width)p.dx*=-1;if(p.y<0||p.y>pc.height)p.dy*=-1});requestAnimationFrame(dp)}dp();
-
-// ── TYPING
-const phrases=['While humans sleep, NEURON thinks.','Your personal AI agent for everything.','Crypto. Career. Life. All in one place.','The agent that never forgets you.','Intelligence for every human. Free.'];
-let pi=0,ci=0,dl=false;const tel=document.getElementById('tel');
-function type(){const p=phrases[pi];if(!dl){tel.textContent=p.slice(0,++ci);if(ci===p.length){dl=true;setTimeout(type,2400);return}}else{tel.textContent=p.slice(0,--ci);if(ci===0){dl=false;pi=(pi+1)%phrases.length}}setTimeout(type,dl?36:70)}type();
+// ── LIVE TICKER (real data from GeckoTerminal, fallback to placeholder)
+const tickTrack=document.getElementById('tickTrack');
+function renderTicker(items){
+  const html=items.map(i=>{
+    const cls=i.ch>=0?'up':'down';
+    const sign=i.ch>=0?'+':'';
+    return '<span class="tick"><span class="sym">'+i.sym+'</span> <span>'+i.price+'</span> <span class="'+cls+'">'+sign+i.ch.toFixed(1)+'%</span></span>';
+  }).join('');
+  tickTrack.innerHTML=html+html; // duplicate for seamless scroll
+}
+// placeholder until live loads
+renderTicker([
+  {sym:'PONS',price:'$0.039',ch:116.9},{sym:'VEX',price:'$0.0079',ch:40.2},{sym:'TENDIES',price:'$0.014',ch:-26.6},
+  {sym:'YOLO',price:'$0.0066',ch:98.9},{sym:'CASHCAT',price:'$0.078',ch:7.5},{sym:'WALLET',price:'$0.0049',ch:-38.2},
+]);
+async function loadTicker(){
+  try{
+    const r=await fetch('https://api.geckoterminal.com/api/v2/networks/robinhood/trending_pools?include=base_token&duration=24h');
+    if(!r.ok)return;
+    const j=await r.json();
+    const inc={}; (j.included||[]).forEach(x=>inc[x.id]=x.attributes);
+    const items=(j.data||[]).slice(0,10).map(p=>{
+      const a=p.attributes;
+      const bid=p.relationships?.base_token?.data?.id;
+      const sym=(bid&&inc[bid]?.symbol)||(a.name||'?').split('/')[0].trim();
+      const price=parseFloat(a.base_token_price_usd);
+      const ch=parseFloat(a.price_change_percentage?.h24)||0;
+      const pf=price>=1?'$'+price.toFixed(2):(price>=0.01?'$'+price.toFixed(4):'$'+price.toFixed(6));
+      return {sym,price:pf,ch};
+    });
+    if(items.length) renderTicker(items);
+  }catch(e){/* keep placeholder */}
+}
+loadTicker();
 
 // ── REVEAL
-const obs=new IntersectionObserver(es=>es.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('on'),i*48)}),{threshold:.1});
+const obs=new IntersectionObserver(es=>es.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('on'),i*40)}),{threshold:.12});
 document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
 
-// ── CRYPTO PRICES (CoinGecko)
-async function fetchCrypto(){
-  try{
-    const r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true');
-    const d=await r.json();
-    function fp(n){return n>=1000?'$'+n.toLocaleString('en',{maximumFractionDigits:0}):'$'+n.toFixed(2)}
-    function fc(el,v){el.textContent=(v>0?'▲ +':'▼ ')+Math.abs(v).toFixed(2)+'%';el.className='ccard-chg '+(v>0?'up':'dn')}
-    document.getElementById('bP').textContent=fp(d.bitcoin.usd);
-    document.getElementById('eP').textContent=fp(d.ethereum.usd);
-    document.getElementById('sP').textContent=fp(d.solana.usd);
-    fc(document.getElementById('bC'),d.bitcoin.usd_24h_change);
-    fc(document.getElementById('eC'),d.ethereum.usd_24h_change);
-    fc(document.getElementById('sC'),d.solana.usd_24h_change);
-  }catch(e){console.log('Crypto fetch:',e)}
-}fetchCrypto();setInterval(fetchCrypto,60000);
-
-// ── WORLD MARKETS (simulated realistic values — updated daily pattern)
-function setMarket(id,chgId,val,chg){
-  document.getElementById(id).textContent=val.toLocaleString('en',{maximumFractionDigits:0});
-  const el=document.getElementById(chgId);
-  el.textContent=(chg>0?'▲ +':'▼ ')+Math.abs(chg).toFixed(2)+'%';
-  el.className='scard-chg '+(chg>0?'up':'dn');
+// ── COPY (both top strip + bottom box)
+function bindCopy(btnId, addrId){
+  const btn=document.getElementById(btnId); if(!btn)return;
+  btn.onclick=async function(){
+    const addr=document.getElementById(addrId).textContent;
+    try{await navigator.clipboard.writeText(addr);}
+    catch(e){const ta=document.createElement('textarea');ta.value=addr;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e2){}document.body.removeChild(ta);}
+    this.textContent='COPIED ✓';this.classList.add('done');
+    const b=this;setTimeout(()=>{b.textContent='COPY';b.classList.remove('done');},1600);
+  };
 }
-// Use day-of-week seed for consistent daily values
-const seed=new Date().getDay();
-const mktData=[
-  {id:'nyse',chgId:'nyseC',base:18420,variance:[0.8,-0.3,1.2,-0.6,0.4,1.1,-0.2]},
-  {id:'nasdaq',chgId:'nasdaqC',base:19870,variance:[1.2,-0.5,1.8,-0.9,0.7,1.5,-0.4]},
-  {id:'dax',chgId:'daxC',base:22180,variance:[0.6,-0.2,0.9,-0.4,0.3,0.8,-0.1]},
-  {id:'nikkei',chgId:'nikkeiC',base:38940,variance:[0.5,-0.8,1.1,-0.3,0.6,0.9,-0.5]},
-  {id:'ftse',chgId:'ftseC',base:8820,variance:[0.4,-0.1,0.7,-0.3,0.2,0.6,-0.15]},
-];
-mktData.forEach(m=>{
-  const chg=m.variance[seed];
-  const val=Math.round(m.base*(1+chg/100));
-  setMarket(m.id,m.chgId,val,chg);
-});
-
-// ── DAILY NEWS (AI + Tech, changes every day)
-const dt=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-const aiNews=[
-  ["OpenAI releases GPT-5 with real-time reasoning capabilities, setting new AI benchmark","Google DeepMind's Gemini Ultra surpasses human-level performance on 95% of benchmarks"],
-  ["Meta's Llama 4 goes open source with 400B parameter model, disrupting AI industry","Anthropic raises $2.8B to accelerate Claude's development into autonomous AI agents"],
-  ["Microsoft integrates Copilot AI deeply into Windows 12, making AI ubiquitous","xAI's Grok 3 achieves breakthrough in multimodal understanding and reasoning"],
-  ["AI agents now handle 40% of customer service interactions globally, report finds","OpenAI's Sora 2 generates cinematic-quality video from text in under 10 seconds"],
-  ["NVIDIA announces Blackwell Ultra chip with 10x AI inference performance boost","AI coding assistants now write 65% of professional code, GitHub study reveals"],
-  ["Google's Project Astra demonstrated as always-on AI agent on mobile devices","AI drug discovery startup raises $500M after models predict 3 new cancer treatments"],
-  ["EU AI Act enforcement begins: major tech companies scramble to comply","Apple Intelligence 3.0 brings on-device AI capabilities rivaling cloud models"],
-];
-const techNews=[
-  ["Solana processes 100M transactions in 24 hours, setting new blockchain record","Apple Vision Pro 3 unveiled with neural interface control and 4K per-eye display"],
-  ["SpaceX Starship completes first commercial Moon mission with AI navigation system","Quantum computing breakthrough: IBM achieves 1,000 qubit error-free computation"],
-  ["Tesla's Full Self-Driving V15 receives regulatory approval in 12 US states","Meta's AR glasses ship 5M units in Q1 2026, signaling mainstream XR adoption"],
-  ["Global 6G rollout begins in South Korea and Japan with sub-millisecond latency","Boston Dynamics' humanoid robot starts commercial deployment in Amazon warehouses"],
-  ["Neuralink's brain-computer interface enables paralyzed patients to control computers","World's first fully autonomous AI research lab publishes 200 papers in one month"],
-  ["Fusion energy milestone: tokamak sustains plasma for 17 minutes in record run","Waymo's robotaxi service expands to 15 new cities after safety milestone achieved"],
-  ["NASA's AI system discovers 3 potentially habitable exoplanets in nearby star systems","China and US agree on global AI safety standards in landmark Geneva summit"],
-];
-const dayIdx=new Date().getDay();
-const ai=aiNews[dayIdx];const tech=techNews[dayIdx];
-document.getElementById('n1').textContent=ai[0];document.getElementById('n1d').textContent=dt;document.getElementById('n1tag').textContent='AI';
-document.getElementById('n2').textContent=ai[1];document.getElementById('n2d').textContent=dt;document.getElementById('n2tag').textContent='AI';
-document.getElementById('n3').textContent=tech[0];document.getElementById('n3d').textContent=dt;document.getElementById('n3tag').textContent='TECHNOLOGY';
-document.getElementById('n4').textContent=tech[1];document.getElementById('n4d').textContent=dt;document.getElementById('n4tag').textContent='TECHNOLOGY';
-
-// ── TOKENOMICS CHART
-(function(){
-  const c=document.getElementById('tkc'),x=c.getContext('2d');
-  const data=[40,30,20,10],cols=['#b8943e','#166534','#1d3461','#606058'];
-  let s=-Math.PI/2;
-  data.forEach((v,i)=>{
-    const sl=(v/100)*Math.PI*2;
-    x.beginPath();x.moveTo(150,150);x.arc(150,150,130,s,s+sl);x.fillStyle=cols[i];x.fill();
-    const mid=s+sl/2;
-    x.font='bold 13px Plus Jakarta Sans,sans-serif';x.fillStyle='#fff';x.textAlign='center';x.textBaseline='middle';
-    x.fillText(v+'%',150+Math.cos(mid)*88,150+Math.sin(mid)*88);
-    s+=sl;
-  });
-  const bg=document.documentElement.getAttribute('data-theme')==='dark'?'#161614':'#fff';
-  x.beginPath();x.arc(150,150,60,0,Math.PI*2);x.fillStyle=bg;x.fill();
-  x.font='bold 16px Plus Jakarta Sans,sans-serif';x.fillStyle=document.documentElement.getAttribute('data-theme')==='dark'?'#f0f0ec':'#080808';
-  x.textAlign='center';x.textBaseline='middle';x.fillText('1B',150,142);
-  x.font='600 10px Plus Jakarta Sans,sans-serif';x.fillStyle='#888880';x.fillText('SUPPLY',150,160);
-})();
-
-// ── FAQ
-function tFaq(el){const it=el.parentElement,op=it.classList.contains('open');document.querySelectorAll('.fqi').forEach(i=>i.classList.remove('open'));if(!op)it.classList.add('open')}
-
-// ── DEMO CHAT
-const dR={
-  btc:"₿ Bitcoin data loading from live feed. For real-time AI analysis: /score btc on @NEURON_AIbot! 🧠",
-  eth:"⟠ Ethereum analysis available. Full NEURON SCORE: /score eth on Telegram!",
-  sol:"◎ Solana — NEURON's home network! Signal: /signal sol on @NEURON_AIbot 🚀",
-  buy:"🛡️ STOP. Use NEURON WINGMAN first: /wingman [coin] [amount] on Telegram. Free & could save you thousands.",
-  def:["🧠 Great question! For a full answer try @NEURON_AIbot on Telegram — free 24/7.","🤖 NEURON AI can help with that! Open Telegram: @NEURON_AIbot","💡 Exactly what NEURON is built for. Try /decide on @NEURON_AIbot!"]
-};
-function sendMsg(){
-  const inp=document.getElementById('di'),t=inp.value.trim();if(!t)return;
-  const ms=document.getElementById('dms');
-  const um=document.createElement('div');um.className='dm u';um.textContent=t;ms.appendChild(um);
-  inp.value='';ms.scrollTop=ms.scrollHeight;
-  setTimeout(()=>{
-    const bm=document.createElement('div');bm.className='dm b';
-    const l=t.toLowerCase();
-    let r=dR.def[Math.floor(Math.random()*3)];
-    if(l.includes('btc')||l.includes('bitcoin'))r=dR.btc;
-    else if(l.includes('eth'))r=dR.eth;
-    else if(l.includes('sol'))r=dR.sol;
-    else if(l.includes('buy')||l.includes('should'))r=dR.buy;
-    bm.textContent=r;ms.appendChild(bm);ms.scrollTop=ms.scrollHeight;
-  },800);
-}
-document.getElementById('di').addEventListener('keypress',e=>{if(e.key==='Enter')sendMsg()});
-
-// ── WAITLIST
-function subWL(){
-  const fn=document.getElementById('fn').value.trim(),ln=document.getElementById('ln').value.trim(),em=document.getElementById('em').value.trim();
-  if(!fn||!ln||!em){alert('Please fill in all required fields.');return}
-  if(!em.includes('@')){alert('Please enter a valid email.');return}
-  const iv=document.getElementById('iv').value,co=document.getElementById('co').value.trim(),rm=document.getElementById('rm').value.trim();
-  const su=encodeURIComponent(`NEURON AI Early Interest — ${fn} ${ln}`);
-  const bd=encodeURIComponent(`Name: ${fn} ${ln}\nEmail: ${em}\nInvestment: ${iv||'Not specified'}\nCompany: ${co||'N/A'}\n\nRemarks:\n${rm||'None'}`);
-  window.location.href=`mailto:neuronaicoin@gmail.com?subject=${su}&body=${bd}`;
-  document.getElementById('wlc').style.display='none';
-  document.getElementById('wlok').style.display='block';
-}
-
-// ── EXIT POPUP
-let shown=false;
-document.addEventListener('mouseleave',e=>{if(e.clientY<50&&!shown){shown=true;document.getElementById('ep').classList.add('on')}});
-function cPop(){document.getElementById('ep').classList.remove('on')}
-document.getElementById('ep').addEventListener('click',e=>{if(e.target===document.getElementById('ep'))cPop()});
+bindCopy('copyBtn','donate-addr');
+bindCopy('copyBtnTop','donate-addr-top');
 </script>
 </body>
 </html>
