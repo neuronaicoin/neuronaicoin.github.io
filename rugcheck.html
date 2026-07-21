@@ -298,9 +298,19 @@ function renderReport(rep, name, addr){
 
 async function scan(){
   hideErr();
-  const chain=$('chain').value;
   let addr=$('addr').value.trim();
   if(!addr){ setStatus('Paste a contract address first.','var(--amber)'); return; }
+
+  // ── URL yapıştırıldıysa chain + adresi otomatik çıkar
+  const urlInfo=parseUrl(addr);
+  if(urlInfo){
+    if(urlInfo.chain) $('chain').value=urlInfo.chain;
+    addr=urlInfo.addr;
+    $('addr').value=addr;
+    setStatus('🔗 Link detected — extracted the address automatically.');
+  }
+
+  const chain=$('chain').value;
   if(chain==='robinhood'){
     showErr('<b>Robinhood Chain isn\'t covered by security data providers yet</b> — it\'s a brand-new chain. '+
       'Until coverage arrives, use <a href="/chainradar.html" style="color:var(--green)">Chain Radar</a>\'s health score '+
@@ -363,6 +373,26 @@ async function poolToToken(gtNet,poolAddr){
     const bid=j.data?.relationships?.base_token?.data?.id;
     if(!bid) return null;
     return bid.split('_').slice(1).join('_');
+  }catch(e){ return null; }
+}
+
+// yapıştırılan URL'den chain + adres çıkar (GeckoTerminal & DexScreener)
+function parseUrl(s){
+  if(!/geckoterminal\.com|dexscreener\.com/i.test(s)) return null;
+  try{
+    const u=new URL(s.startsWith('http')?s:'https://'+s);
+    const parts=u.pathname.split('/').filter(Boolean);
+    // geckoterminal.com/{network}/pools/{addr}  veya  /{network}/tokens/{addr}
+    // dexscreener.com/{network}/{addr}
+    let net=null, addr=null;
+    if(u.hostname.includes('geckoterminal')){
+      net=parts[0]; addr=parts[parts.length-1];
+    } else {
+      net=parts[0]; addr=parts[1];
+    }
+    if(!addr) return null;
+    const chainMap={eth:'1',ethereum:'1',base:'8453',arbitrum:'42161',bsc:'56',polygon_pos:'137',polygon:'137',solana:'solana',robinhood:'robinhood'};
+    return {chain:chainMap[(net||'').toLowerCase()]||null, addr:addr};
   }catch(e){ return null; }
 }
 
