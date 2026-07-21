@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="NEURON Daily Report — the daily state of Robinhood Chain as a shareable professional report.">
+<title>Daily Report — NEURON AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#07100c;--panel:#0c1a13;--panel2:#0f241a;--line:#1a3a2a;--line2:#245038;
+    --green:#2fe08a;--green2:#19b56b;--amber:#ffc24a;--red:#ff5f6d;
+    --text:#e6f5ec;--muted:#7fa38f;--faint:#4a6b58;
+  }
+  body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+    background-image:radial-gradient(ellipse at 50% -5%,rgba(47,224,138,.1),transparent 50%)}
+  .wrap{max-width:900px;margin:0 auto;padding:22px 16px 60px}
+
+  header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .rp-ic{width:44px;height:44px;border-radius:11px;background:linear-gradient(145deg,var(--green),var(--green2));
+    display:grid;place-items:center;overflow:hidden}
+  .rp-ic img{width:100%;height:100%;object-fit:cover;border-radius:11px}
+  .rp-ic span{color:#07100c;font-weight:700;font-size:20px}
+  .brand h1{font-size:20px;font-weight:700}
+  .brand h1 b{color:var(--green)}
+  .brand p{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);letter-spacing:.05em}
+  .back{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);text-decoration:none;
+    border:1px solid var(--line);border-radius:9px;padding:8px 12px}
+  .back:hover{color:var(--green);border-color:var(--green)}
+
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+  .act{border:none;border-radius:11px;padding:13px 22px;font-family:'Space Grotesk';font-weight:700;font-size:14px;cursor:pointer;transition:.15s}
+  .act.png{background:var(--green);color:#07100c}
+  .act.png:hover{background:var(--green2)}
+  .act.tw{background:var(--panel);color:var(--text);border:1.5px solid var(--green)}
+  .act.tw:hover{background:var(--panel2)}
+  .act.done{background:var(--amber);color:#07100c;border-color:var(--amber)}
+  .act:disabled{opacity:.55;cursor:wait}
+  .status{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:16px}
+
+  /* preview scaling */
+  .preview{overflow:auto;border:1px solid var(--line);border-radius:16px;background:#050a08;padding:14px;display:grid;place-items:center}
+  .card-scale{transform-origin:top left}
+
+  /* ============ THE REPORT CARD (1080x1080) ============ */
+  .card{width:1080px;height:1080px;background:#07100c;position:relative;overflow:hidden;
+    font-family:'Space Grotesk',sans-serif;color:#e6f5ec;flex-shrink:0}
+  .card .grid-bg{position:absolute;inset:0;
+    background-image:linear-gradient(rgba(47,224,138,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(47,224,138,.05) 1px,transparent 1px);
+    background-size:54px 54px}
+  .card .glow{position:absolute;top:-25%;left:50%;transform:translateX(-50%);width:900px;height:600px;
+    background:radial-gradient(ellipse,rgba(47,224,138,.16),transparent 65%)}
+  .cc{position:relative;padding:52px 56px;height:100%;display:flex;flex-direction:column}
+
+  .c-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}
+  .c-brand{display:flex;align-items:center;gap:16px}
+  .c-logo{width:56px;height:56px;border-radius:14px;background:linear-gradient(145deg,#2fe08a,#19b56b);
+    display:grid;place-items:center;position:relative;overflow:hidden}
+  .c-logo::after{content:'';position:absolute;inset:0;background:conic-gradient(from 0deg,transparent,rgba(7,16,12,.5) 65deg,transparent 95deg)}
+  .c-logo span{color:#07100c;font-weight:700;font-size:26px;z-index:1}
+  .c-title{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+  .c-title .g{color:#2fe08a}
+  .c-sub{font-family:'IBM Plex Mono',monospace;font-size:14px;color:#7fa38f;margin-top:4px;letter-spacing:.08em}
+  .c-date{font-family:'IBM Plex Mono',monospace;font-size:15px;color:#7fa38f;text-align:right;line-height:1.6}
+  .c-date b{color:#2fe08a;font-size:13px;letter-spacing:.12em}
+
+  .c-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px}
+  .c-stat{background:rgba(12,26,19,.85);border:1px solid #1a3a2a;border-radius:16px;padding:18px 20px}
+  .c-stat .l{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#4a6b58;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px}
+  .c-stat .v{font-family:'IBM Plex Mono',monospace;font-size:27px;font-weight:700;letter-spacing:-.02em}
+  .c-stat .v.g{color:#2fe08a}.c-stat .v.a{color:#ffc24a}.c-stat .v.r{color:#ff5f6d}
+
+  .c-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;flex:1}
+  .c-panel{background:rgba(12,26,19,.85);border:1px solid #1a3a2a;border-radius:18px;padding:22px 24px}
+  .c-ptitle{font-size:18px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+  .c-ptitle.ok{color:#2fe08a}.c-ptitle.bad{color:#ff5f6d}
+  .c-row{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+  .c-row:last-child{margin-bottom:0}
+  .c-rank{font-family:'IBM Plex Mono',monospace;font-size:13px;color:#4a6b58;width:20px}
+  .c-sym{font-weight:700;font-size:17px;width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .c-bar{flex:1;height:10px;background:#0f241a;border-radius:6px;overflow:hidden}
+  .c-fill{height:100%;border-radius:6px}
+  .c-fill.g{background:linear-gradient(90deg,#19b56b,#2fe08a)}
+  .c-fill.a{background:linear-gradient(90deg,#c99a2e,#ffc24a)}
+  .c-fill.r{background:linear-gradient(90deg,#d64550,#ff5f6d)}
+  .c-score{font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:700;width:36px;text-align:right}
+  .c-score.g{color:#2fe08a}.c-score.a{color:#ffc24a}.c-score.r{color:#ff5f6d}
+
+  .c-movers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:22px}
+  .c-mover{background:rgba(12,26,19,.85);border:1px solid #1a3a2a;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:14px}
+  .c-mi{font-size:26px}
+  .c-ml{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#4a6b58;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px}
+  .c-mv{font-weight:700;font-size:18px}
+  .c-mp{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700}
+  .c-mp.up{color:#2fe08a}.c-mp.down{color:#ff5f6d}.c-mp.hot{color:#ffc24a}
+
+  .c-dist{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+  .c-dist-label{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#7fa38f;letter-spacing:.08em;white-space:nowrap}
+  .c-dist-bar{flex:1;height:16px;border-radius:9px;overflow:hidden;display:flex}
+  .c-dist-seg{height:100%}
+  .c-dist-nums{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#7fa38f;white-space:nowrap}
+
+  .c-foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #1a3a2a;padding-top:20px}
+  .c-url{font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:700;color:#2fe08a}
+  .c-dis{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#4a6b58}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="rp-ic"><img src="logo.png" alt="N" onerror="this.style.display='none';this.parentNode.innerHTML='<span>📊</span>'"></div>
+      <div>
+        <h1>Daily <b>Report</b></h1>
+        <p>robinhood chain · by NEURON AI</p>
+      </div>
+    </div>
+    <a class="back" href="/">← neuronaicoin.com</a>
+  </header>
+
+  <div class="actions">
+    <select id="chain" class="act" style="background:var(--bg);color:var(--text);border:1.5px solid var(--line2);font-weight:600">
+      <option value="robinhood" selected>Robinhood Chain</option>
+      <option value="solana">Solana</option>
+      <option value="eth">Ethereum</option>
+      <option value="base">Base</option>
+      <option value="arbitrum">Arbitrum</option>
+      <option value="bsc">BSC</option>
+      <option value="polygon_pos">Polygon</option>
+    </select>
+    <button class="act png" id="dl">📸 Download as image</button>
+    <button class="act tw" id="tw">📋 Copy as tweet</button>
+  </div>
+  <div class="status" id="status">Generating today's report…</div>
+
+  <div class="preview" id="preview">
+    <div class="card-scale" id="scaler">
+      <div class="card" id="card">
+        <div class="grid-bg"></div><div class="glow"></div>
+        <div class="cc">
+          <div class="c-head">
+            <div class="c-brand">
+              <div class="c-logo"><span>N</span></div>
+              <div>
+                <div class="c-title"><span id="c-chain">Robinhood Chain</span> <span class="g">Daily Report</span></div>
+                <div class="c-sub">ONCHAIN INTELLIGENCE · BY NEURON AI</div>
+              </div>
+            </div>
+            <div class="c-date"><b>LIVE DATA</b><br><span id="c-date">—</span></div>
+          </div>
+
+          <div class="c-stats">
+            <div class="c-stat"><div class="l">Pools scanned</div><div class="v" id="s-pools">—</div></div>
+            <div class="c-stat"><div class="l">Avg health</div><div class="v g" id="s-avg">—</div></div>
+            <div class="c-stat"><div class="l">24h volume</div><div class="v" id="s-vol">—</div></div>
+            <div class="c-stat"><div class="l">Up / Down</div><div class="v" id="s-updown">—</div></div>
+          </div>
+
+          <div class="c-dist">
+            <div class="c-dist-label">HEALTH MAP</div>
+            <div class="c-dist-bar" id="dist-bar"></div>
+            <div class="c-dist-nums" id="dist-nums">—</div>
+          </div>
+
+          <div class="c-cols">
+            <div class="c-panel">
+              <div class="c-ptitle ok">🏆 Top Health</div>
+              <div id="c-top"></div>
+            </div>
+            <div class="c-panel">
+              <div class="c-ptitle bad">☠️ Danger Zone</div>
+              <div id="c-low"></div>
+            </div>
+          </div>
+
+          <div class="c-movers">
+            <div class="c-mover"><div class="c-mi">📈</div><div><div class="c-ml">Biggest gainer</div><div class="c-mv" id="m-up">—</div><div class="c-mp up" id="m-up-p">—</div></div></div>
+            <div class="c-mover"><div class="c-mi">📉</div><div><div class="c-ml">Biggest loser</div><div class="c-mv" id="m-dn">—</div><div class="c-mp down" id="m-dn-p">—</div></div></div>
+            <div class="c-mover"><div class="c-mi">🔥</div><div><div class="c-ml">Hottest volume</div><div class="c-mv" id="m-hot">—</div><div class="c-mp hot" id="m-hot-p">—</div></div></div>
+          </div>
+
+          <div class="c-foot">
+            <div class="c-url">neuronaicoin.com</div>
+            <div class="c-dis">Activity health scores · not price predictions · DYOR</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const API='https://api.geckoterminal.com/api/v2';
+const CHAINS={robinhood:'Robinhood Chain',solana:'Solana',eth:'Ethereum',base:'Base',arbitrum:'Arbitrum',bsc:'BSC',polygon_pos:'Polygon'};
+const TAGS={robinhood:'#RobinhoodChain',solana:'#Solana',eth:'#Ethereum',base:'#Base',arbitrum:'#Arbitrum',bsc:'#BNBChain',polygon_pos:'#Polygon'};
+let R=null; // rapor verisi
+
+const fmt=n=>{ if(n==null||isNaN(n))return '—';
+  if(n>=1e6)return '$'+(n/1e6).toFixed(2)+'M'; if(n>=1e3)return '$'+(n/1e3).toFixed(0)+'K'; return '$'+Math.round(n); };
+
+function scorePool(a){
+  let s=50;
+  const liq=parseFloat(a.reserve_in_usd)||0;
+  const vol=parseFloat(a.volume_usd?.h24)||0;
+  const mcap=parseFloat(a.market_cap_usd||a.fdv_usd)||0;
+  const ch24=parseFloat(a.price_change_percentage?.h24)||0;
+  const buys=a.transactions?.h24?.buys||0, sells=a.transactions?.h24?.sells||0;
+  const tot=buys+sells; const bp=tot>0?buys/tot:.5;
+  if(liq>=250000)s+=15; else if(liq>=50000)s-=5; else s-=25;
+  if(bp>=.58)s+=12; else if(bp<=.42)s-=12;
+  const ageH=a.pool_created_at?(Date.now()-new Date(a.pool_created_at))/3600000:999;
+  if(ageH<24)s-=8;
+  if(mcap>0&&vol>mcap)s-=5;
+  if(ch24<=-40)s-=15;
+  return {score:Math.max(0,Math.min(100,Math.round(s))),liq,vol,ch24};
+}
+
+function buildReport(pools){
+  const sorted=[...pools].sort((a,b)=>b.score-a.score);
+  const hi=pools.filter(p=>p.score>=65).length;
+  const mid=pools.filter(p=>p.score>=45&&p.score<65).length;
+  const lo=pools.filter(p=>p.score<45).length;
+  return {
+    date:new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}),
+    count:pools.length,
+    avg:Math.round(pools.reduce((s,p)=>s+p.score,0)/pools.length),
+    vol:pools.reduce((s,p)=>s+(p.vol||0),0),
+    up:pools.filter(p=>p.ch24>0).length,
+    down:pools.filter(p=>p.ch24<=0).length,
+    dist:{hi,mid,lo},
+    top:sorted.slice(0,5),
+    low:sorted.slice(-5).reverse(),
+    gainer:[...pools].sort((a,b)=>b.ch24-a.ch24)[0],
+    loser:[...pools].sort((a,b)=>a.ch24-b.ch24)[0],
+    hot:[...pools].sort((a,b)=>(b.vol||0)-(a.vol||0))[0]
+  };
+}
+
+function renderReport(r){
+  R=r;
+  $('c-date').textContent=r.date;
+  $('s-pools').textContent=r.count;
+  $('s-avg').textContent=r.avg;
+  $('s-avg').className='v '+(r.avg>=65?'g':(r.avg>=45?'a':'r'));
+  $('s-vol').textContent=fmt(r.vol);
+  $('s-updown').innerHTML='<span style="color:#2fe08a">'+r.up+'</span> / <span style="color:#ff5f6d">'+r.down+'</span>';
+  // dağılım çubuğu
+  const tot=r.dist.hi+r.dist.mid+r.dist.lo||1;
+  $('dist-bar').innerHTML=
+    '<div class="c-dist-seg" style="width:'+(r.dist.hi/tot*100)+'%;background:#2fe08a"></div>'+
+    '<div class="c-dist-seg" style="width:'+(r.dist.mid/tot*100)+'%;background:#ffc24a"></div>'+
+    '<div class="c-dist-seg" style="width:'+(r.dist.lo/tot*100)+'%;background:#ff5f6d"></div>';
+  $('dist-nums').innerHTML='<span style="color:#2fe08a">'+r.dist.hi+' healthy</span> · <span style="color:#ffc24a">'+r.dist.mid+' mixed</span> · <span style="color:#ff5f6d">'+r.dist.lo+' risky</span>';
+  const rowH=(p,i)=>{
+    const c=p.score>=65?'g':(p.score>=45?'a':'r');
+    return '<div class="c-row"><span class="c-rank">'+(i+1)+'</span><span class="c-sym">'+p.sym+'</span>'+
+      '<div class="c-bar"><div class="c-fill '+c+'" style="width:'+p.score+'%"></div></div>'+
+      '<span class="c-score '+c+'">'+p.score+'</span></div>';
+  };
+  $('c-top').innerHTML=r.top.map(rowH).join('');
+  $('c-low').innerHTML=r.low.map(rowH).join('');
+  $('m-up').textContent='$'+r.gainer.sym; $('m-up-p').textContent='+'+r.gainer.ch24.toFixed(1)+'% (24h)';
+  $('m-dn').textContent='$'+r.loser.sym; $('m-dn-p').textContent=r.loser.ch24.toFixed(1)+'% (24h)';
+  $('m-hot').textContent='$'+r.hot.sym; $('m-hot-p').textContent=fmt(r.hot.vol)+' vol';
+  $('status').innerHTML='<span style="color:#2fe08a">●</span> Report ready · '+r.count+' pools · '+new Date().toLocaleTimeString();
+}
+
+async function load(){
+  const net=document.getElementById('chain').value;
+  document.getElementById('c-chain').textContent=CHAINS[net];
+  document.getElementById('status').textContent='Generating '+CHAINS[net]+' report…';
+  try{
+    const r=await fetch(API+'/networks/'+net+'/pools?include=base_token&sort=h24_volume_usd_desc&page=1');
+    if(!r.ok) throw 0;
+    const j=await r.json();
+    const inc={}; (j.included||[]).forEach(x=>inc[x.id]=x.attributes);
+    let pools=(j.data||[]).map(p=>{
+      const a=p.attributes;
+      const bid=p.relationships?.base_token?.data?.id;
+      const sym=(bid&&inc[bid]?.symbol)||(a.name||'?').split('/')[0].trim();
+      return {sym,...scorePool(a)};
+    }).filter(p=>p.sym&&p.sym!=='?');
+    const seen={}; const uniq=[];
+    pools.forEach(p=>{ if(!seen[p.sym]){seen[p.sym]=1;uniq.push(p);} });
+    if(!uniq.length) throw 0;
+    renderReport(buildReport(uniq));
+  }catch(e){
+    $('status').textContent='⚠ Live data unavailable — retry in a moment.';
+  }
+}
+
+// preview ölçekleme
+function fitScale(){
+  const w=Math.min(document.getElementById('preview').clientWidth-28,1080);
+  const s=w/1080;
+  const sc=$('scaler');
+  sc.style.transform='scale('+s+')';
+  sc.style.width=(1080*s)+'px';
+  sc.style.height=(1080*s)+'px';
+}
+window.addEventListener('resize',fitScale);
+
+// PNG indir
+$('dl').onclick=async function(){
+  if(!R){return;}
+  this.disabled=true; this.textContent='Rendering…';
+  try{
+    const canvas=await html2canvas($('card'),{scale:1,backgroundColor:'#07100c',useCORS:true});
+    const a=document.createElement('a');
+    a.download='neuron-'+document.getElementById('chain').value+'-report-'+new Date().toISOString().slice(0,10)+'.png';
+    a.href=canvas.toDataURL('image/png');
+    a.click();
+    this.textContent='📸 Download as image';
+  }catch(e){ this.textContent='⚠ Render failed — retry'; }
+  this.disabled=false;
+};
+
+// tweet kopyala
+$('tw').onclick=async function(){
+  if(!R){return;}
+  const net=document.getElementById('chain').value;
+  const txt=CHAINS[net]+' Daily Report 📊\n\n'+
+    '🏆 Top health: $'+R.top[0].sym+' — score '+R.top[0].score+'\n'+
+    '☠️ Weakest: $'+R.low[0].sym+' — score '+R.low[0].score+'\n'+
+    '📈 Biggest gainer: $'+R.gainer.sym+' +'+R.gainer.ch24.toFixed(1)+'%\n'+
+    '📉 Biggest loser: $'+R.loser.sym+' '+R.loser.ch24.toFixed(1)+'%\n'+
+    '🔥 Hottest: $'+R.hot.sym+' ('+fmt(R.hot.vol)+' vol)\n\n'+
+    'Avg chain health: '+R.avg+'/100 · '+R.count+' pools scanned\n\n'+
+    'Full live data, free:\n🔗 neuronaicoin.com\n\n'+TAGS[net]+' #DailyReport #DeFi #OnchainData';
+  try{ await navigator.clipboard.writeText(txt); }
+  catch(e){ const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e2){}document.body.removeChild(ta); }
+  this.textContent='COPIED ✓'; this.classList.add('done');
+  const b=this; setTimeout(()=>{b.textContent='📋 Copy as tweet';b.classList.remove('done');},1800);
+};
+
+document.getElementById('chain').onchange=load;
+load().then(fitScale); fitScale();
+</script>
+</body>
+</html>
