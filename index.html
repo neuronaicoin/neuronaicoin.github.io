@@ -70,6 +70,33 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;ali
   font-family:var(--disp);font-weight:600;font-size:.92rem;text-decoration:none;transition:.2s;display:inline-flex;align-items:center;gap:.5rem}
 .btn-s:hover{border-color:var(--grn);transform:translateY(-2px)}
 
+
+/* tool card identities */
+.tc-radar::before{background:linear-gradient(90deg,#2fe08a,transparent)}
+.tc-radar .tool-ic{border-color:rgba(47,224,138,.4);background:rgba(47,224,138,.08)}
+.tc-radar.live:hover{border-color:#2fe08a}
+.tc-rug::before{background:linear-gradient(90deg,#e0b64a,transparent)}
+.tc-rug .tool-ic{border-color:rgba(224,182,74,.4);background:rgba(224,182,74,.08)}
+.tc-rug.live:hover{border-color:#e0b64a}
+.tc-rug .tool-foot{color:#e0b64a}
+.tc-rug .tool-status.on{background:rgba(224,182,74,.12);color:#e0b64a}
+.tc-rug .tool-status.on .d{background:#e0b64a}
+.tc-whale::before{background:linear-gradient(90deg,#4aa8ff,transparent)}
+.tc-whale .tool-ic{border-color:rgba(74,168,255,.4);background:rgba(74,168,255,.08)}
+.tc-whale.live:hover{border-color:#4aa8ff}
+.tc-whale .tool-foot{color:#4aa8ff}
+.tc-whale .tool-status.on{background:rgba(74,168,255,.12);color:#4aa8ff}
+.tc-whale .tool-status.on .d{background:#4aa8ff}
+
+/* tool identity buttons */
+.tool-btn{position:relative;font-weight:700}
+.tb-radar{background:linear-gradient(135deg,#2fe08a,#1eb56e);color:#07100c;box-shadow:0 4px 20px rgba(47,224,138,.25)}
+.tb-radar:hover{box-shadow:0 8px 32px rgba(47,224,138,.4)}
+.tb-rug{background:linear-gradient(135deg,#e0b64a,#c99a2e);color:#140f04;box-shadow:0 4px 20px rgba(224,182,74,.25)}
+.tb-rug:hover{background:linear-gradient(135deg,#eec55c,#d4a63a);box-shadow:0 8px 32px rgba(224,182,74,.4);transform:translateY(-2px)}
+.tb-whale{background:linear-gradient(135deg,#4aa8ff,#2f7fd6);color:#041020;box-shadow:0 4px 20px rgba(74,168,255,.25)}
+.tb-whale:hover{background:linear-gradient(135deg,#63b6ff,#3d8de0);box-shadow:0 8px 32px rgba(74,168,255,.4);transform:translateY(-2px)}
+
 /* live ticker (signature element) */
 .ticker{width:100%;max-width:900px;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .ticker-head{display:flex;align-items:center;gap:.5rem;padding:.7rem 1.1rem;border-bottom:1px solid var(--line);
@@ -286,8 +313,9 @@ footer{position:relative;z-index:1;background:var(--bg);border-top:1px solid var
   <h1>The intelligence layer for <span class="accent">onchain finance</span></h1>
   <p class="hsub">NEURON AI builds AI-powered tools that read the onchain economy in real time — so you can act on signal, not noise. Free to use, built on Robinhood Chain.</p>
   <div class="hbtns">
-    <a href="/chainradar.html" class="btn-p">📡 Open Chain Radar</a>
-    <a href="/rugcheck.html" class="btn-p" style="background:var(--panel);color:var(--tx);border:1.5px solid var(--grn)">🛡️ Rug Check</a>
+    <a href="/chainradar.html" class="btn-p tool-btn tb-radar">📡 Chain Radar</a>
+    <a href="/rugcheck.html" class="btn-p tool-btn tb-rug">🛡️ Rug Check</a>
+    <a href="/whalewatch.html" class="btn-p tool-btn tb-whale">🐋 Whale Watch</a>
     <a href="#tools" class="btn-s">All tools</a>
   </div>
 
@@ -321,7 +349,7 @@ footer{position:relative;z-index:1;background:var(--bg);border-top:1px solid var
     <p class="sdesc rv">Each NEURON tool turns raw onchain data into something you can actually use. We ship them one by one — Chain Radar is live now, more are on the way.</p>
     <div class="tools-grid">
 
-      <a href="/chainradar.html" class="tool live rv">
+      <a href="/chainradar.html" class="tool live rv tc-radar">
         <div class="tool-top">
           <div class="tool-ic">📡</div>
           <span class="tool-status on"><span class="d"></span>LIVE</span>
@@ -332,7 +360,7 @@ footer{position:relative;z-index:1;background:var(--bg);border-top:1px solid var
         <div class="tool-foot">Open Chain Radar →</div>
       </a>
 
-      <a href="/whalewatch.html" class="tool live rv">
+      <a href="/whalewatch.html" class="tool live rv tc-whale">
         <div class="tool-top">
           <div class="tool-ic">🐋</div>
           <span class="tool-status on"><span class="d"></span>LIVE</span>
@@ -343,7 +371,7 @@ footer{position:relative;z-index:1;background:var(--bg);border-top:1px solid var
         <div class="tool-foot">Open Whale Watch →</div>
       </a>
 
-      <a href="/rugcheck.html" class="tool live rv">
+      <a href="/rugcheck.html" class="tool live rv tc-rug">
         <div class="tool-top">
           <div class="tool-ic">🛡️</div>
           <span class="tool-status on"><span class="d"></span>LIVE</span>
@@ -528,7 +556,8 @@ footer{position:relative;z-index:1;background:var(--bg);border-top:1px solid var
       <div class="fth">Product</div>
       <ul class="ftul">
         <li><a href="/chainradar.html">Chain Radar</a></li>
-        <li><a href="#tools">All Tools</a></li>
+        <li><a href="/rugcheck.html">Rug Check</a></li>
+        <li><a href="/whalewatch.html">Whale Watch</a></li>
         <li><a href="#roadmap">Roadmap</a></li>
         <li><a href="#token">$NEURON</a></li>
       </ul>
