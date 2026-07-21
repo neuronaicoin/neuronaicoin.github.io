@@ -523,6 +523,7 @@ async function load(){
         sym: baseTok?.symbol || (a.name||'?').split('/')[0].trim(),
         name: a.name||'',
         addr: p.attributes?.address||'',
+        tokenAddr: baseId? baseId.split('_').slice(1).join('_') : '',
         poolUrl: `https://www.geckoterminal.com/${NET}/pools/${a.address}`,
         price: parseFloat(a.base_token_price_usd),
         ch5: parseFloat(a.price_change_percentage?.m5),
@@ -897,6 +898,7 @@ function openDetail(sym){
     '<div class="md-flags">'+flagsHtml+'</div>'+
     '<div class="md-actions">'+
       '<a href="'+r.poolUrl+'" target="_blank" class="md-btn">View on GeckoTerminal ↗</a>'+
+      (r.tokenAddr?'<a href="/rugcheck.html?chain='+NET+'&address='+encodeURIComponent(r.tokenAddr)+'" class="md-btn">🛡️ Rug Check</a>':'')+
       '<button class="md-btn gold" id="md-alert">🔔 Set alert</button>'+
     '</div>'+
     '<div id="md-alert-form" style="display:none;margin-top:14px"></div>'+
