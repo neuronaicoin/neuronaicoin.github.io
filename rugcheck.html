@@ -138,7 +138,7 @@
       <input type="text" id="addr" placeholder="Paste token contract address (0x… or Solana mint)" autocomplete="off" spellcheck="false">
       <button class="scan-btn" id="scan">Scan</button>
     </div>
-    <div class="hint">Tip: find the contract address on GeckoTerminal, DexScreener, or the project's official page. Never trust addresses from random DMs.</div>
+    <div class="hint">Paste the <b style="color:var(--muted)">token</b> contract address (0x…). Pasted a pool/pair address by accident? No problem — we'll auto-detect the token behind it. Never trust addresses from random DMs.</div>
   </div>
 
   <div class="status" id="status">Ready to scan.</div>
@@ -299,7 +299,7 @@ function renderReport(rep, name, addr){
 async function scan(){
   hideErr();
   const chain=$('chain').value;
-  const addr=$('addr').value.trim();
+  let addr=$('addr').value.trim();
   if(!addr){ setStatus('Paste a contract address first.','var(--amber)'); return; }
   if(chain==='robinhood'){
     showErr('<b>Robinhood Chain isn\'t covered by security data providers yet</b> — it\'s a brand-new chain. '+
@@ -314,28 +314,56 @@ async function scan(){
     let url, data, rep, name='Token';
     if(chain==='solana'){
       url=GO+'/solana/token_security?contract_addresses='+encodeURIComponent(addr);
-      const r=await fetch(url); const j=await r.json();
+      let r=await fetch(url); let j=await r.json();
       data=j.result&&(j.result[addr]||Object.values(j.result)[0]);
-      if(!data) throw new Error('Token not found in security database. Check the address & chain.');
+      if(!data){
+        // belki pool adresi yapıştırıldı — GeckoTerminal'den token'ı bul
+        const tok=await poolToToken('solana',addr);
+        if(tok){ addr=tok; setStatus('🛡️ That was a pool address — found the token, scanning…');
+          r=await fetch(GO+'/solana/token_security?contract_addresses='+encodeURIComponent(addr));
+          j=await r.json(); data=j.result&&(j.result[addr]||Object.values(j.result)[0]); }
+      }
+      if(!data) throw new Error('Token not found. Make sure you pasted the TOKEN contract address (not a pool/pair address) and picked the right chain.');
       name=(data.metadata&&(data.metadata.symbol||data.metadata.name))||'Solana token';
       rep=buildSolReport(data);
     } else {
       url=GO+'/token_security/'+chain+'?contract_addresses='+encodeURIComponent(addr);
-      const r=await fetch(url); const j=await r.json();
-      const key=addr.toLowerCase();
+      let r=await fetch(url); let j=await r.json();
+      let key=addr.toLowerCase();
       data=j.result&&(j.result[key]||Object.values(j.result)[0]);
-      if(!data) throw new Error('Token not found in security database. Check the address & chain.');
+      if(!data){
+        // belki pool adresi yapıştırıldı — GeckoTerminal'den token'ı bul
+        const gtNet={ '1':'eth','8453':'base','42161':'arbitrum','56':'bsc','137':'polygon_pos' }[chain];
+        const tok=gtNet? await poolToToken(gtNet,addr):null;
+        if(tok){ addr=tok; key=addr.toLowerCase();
+          setStatus('🛡️ That was a pool address — found the token, scanning…');
+          r=await fetch(GO+'/token_security/'+chain+'?contract_addresses='+encodeURIComponent(addr));
+          j=await r.json(); data=j.result&&(j.result[key]||Object.values(j.result)[0]); }
+      }
+      if(!data) throw new Error('Token not found. Make sure you pasted the TOKEN contract address (not a pool/pair address) and picked the right chain.');
       name=data.token_symbol||data.token_name||'Token';
       rep=buildReport(data,name);
     }
     renderReport(rep,name,addr);
     setStatus('<span style="color:var(--green)">●</span> Scan complete · '+new Date().toLocaleTimeString());
   }catch(e){
-    showErr('<b>Scan failed:</b> '+(e.message||'Unknown error')+'<br>Double-check the address and selected chain. '+
+    showErr('<b>Scan failed:</b> '+(e.message||'Unknown error')+'<br>Tip: paste the <b>token</b> contract address — on GeckoTerminal/DexScreener it\'s shown on the token page (not the pool/pair address in the URL). '+
       'If it keeps failing, the security API may be rate-limited — wait a minute and retry.');
     setStatus('Error.','var(--red)');
   }
   btn.disabled=false; btn.textContent='Scan';
+}
+
+// pool adresi → base token adresi (GeckoTerminal ile)
+async function poolToToken(gtNet,poolAddr){
+  try{
+    const r=await fetch('https://api.geckoterminal.com/api/v2/networks/'+gtNet+'/pools/'+encodeURIComponent(poolAddr));
+    if(!r.ok) return null;
+    const j=await r.json();
+    const bid=j.data?.relationships?.base_token?.data?.id;
+    if(!bid) return null;
+    return bid.split('_').slice(1).join('_');
+  }catch(e){ return null; }
 }
 
 $('scan').onclick=scan;
