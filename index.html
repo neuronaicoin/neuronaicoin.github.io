@@ -123,6 +123,43 @@ section{position:relative;z-index:1;padding:clamp(4rem,9vw,7rem) clamp(1rem,4vw,
 .rv{opacity:0;transform:translateY(22px);transition:opacity .6s var(--ez),transform .6s var(--ez)}
 .rv.on{opacity:1;transform:none}
 
+/* ── TODAY ── */
+.today{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding-top:clamp(3rem,6vw,4.5rem);padding-bottom:clamp(3rem,6vw,4.5rem)}
+.td-head{display:flex;align-items:flex-end;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;margin-bottom:1.8rem}
+.td-date{font-family:var(--mono);font-size:.8rem;color:var(--tx3)}
+.td-copy{background:var(--grn);color:#080b11;border:none;border-radius:10px;padding:.8rem 1.4rem;font-family:var(--disp);
+  font-weight:700;font-size:.88rem;cursor:pointer;transition:.15s;white-space:nowrap}
+.td-copy:hover{background:var(--grn2);transform:translateY(-1px)}
+.td-copy.done{background:var(--gold)}
+.td-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+@media(max-width:760px){.td-grid{grid-template-columns:1fr}}
+.td-panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:1.4rem 1.5rem}
+.td-ptitle{font-family:var(--disp);font-size:1rem;font-weight:700;margin-bottom:1rem}
+.td-ptitle.ok{color:var(--grn)}
+.td-ptitle.bad{color:#ff5f6d}
+.td-loading{font-family:var(--mono);font-size:.8rem;color:var(--tx3)}
+.td-row{display:flex;align-items:center;gap:.8rem;padding:.7rem 0;border-bottom:1px solid rgba(30,40,54,.6);
+  text-decoration:none;color:inherit;transition:.15s}
+.td-row:last-child{border-bottom:none}
+.td-row:hover{background:rgba(47,224,138,.03)}
+.td-score{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;font-family:var(--mono);
+  font-weight:700;font-size:1.05rem;flex-shrink:0}
+.td-score.hi{background:rgba(47,224,138,.13);color:var(--grn)}
+.td-score.mid{background:rgba(224,182,74,.12);color:var(--gold)}
+.td-score.lo{background:rgba(255,95,109,.13);color:#ff5f6d}
+.td-sym{font-family:var(--disp);font-weight:600;font-size:1rem;min-width:80px}
+.td-meta{font-family:var(--mono);font-size:.72rem;color:var(--tx3)}
+.td-chg{font-family:var(--mono);font-size:.85rem;font-weight:600;margin-left:auto}
+.td-chg.up{color:var(--grn)}
+.td-chg.down{color:#ff5f6d}
+.td-flags{display:flex;gap:.3rem;flex-wrap:wrap}
+.td-flag{font-family:var(--mono);font-size:.6rem;padding:.15rem .4rem;border-radius:4px;font-weight:600}
+.td-flag.ok{background:rgba(47,224,138,.12);color:var(--grn)}
+.td-flag.warn{background:rgba(224,182,74,.12);color:var(--gold)}
+.td-flag.bad{background:rgba(255,95,109,.13);color:#ff5f6d}
+.td-foot{margin-top:1.3rem;font-family:var(--mono);font-size:.72rem;color:var(--tx3);line-height:1.6}
+.td-foot a{color:var(--grn);text-decoration:none}
+
 /* ── TOOLS (main focus) ── */
 .tools{background:linear-gradient(180deg,var(--bg),var(--bg2))}
 .support-strip{display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;
@@ -326,6 +363,31 @@ footer{position:relative;z-index:1;background:var(--bg);border-top:1px solid var
     </div>
   </div>
 </header>
+
+<!-- TODAY ON ROBINHOOD CHAIN -->
+<section class="today" id="today">
+  <div class="con">
+    <div class="td-head">
+      <div>
+        <div class="eyebrow rv">Daily Intelligence</div>
+        <h2 class="shead rv" style="margin-bottom:.4rem">Today on Robinhood Chain</h2>
+        <p class="td-date rv" id="td-date">Loading live data…</p>
+      </div>
+      <button class="td-copy rv" id="td-copy">📋 Copy as tweet</button>
+    </div>
+    <div class="td-grid rv">
+      <div class="td-panel">
+        <div class="td-ptitle ok">✅ Healthiest today</div>
+        <div id="td-healthy"><div class="td-loading">Scanning pools…</div></div>
+      </div>
+      <div class="td-panel">
+        <div class="td-ptitle bad">⚠️ Highest risk today</div>
+        <div id="td-risky"><div class="td-loading">Scanning pools…</div></div>
+      </div>
+    </div>
+    <div class="td-foot rv">Live scores from <a href="/chainradar.html">Chain Radar</a> — liquidity, buy/sell pressure, volume &amp; risk flags. Updated on every visit. Not financial advice.</div>
+  </div>
+</section>
 
 <!-- TOOLS -->
 <section class="tools" id="tools">
@@ -612,7 +674,81 @@ async function loadTicker(){
 }
 loadTicker();
 
-// ── REVEAL
+// ── TODAY ON ROBINHOOD CHAIN
+const tdFmt=n=>{ if(n==null||isNaN(n))return '—';
+  if(n>=1e6)return '$'+(n/1e6).toFixed(2)+'M'; if(n>=1e3)return '$'+(n/1e3).toFixed(0)+'K'; return '$'+n.toFixed(0); };
+function tdScore(a){
+  // Chain Radar ile aynı mantık (kompakt)
+  let s=50; const flags=[];
+  const liq=parseFloat(a.reserve_in_usd)||0;
+  const vol=parseFloat(a.volume_usd?.h24)||0;
+  const mcap=parseFloat(a.market_cap_usd||a.fdv_usd)||0;
+  const ch24=parseFloat(a.price_change_percentage?.h24)||0;
+  const buys=a.transactions?.h24?.buys||0, sells=a.transactions?.h24?.sells||0;
+  const tot=buys+sells; const bp=tot>0?buys/tot:.5;
+  if(liq>=250000){s+=15;flags.push(['ok','LIQ OK']);}
+  else if(liq>=50000){s-=5;flags.push(['warn','LOW LIQ']);}
+  else {s-=25;flags.push(['bad','MICRO LIQ']);}
+  if(bp>=.58){s+=12;flags.push(['ok','BUY>SELL']);}
+  else if(bp<=.42){s-=12;flags.push(['bad','SELL>BUY']);}
+  const ageH=a.pool_created_at? (Date.now()-new Date(a.pool_created_at))/3600000:999;
+  if(ageH<24){s-=8;flags.push(['warn','FRESH']);}
+  if(mcap>0&&vol>mcap){s-=5;flags.push(['warn','HOT VOL']);}
+  if(ch24<=-40){s-=15;flags.push(['bad','DUMP RISK']);}
+  return {score:Math.max(0,Math.min(100,Math.round(s))),flags,liq,ch24};
+}
+let tdData={healthy:[],risky:[]};
+async function loadToday(){
+  try{
+    const r=await fetch('https://api.geckoterminal.com/api/v2/networks/robinhood/pools?include=base_token&sort=h24_volume_usd_desc&page=1');
+    if(!r.ok) throw 0;
+    const j=await r.json();
+    const inc={}; (j.included||[]).forEach(x=>inc[x.id]=x.attributes);
+    const pools=(j.data||[]).map(p=>{
+      const a=p.attributes;
+      const bid=p.relationships?.base_token?.data?.id;
+      const sym=(bid&&inc[bid]?.symbol)||(a.name||'?').split('/')[0].trim();
+      const sc=tdScore(a);
+      return {sym,...sc};
+    }).filter(p=>p.sym&&p.sym!=='?');
+    // uniq by sym (en yüksek hacimli kalır - zaten sıralı)
+    const seen={}; const uniq=[];
+    pools.forEach(p=>{ if(!seen[p.sym]){seen[p.sym]=1;uniq.push(p);} });
+    const sorted=[...uniq].sort((a,b)=>b.score-a.score);
+    tdData.healthy=sorted.slice(0,3);
+    tdData.risky=sorted.slice(-3).reverse();
+    const row=p=>{
+      const cls=p.score>=65?'hi':(p.score>=45?'mid':'lo');
+      const fl=p.flags.slice(0,2).map(f=>'<span class="td-flag '+f[0]+'">'+f[1]+'</span>').join('');
+      return '<a class="td-row" href="/chainradar.html">'+
+        '<span class="td-score '+cls+'">'+p.score+'</span>'+
+        '<div><div class="td-sym">'+p.sym+'</div><div class="td-meta">'+tdFmt(p.liq)+' liq</div></div>'+
+        '<div class="td-flags">'+fl+'</div>'+
+        '<span class="td-chg '+(p.ch24>=0?'up':'down')+'">'+(p.ch24>=0?'+':'')+p.ch24.toFixed(1)+'%</span></a>';
+    };
+    document.getElementById('td-healthy').innerHTML=tdData.healthy.map(row).join('');
+    document.getElementById('td-risky').innerHTML=tdData.risky.map(row).join('');
+    document.getElementById('td-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})+' · live scores · updated just now';
+  }catch(e){
+    document.getElementById('td-healthy').innerHTML='<div class="td-loading">Live data unavailable — open <a href="/chainradar.html" style="color:var(--grn)">Chain Radar</a> directly.</div>';
+    document.getElementById('td-risky').innerHTML='<div class="td-loading">—</div>';
+  }
+}
+loadToday();
+document.getElementById('td-copy').onclick=async function(){
+  if(!tdData.healthy.length){ return; }
+  const h=tdData.healthy[0], r=tdData.risky[0];
+  const txt='Today on Robinhood Chain 📡\n\n'+
+    '✅ Healthiest: $'+h.sym+' — score '+h.score+' ('+tdFmt(h.liq)+' liq)\n'+
+    '⚠️ Highest risk: $'+r.sym+' — score '+r.score+(r.flags.length?' ('+r.flags.map(f=>f[1]).join(', ')+')':'')+'\n\n'+
+    'Live scores, free:\n🔗 neuronaicoin.com/chainradar.html\n\n#RobinhoodChain #DeFi';
+  try{ await navigator.clipboard.writeText(txt); }
+  catch(e){ const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e2){}document.body.removeChild(ta); }
+  this.textContent='COPIED ✓'; this.classList.add('done');
+  const b=this; setTimeout(()=>{b.textContent='📋 Copy as tweet';b.classList.remove('done');},1800);
+};
+
+
 const obs=new IntersectionObserver(es=>es.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('on'),i*40)}),{threshold:.12});
 document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
 
