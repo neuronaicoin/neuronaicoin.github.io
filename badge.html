@@ -130,14 +130,22 @@ async function renderBadge(){
   const app=document.getElementById('app');
   app.innerHTML='<div class="badge b-hi" style="justify-content:center"><div class="b-loading"><span class="b-dot"></span> NEURON scanning…</div></div>';
   try{
+    let a=null;
     const r=await fetch(API+'/networks/'+NET_CHAIN+'/tokens/'+encodeURIComponent(NET_TOKEN)+'/pools?page=1');
-    if(!r.ok) throw 0;
-    const j=await r.json();
-    const pools=j.data||[];
-    if(!pools.length) throw 0;
-    // en yüksek likiditeli pool
-    pools.sort((x,y)=>(parseFloat(y.attributes.reserve_in_usd)||0)-(parseFloat(x.attributes.reserve_in_usd)||0));
-    const a=pools[0].attributes;
+    if(r.ok){
+      const j=await r.json();
+      const pools=j.data||[];
+      if(pools.length){
+        pools.sort((x,y)=>(parseFloat(y.attributes.reserve_in_usd)||0)-(parseFloat(x.attributes.reserve_in_usd)||0));
+        a=pools[0].attributes;
+      }
+    }
+    // fallback: adres bir pool olabilir — direkt pool olarak dene
+    if(!a){
+      const r2=await fetch(API+'/networks/'+NET_CHAIN+'/pools/'+encodeURIComponent(NET_TOKEN));
+      if(r2.ok){ const j2=await r2.json(); a=j2.data?.attributes||null; }
+    }
+    if(!a) throw 0;
     const score=scorePool(a);
     const sym=(a.name||'?').split('/')[0].trim();
     const cls=score>=65?'b-hi':(score>=45?'b-mid':'b-lo');
@@ -194,12 +202,11 @@ function renderGenerator(){
       addr=gm[3]; isPool=(gm[2]==='pools'); document.getElementById('g-addr').value=addr; }
     st.textContent='⚡ Resolving token…';
     try{
-      // pool ise token'a çevir; değilse token'ı doğrula
+      // ÖNCE pool mu diye dene (pool kontratları LP token gibi görünebilir) — pool'sa base token'a çevir
       let tokenAddr=addr;
-      if(isPool||!(await tokenExists(chain,addr))){
-        const t=await poolToToken(chain,addr);
-        if(t) tokenAddr=t; else throw new Error('Token not found on '+CHAINS[chain]+'. Check the address & chain.');
-      }
+      const t=await poolToToken(chain,addr);
+      if(t) tokenAddr=t;
+      else if(!(await tokenExists(chain,addr))) throw new Error('Token not found on '+CHAINS[chain]+'. Check the address & chain.');
       const base=location.origin+location.pathname;
       const url=base+'?chain='+chain+'&token='+tokenAddr;
       const code='<iframe src="'+url+'" width="320" height="110" frameborder="0" scrolling="no" style="border:0;overflow:hidden"></iframe>';
