@@ -88,6 +88,33 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;ali
 .tc-whale .tool-status.on{background:rgba(74,168,255,.12);color:#4aa8ff}
 .tc-whale .tool-status.on .d{background:#4aa8ff}
 
+/* contact form */
+.contact-box{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:1.8rem;max-width:640px;margin:0 auto 1.5rem}
+.contact-box h3{font-family:var(--disp);font-size:1.15rem;font-weight:700;margin-bottom:.4rem}
+.contact-box>p{font-size:.85rem;color:var(--tx2);margin-bottom:1.2rem;line-height:1.5}
+.cform{display:flex;flex-direction:column;gap:.7rem}
+.cf-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+@media(max-width:560px){.cf-row{grid-template-columns:1fr}}
+.cform input,.cform textarea{background:var(--bg);border:1px solid var(--line2,#245038);border-radius:10px;color:var(--tx);
+  font-family:var(--body,'Space Grotesk');font-size:.88rem;padding:.85rem 1rem;outline:none;width:100%;resize:vertical}
+.cform input:focus,.cform textarea:focus{border-color:var(--grn)}
+.cform input::placeholder,.cform textarea::placeholder{color:var(--tx3)}
+.cf-send{background:var(--grn);color:#080b11;border:none;border-radius:10px;padding:.9rem;font-family:var(--disp);
+  font-weight:700;font-size:.95rem;cursor:pointer;transition:.15s}
+.cf-send:hover{background:var(--grn2);transform:translateY(-1px)}
+.cf-send:disabled{opacity:.6;cursor:wait;transform:none}
+.cf-status{font-family:var(--mono);font-size:.78rem;text-align:center;min-height:1.1em}
+.cf-status.ok{color:var(--grn)}
+.cf-status.err{color:#ff5f6d}
+
+/* dump alert card identity */
+.tc-dump::before{background:linear-gradient(90deg,#ff5f6d,transparent)}
+.tc-dump .tool-ic{border-color:rgba(255,95,109,.4);background:rgba(255,95,109,.08)}
+.tc-dump.live:hover{border-color:#ff5f6d}
+.tc-dump .tool-foot{color:#ff5f6d}
+.tc-dump .tool-status.on{background:rgba(255,95,109,.12);color:#ff5f6d}
+.tc-dump .tool-status.on .d{background:#ff5f6d}
+
 /* tool identity buttons */
 .tool-btn{position:relative;font-weight:700}
 .tb-radar{background:linear-gradient(135deg,#2fe08a,#1eb56e);color:#07100c;box-shadow:0 4px 20px rgba(47,224,138,.25)}
@@ -95,6 +122,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;ali
 .tb-rug{background:linear-gradient(135deg,#e0b64a,#c99a2e);color:#140f04;box-shadow:0 4px 20px rgba(224,182,74,.25)}
 .tb-rug:hover{background:linear-gradient(135deg,#eec55c,#d4a63a);box-shadow:0 8px 32px rgba(224,182,74,.4);transform:translateY(-2px)}
 .tb-whale{background:linear-gradient(135deg,#4aa8ff,#2f7fd6);color:#041020;box-shadow:0 4px 20px rgba(74,168,255,.25)}
+.tb-dump{background:linear-gradient(135deg,#ff5f6d,#d64550);color:#100708;box-shadow:0 4px 20px rgba(255,95,109,.25)}
+.tb-dump:hover{background:linear-gradient(135deg,#ff7a86,#e0525d);box-shadow:0 8px 32px rgba(255,95,109,.4);transform:translateY(-2px)}
 .tb-whale:hover{background:linear-gradient(135deg,#63b6ff,#3d8de0);box-shadow:0 8px 32px rgba(74,168,255,.4);transform:translateY(-2px)}
 
 /* live ticker (signature element) */
@@ -353,6 +382,7 @@ footer{position:relative;z-index:1;background:var(--bg);border-top:1px solid var
     <a href="/chainradar.html" class="btn-p tool-btn tb-radar">📡 Chain Radar</a>
     <a href="/rugcheck.html" class="btn-p tool-btn tb-rug">🛡️ Rug Check</a>
     <a href="/whalewatch.html" class="btn-p tool-btn tb-whale">🐋 Whale Watch</a>
+    <a href="/dumpalert.html" class="btn-p tool-btn tb-dump">🚨 Dump Alert</a>
     <a href="#tools" class="btn-s">All tools</a>
   </div>
 
@@ -442,6 +472,17 @@ footer{position:relative;z-index:1;background:var(--bg);border-top:1px solid var
         <p>One-tap contract safety scan. Honeypot detection, taxes, ownership, mint rights, holder concentration — the checks that separate a project from a trap. Ethereum, Base, Arbitrum, BSC, Polygon &amp; Solana.</p>
         <div class="tool-tags"><span class="ttag">safety</span><span class="ttag">contract-scan</span><span class="ttag">free</span></div>
         <div class="tool-foot">Open Rug Check →</div>
+      </a>
+
+      <a href="/dumpalert.html" class="tool live rv tc-dump">
+        <div class="tool-top">
+          <div class="tool-ic">🚨</div>
+          <span class="tool-status on"><span class="d"></span>LIVE</span>
+        </div>
+        <h3>Dump Alert</h3>
+        <p>Know what to avoid. Live crash watch: the biggest 24h drops, the weakest structures and the pools where money is heading for the exit — before you walk in.</p>
+        <div class="tool-tags"><span class="ttag">crash-watch</span><span class="ttag">risk</span><span class="ttag">free</span></div>
+        <div class="tool-foot">Open Dump Alert →</div>
       </a>
 
       <div class="tool soon rv">
@@ -594,6 +635,24 @@ footer{position:relative;z-index:1;background:var(--bg);border-top:1px solid var
       </a>
     </div>
 
+    <div class="contact-box rv" id="contact">
+      <h3>📬 Contact us</h3>
+      <p>Questions, feedback, partnership ideas or a tool request — we read everything.</p>
+      <form id="cform" class="cform">
+        <div class="cf-row">
+          <input type="text" name="first_name" id="cf-fn" placeholder="First name" required>
+          <input type="text" name="last_name" id="cf-ln" placeholder="Last name" required>
+        </div>
+        <div class="cf-row">
+          <input type="text" name="country" id="cf-co" placeholder="Country" required>
+          <input type="email" name="email" id="cf-em" placeholder="Email address" required>
+        </div>
+        <textarea name="message" id="cf-msg" placeholder="Your message…" rows="4" required></textarea>
+        <button type="submit" class="cf-send" id="cf-send">Send message</button>
+        <div class="cf-status" id="cf-status"></div>
+      </form>
+    </div>
+
     <div class="donate-box rv">
       <h3>Help us build more tools 🙏</h3>
       <p>Every NEURON tool is free and always will be. To keep building and shipping new AI tools for the onchain economy, we rely on your support. If our tools help you, please consider a USDT donation — it goes straight into building the next one.</p>
@@ -620,6 +679,8 @@ footer{position:relative;z-index:1;background:var(--bg);border-top:1px solid var
         <li><a href="/chainradar.html">Chain Radar</a></li>
         <li><a href="/rugcheck.html">Rug Check</a></li>
         <li><a href="/whalewatch.html">Whale Watch</a></li>
+        <li><a href="/dumpalert.html">Dump Alert</a></li>
+        <li><a href="#contact">Contact</a></li>
         <li><a href="#roadmap">Roadmap</a></li>
         <li><a href="#token">$NEURON</a></li>
       </ul>
@@ -673,6 +734,33 @@ async function loadTicker(){
   }catch(e){/* keep placeholder */}
 }
 loadTicker();
+
+// ── CONTACT FORM (Formspree)
+const cform=document.getElementById('cform');
+if(cform){
+  cform.addEventListener('submit',async function(e){
+    e.preventDefault();
+    const btn=document.getElementById('cf-send');
+    const st=document.getElementById('cf-status');
+    btn.disabled=true; btn.textContent='Sending…'; st.className='cf-status'; st.textContent='';
+    try{
+      const data=new FormData(cform);
+      const r=await fetch('https://formspree.io/f/xlgqlaby',{
+        method:'POST', body:data, headers:{'Accept':'application/json'}
+      });
+      if(r.ok){
+        st.className='cf-status ok'; st.textContent='Message sent ✓ — we\'ll get back to you.';
+        cform.reset();
+      } else {
+        const j=await r.json().catch(()=>({}));
+        throw new Error((j.errors&&j.errors[0]&&j.errors[0].message)||'Send failed');
+      }
+    }catch(err){
+      st.className='cf-status err'; st.textContent='⚠ Could not send — please try again in a minute.';
+    }
+    btn.disabled=false; btn.textContent='Send message';
+  });
+}
 
 // ── TODAY ON ROBINHOOD CHAIN
 const tdFmt=n=>{ if(n==null||isNaN(n))return '—';
