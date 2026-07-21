@@ -463,15 +463,48 @@ async function run(){
   // blockscout URL yapıştırıldıysa
   const um=addr.match(/blockscout\.com\/(address|token)\/(0x[a-fA-F0-9]{40})/);
   if(um){ addr=um[2]; $('addr').value=addr; if(um[1]==='token') setMode('holders'); }
+  // geckoterminal URL yapıştırıldıysa
+  const gm=addr.match(/geckoterminal\.com\/([a-z0-9_-]+)\/(pools|tokens)\/(0x[a-fA-F0-9]{40})/i);
+  if(gm){
+    const netMap={robinhood:'robinhood',eth:'eth',base:'base',arbitrum:'arbitrum',polygon_pos:'polygon'};
+    if(netMap[gm[1]]) $('chain').value=netMap[gm[1]];
+    addr=gm[3]; $('addr').value=addr;
+    if(gm[2]==='pools'){ setMode('holders'); } // pool linki → token'ı bulup holders göster
+    else setMode('holders');
+  }
   const btn=$('go'); btn.disabled=true; btn.textContent='Loading…';
   try{
-    if(mode==='wallet') await loadWallet(chain,addr);
-    else await loadHolders(chain,addr);
+    if(mode==='holders'){
+      // token mu pool mu? önce token dene, olmazsa pool→token çevir
+      try{ await loadHolders(chain,addr); }
+      catch(e1){
+        setStatus('🔗 Not a token — checking if it\'s a pool…');
+        const tok=await poolToToken(chain,addr);
+        if(tok){ $('addr').value=tok; await loadHolders(chain,tok); }
+        else throw e1;
+      }
+    } else {
+      await loadWallet(chain,addr);
+    }
   }catch(e){
     showErr('<b>Failed:</b> '+esc(e.message||'Unknown error')+'<br>Tip: make sure the address exists on the selected chain. Public explorers can also rate-limit — wait a moment and retry.');
     setStatus('Error.','var(--red)');
   }
   btn.disabled=false; btn.textContent='Watch';
+}
+
+// pool adresi → base token adresi (GeckoTerminal ile)
+async function poolToToken(chain,poolAddr){
+  const gtNet={robinhood:'robinhood',eth:'eth',base:'base',arbitrum:'arbitrum',polygon:'polygon_pos'}[chain];
+  if(!gtNet) return null;
+  try{
+    const r=await fetch('https://api.geckoterminal.com/api/v2/networks/'+gtNet+'/pools/'+encodeURIComponent(poolAddr));
+    if(!r.ok) return null;
+    const j=await r.json();
+    const bid=j.data?.relationships?.base_token?.data?.id;
+    if(!bid) return null;
+    return bid.split('_').slice(1).join('_');
+  }catch(e){ return null; }
 }
 $('go').onclick=run;
 $('addr').addEventListener('keypress',e=>{ if(e.key==='Enter') run(); });
