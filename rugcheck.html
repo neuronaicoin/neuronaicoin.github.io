@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="NEURON Rug Check — one-tap token safety scan. Honeypot detection, taxes, ownership, holder concentration. Free.">
+<title>Rug Check — NEURON AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#07100c;--panel:#0c1a13;--panel2:#0f241a;--line:#1a3a2a;--line2:#245038;
+    --green:#2fe08a;--green2:#19b56b;--amber:#ffc24a;--red:#ff5f6d;
+    --text:#e6f5ec;--muted:#7fa38f;--faint:#4a6b58;
+  }
+  body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+    background-image:radial-gradient(ellipse at 50% -5%,rgba(47,224,138,.1),transparent 50%)}
+  .wrap{max-width:860px;margin:0 auto;padding:22px 16px 60px}
+
+  header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .shield-ic{width:44px;height:44px;border-radius:11px;background:linear-gradient(145deg,var(--green),var(--green2));
+    display:grid;place-items:center;position:relative;overflow:hidden}
+  .shield-ic img{width:100%;height:100%;object-fit:cover;border-radius:11px}
+  .shield-ic span{color:#07100c;font-weight:700;font-size:20px;z-index:1}
+  .brand h1{font-size:20px;font-weight:700;letter-spacing:-.01em}
+  .brand h1 b{color:var(--green)}
+  .brand p{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);letter-spacing:.05em}
+  .back{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);text-decoration:none;
+    border:1px solid var(--line);border-radius:9px;padding:8px 14px;transition:.15s}
+  .back:hover{color:var(--green);border-color:var(--green)}
+
+  .scan-box{background:linear-gradient(135deg,rgba(47,224,138,.07),var(--panel));border:1px solid var(--line);
+    border-radius:16px;padding:22px;margin-bottom:16px}
+  .sb-title{font-size:17px;font-weight:700;margin-bottom:4px}
+  .sb-sub{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+  .scan-row{display:flex;gap:9px;flex-wrap:wrap}
+  .chain-pick{background:var(--bg);border:1px solid var(--line2);color:var(--text);padding:12px 14px;border-radius:10px;
+    font-family:'Space Grotesk';font-weight:600;font-size:13px;cursor:pointer;outline:none}
+  .chain-pick:focus{border-color:var(--green)}
+  .scan-row input{flex:1;min-width:220px;background:var(--bg);border:1px solid var(--line2);border-radius:10px;
+    color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:12px 14px;outline:none}
+  .scan-row input:focus{border-color:var(--green)}
+  .scan-row input::placeholder{color:var(--faint)}
+  .scan-btn{background:var(--green);color:#07100c;border:none;border-radius:10px;padding:12px 24px;
+    font-family:'Space Grotesk';font-weight:700;font-size:14px;cursor:pointer;transition:.15s;white-space:nowrap}
+  .scan-btn:hover{background:var(--green2)}
+  .scan-btn:disabled{opacity:.55;cursor:wait}
+  .hint{margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);line-height:1.5}
+
+  .status{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);margin:14px 2px}
+
+  /* result */
+  .result{display:none}
+  .verdict-card{border-radius:16px;padding:24px;margin-bottom:14px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .verdict-card.ok{background:rgba(47,224,138,.09);border:1.5px solid rgba(47,224,138,.4)}
+  .verdict-card.warn{background:rgba(255,194,74,.08);border:1.5px solid rgba(255,194,74,.35)}
+  .verdict-card.bad{background:rgba(255,95,109,.09);border:1.5px solid rgba(255,95,109,.4)}
+  .v-score{width:84px;height:84px;border-radius:18px;display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;
+    font-weight:700;font-size:32px;flex-shrink:0}
+  .verdict-card.ok .v-score{background:rgba(47,224,138,.15);color:var(--green)}
+  .verdict-card.warn .v-score{background:rgba(255,194,74,.13);color:var(--amber)}
+  .verdict-card.bad .v-score{background:rgba(255,95,109,.14);color:var(--red)}
+  .v-info{flex:1;min-width:200px}
+  .v-name{font-size:21px;font-weight:700;margin-bottom:3px}
+  .v-verdict{font-size:15px;font-weight:600;margin-bottom:5px}
+  .verdict-card.ok .v-verdict{color:var(--green)}
+  .verdict-card.warn .v-verdict{color:var(--amber)}
+  .verdict-card.bad .v-verdict{color:var(--red)}
+  .v-sub{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--muted);word-break:break-all}
+
+  .checks{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+  @media(max-width:640px){.checks{grid-template-columns:1fr}}
+  .check{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;gap:11px;align-items:flex-start}
+  .check .cdot{width:9px;height:9px;border-radius:50%;margin-top:5px;flex-shrink:0}
+  .check.ok .cdot{background:var(--green)}
+  .check.warn .cdot{background:var(--amber)}
+  .check.bad .cdot{background:var(--red)}
+  .check.na .cdot{background:var(--faint)}
+  .c-title{font-size:13.5px;font-weight:600;margin-bottom:2px}
+  .c-desc{font-size:12px;color:var(--muted);line-height:1.45}
+
+  .holders{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
+  .h-title{font-size:14px;font-weight:700;margin-bottom:12px}
+  .h-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-family:'IBM Plex Mono',monospace;font-size:11.5px}
+  .h-addr{color:var(--muted);width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .h-bar{flex:1;height:7px;background:var(--panel2);border-radius:4px;overflow:hidden}
+  .h-fill{height:100%;background:var(--green2);border-radius:4px}
+  .h-pct{color:var(--text);font-weight:600;width:52px;text-align:right}
+  .h-tag{font-size:9.5px;color:var(--faint)}
+
+  .disclaimer{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);line-height:1.6;text-align:center;margin-top:18px}
+
+  .err-box{background:rgba(255,95,109,.08);border:1px solid rgba(255,95,109,.3);border-radius:12px;padding:16px 18px;
+    font-size:13px;color:var(--text);line-height:1.6;display:none}
+  .err-box b{color:var(--red)}
+
+  /* donate */
+  .donate{margin-top:26px;padding:18px 20px;background:linear-gradient(135deg,rgba(47,224,138,.06),var(--panel));
+    border:1px solid var(--line);border-radius:14px;text-align:center}
+  .donate h3{font-size:15px;font-weight:700;margin-bottom:5px}
+  .donate p{font-size:12px;color:var(--muted);margin-bottom:13px;line-height:1.5}
+  .addr-row{display:inline-flex;align-items:center;gap:9px;background:var(--bg);border:1.5px solid var(--green);
+    border-radius:11px;padding:8px 8px 8px 13px;flex-wrap:wrap;justify-content:center;max-width:100%}
+  .addr-row code{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--text);word-break:break-all}
+  .copy-btn{background:var(--green);color:#07100c;border:none;border-radius:8px;padding:8px 14px;
+    font-family:'Space Grotesk';font-weight:700;font-size:12px;cursor:pointer}
+  .net-warn{margin-top:9px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#07100c;background:var(--amber);
+    border-radius:8px;padding:7px 12px;font-weight:600;display:inline-block}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="shield-ic"><img src="logo.png" alt="N" onerror="this.style.display='none';this.parentNode.innerHTML='<span>🛡</span>'"></div>
+      <div>
+        <h1>Rug <b>Check</b></h1>
+        <p>token safety scanner · by NEURON AI</p>
+      </div>
+    </div>
+    <a class="back" href="/chainradar.html">📡 Chain Radar →</a>
+  </header>
+
+  <div class="scan-box">
+    <div class="sb-title">🛡️ Scan any token before you touch it</div>
+    <div class="sb-sub">Paste a contract address. We check honeypot risk, taxes, ownership, mint rights, holder concentration and more — in seconds. Free.</div>
+    <div class="scan-row">
+      <select id="chain" class="chain-pick">
+        <option value="1">Ethereum</option>
+        <option value="8453">Base</option>
+        <option value="42161">Arbitrum</option>
+        <option value="56">BSC</option>
+        <option value="137">Polygon</option>
+        <option value="solana">Solana</option>
+        <option value="robinhood">Robinhood Chain</option>
+      </select>
+      <input type="text" id="addr" placeholder="Paste token contract address (0x… or Solana mint)" autocomplete="off" spellcheck="false">
+      <button class="scan-btn" id="scan">Scan</button>
+    </div>
+    <div class="hint">Tip: find the contract address on GeckoTerminal, DexScreener, or the project's official page. Never trust addresses from random DMs.</div>
+  </div>
+
+  <div class="status" id="status">Ready to scan.</div>
+  <div class="err-box" id="errbox"></div>
+
+  <div class="result" id="result">
+    <div class="verdict-card" id="vcard">
+      <div class="v-score" id="vscore">—</div>
+      <div class="v-info">
+        <div class="v-name" id="vname">—</div>
+        <div class="v-verdict" id="vverdict">—</div>
+        <div class="v-sub" id="vsub">—</div>
+      </div>
+    </div>
+    <div class="checks" id="checks"></div>
+    <div class="holders" id="holders" style="display:none">
+      <div class="h-title">Top holders</div>
+      <div id="hrows"></div>
+    </div>
+  </div>
+
+  <div class="donate">
+    <h3>Support us to build more tools 🙏</h3>
+    <p>Rug Check is free and will stay free. Your USDT donation helps us build and add new tools.</p>
+    <div class="addr-row">
+      <code id="daddr">0xD20DC98870a1731b287f9C16ba8FB0AaA448fbDA</code>
+      <button class="copy-btn" id="dcopy">COPY</button>
+    </div>
+    <div><span class="net-warn">⚠️ USDT on ARBITRUM ONE network only</span></div>
+  </div>
+
+  <div class="disclaimer">Rug Check uses public security data (GoPlus). No scan is a guarantee — contracts can hide risks and data can lag.<br>Informational only. Not financial advice. Always DYOR.</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const GO='https://api.gopluslabs.io/api/v1';
+
+function setStatus(t,color){ $('status').innerHTML=t; $('status').style.color=color||'var(--muted)'; }
+function showErr(html){ $('errbox').innerHTML=html; $('errbox').style.display='block'; $('result').style.display='none'; }
+function hideErr(){ $('errbox').style.display='none'; }
+
+// ── scoring: 100'den başla, risklere göre düş
+function buildReport(d, sym){
+  const checks=[]; let score=100; let critical=false;
+  const yes=v=>v==='1'; const num=v=>parseFloat(v||'0');
+
+  // HONEYPOT (kritik)
+  if(yes(d.is_honeypot)){ critical=true; score=0;
+    checks.push(['bad','Honeypot detected','You can buy but you can NOT sell. This is a trap. Stay away.']); }
+  else checks.push(['ok','Not a honeypot','Simulation shows selling is possible.']);
+
+  // sell restrictions
+  if(yes(d.cannot_sell_all)){ score-=35; checks.push(['bad','Cannot sell all','The contract blocks selling your full balance — classic trap mechanic.']); }
+  if(yes(d.transfer_pausable)){ score-=15; checks.push(['bad','Transfers can be paused','The owner can freeze all trading at any moment.']); }
+  if(yes(d.is_blacklisted)){ score-=15; checks.push(['warn','Blacklist function','The owner can block specific wallets from trading.']); }
+  if(yes(d.slippage_modifiable)){ score-=15; checks.push(['bad','Tax can be changed','The owner can raise buy/sell tax later — even to 100%.']); }
+
+  // taxes
+  const bt=num(d.buy_tax)*100, st=num(d.sell_tax)*100;
+  if(bt>10||st>10){ score-=20; checks.push(['bad','High tax ('+bt.toFixed(0)+'% buy / '+st.toFixed(0)+'% sell)','Heavy taxes eat your position on every trade.']); }
+  else if(bt>5||st>5){ score-=10; checks.push(['warn','Notable tax ('+bt.toFixed(0)+'% / '+st.toFixed(0)+'%)','Higher than typical — factor it in.']); }
+  else checks.push(['ok','Low/zero tax ('+bt.toFixed(0)+'% / '+st.toFixed(0)+'%)','Buy and sell taxes look normal.']);
+
+  // ownership
+  const owner=(d.owner_address||'').toLowerCase();
+  const renounced=!owner||owner==='0x0000000000000000000000000000000000000000'||owner.includes('dead');
+  if(renounced) checks.push(['ok','Ownership renounced','No one can modify the contract anymore.']);
+  else { score-=10; checks.push(['warn','Owner still in control','The contract owner retains privileges. Check what they can do.']); }
+  if(yes(d.hidden_owner)){ score-=20; checks.push(['bad','Hidden owner','Ownership is obscured — a common rug pattern.']); }
+  if(yes(d.can_take_back_ownership)){ score-=20; checks.push(['bad','Ownership can be reclaimed','"Renounced" but can be taken back. Deceptive.']); }
+
+  // mint
+  if(yes(d.is_mintable)){ score-=15; checks.push(['bad','Mintable','New tokens can be created, diluting holders at will.']); }
+  else checks.push(['ok','Not mintable','Supply can not be inflated.']);
+
+  // source & proxy
+  if(yes(d.is_open_source)) checks.push(['ok','Open source','Contract code is verified and readable.']);
+  else { score-=20; checks.push(['bad','Closed source','Unverified code — impossible to audit. Big red flag.']); }
+  if(yes(d.is_proxy)){ score-=10; checks.push(['warn','Proxy contract','Logic can be swapped behind the scenes.']); }
+  if(yes(d.selfdestruct)){ score-=30; checks.push(['bad','Self-destruct present','The contract can destroy itself.']); }
+
+  // holders concentration
+  let topPct=0;
+  if(Array.isArray(d.holders)&&d.holders.length){
+    topPct=d.holders.slice(0,10).reduce((s,h)=>s+num(h.percent)*100,0);
+    if(topPct>50){ score-=15; checks.push(['bad','Top 10 hold '+topPct.toFixed(0)+'%','Extremely concentrated — few wallets control the price.']); }
+    else if(topPct>30){ score-=8; checks.push(['warn','Top 10 hold '+topPct.toFixed(0)+'%','Fairly concentrated. Watch for coordinated dumps.']); }
+    else checks.push(['ok','Top 10 hold '+topPct.toFixed(0)+'%','Distribution looks reasonable.']);
+  }
+
+  // LP lock
+  if(Array.isArray(d.lp_holders)&&d.lp_holders.length){
+    const locked=d.lp_holders.reduce((s,h)=>s+(yes(h.is_locked)?num(h.percent):0),0)*100;
+    if(locked>=80) checks.push(['ok','Liquidity mostly locked ('+locked.toFixed(0)+'%)','LP tokens are locked — rug pull is harder.']);
+    else if(locked>=30){ score-=8; checks.push(['warn','Liquidity partially locked ('+locked.toFixed(0)+'%)','Some LP is free to pull.']); }
+    else { score-=15; checks.push(['bad','Liquidity not locked','The team can pull liquidity at any time.']); }
+  }
+
+  score=Math.max(0,Math.min(100,Math.round(score)));
+  let verdict,cls;
+  if(critical){ verdict='CRITICAL — HONEYPOT'; cls='bad'; }
+  else if(score>=80){ verdict='Low risk profile'; cls='ok'; }
+  else if(score>=50){ verdict='Caution — mixed signals'; cls='warn'; }
+  else { verdict='High risk — data says stay sharp'; cls='bad'; }
+
+  return {score,verdict,cls,checks,holders:d.holders||[]};
+}
+
+// ── solana raporu (alanlar farklı)
+function buildSolReport(d){
+  const checks=[]; let score=100;
+  const yes=v=>v==='1'||v===1||v===true;
+  if(d.mint_authority&&d.mint_authority.length){ score-=25; checks.push(['bad','Mint authority active','New tokens can be minted — supply can be inflated.']); }
+  else checks.push(['ok','Mint authority revoked','Supply can not be inflated.']);
+  if(d.freeze_authority&&d.freeze_authority.length){ score-=25; checks.push(['bad','Freeze authority active','Your tokens can be frozen in your wallet.']); }
+  else checks.push(['ok','Freeze authority revoked','Tokens can not be frozen.']);
+  if(yes(d.metadata_mutable&&d.metadata_mutable.status)){ score-=10; checks.push(['warn','Metadata mutable','Name/logo can be changed — used in impersonation scams.']); }
+  if(yes(d.transfer_fee&&d.transfer_fee.status)){ score-=10; checks.push(['warn','Transfer fee present','A fee is taken on transfers.']); }
+  if(yes(d.closable&&d.closable.status)){ score-=20; checks.push(['bad','Token account closable','Accounts can be closed by authority.']); }
+  let topPct=0;
+  if(Array.isArray(d.holders)&&d.holders.length){
+    topPct=d.holders.slice(0,10).reduce((s,h)=>s+parseFloat(h.percent||0)*100,0);
+    if(topPct>50){ score-=15; checks.push(['bad','Top 10 hold '+topPct.toFixed(0)+'%','Extremely concentrated.']); }
+    else if(topPct>30){ score-=8; checks.push(['warn','Top 10 hold '+topPct.toFixed(0)+'%','Fairly concentrated.']); }
+    else checks.push(['ok','Top 10 hold '+topPct.toFixed(0)+'%','Distribution looks reasonable.']);
+  }
+  score=Math.max(0,Math.min(100,Math.round(score)));
+  let verdict,cls;
+  if(score>=80){ verdict='Low risk profile'; cls='ok'; }
+  else if(score>=50){ verdict='Caution — mixed signals'; cls='warn'; }
+  else { verdict='High risk — data says stay sharp'; cls='bad'; }
+  return {score,verdict,cls,checks,holders:d.holders||[]};
+}
+
+function renderReport(rep, name, addr){
+  const card=$('vcard'); card.className='verdict-card '+rep.cls;
+  $('vscore').textContent=rep.score;
+  $('vname').textContent=name||'Token';
+  $('vverdict').textContent=rep.verdict;
+  $('vsub').textContent=addr;
+  $('checks').innerHTML=rep.checks.map(c=>
+    '<div class="check '+c[0]+'"><span class="cdot"></span><div><div class="c-title">'+c[1]+'</div><div class="c-desc">'+c[2]+'</div></div></div>'
+  ).join('');
+  if(rep.holders&&rep.holders.length){
+    $('holders').style.display='block';
+    $('hrows').innerHTML=rep.holders.slice(0,8).map(h=>{
+      const p=(parseFloat(h.percent||0)*100);
+      const tag=h.is_contract==='1'?'contract':(h.is_locked==='1'?'locked':'');
+      return '<div class="h-row"><span class="h-addr">'+(h.address||'').slice(0,10)+'…</span>'+
+        '<div class="h-bar"><div class="h-fill" style="width:'+Math.min(100,p*2)+'%"></div></div>'+
+        '<span class="h-pct">'+p.toFixed(1)+'%</span><span class="h-tag">'+tag+'</span></div>';
+    }).join('');
+  } else $('holders').style.display='none';
+  $('result').style.display='block';
+}
+
+async function scan(){
+  hideErr();
+  const chain=$('chain').value;
+  const addr=$('addr').value.trim();
+  if(!addr){ setStatus('Paste a contract address first.','var(--amber)'); return; }
+  if(chain==='robinhood'){
+    showErr('<b>Robinhood Chain isn\'t covered by security data providers yet</b> — it\'s a brand-new chain. '+
+      'Until coverage arrives, use <a href="/chainradar.html" style="color:var(--green)">Chain Radar</a>\'s health score '+
+      '(liquidity, buy/sell pressure, risk flags) as your safety read. We\'ll enable Rug Check for Robinhood Chain the moment data is available.');
+    setStatus('Chain not covered yet.','var(--amber)');
+    return;
+  }
+  const btn=$('scan'); btn.disabled=true; btn.textContent='Scanning…';
+  setStatus('🛡️ Scanning contract…');
+  try{
+    let url, data, rep, name='Token';
+    if(chain==='solana'){
+      url=GO+'/solana/token_security?contract_addresses='+encodeURIComponent(addr);
+      const r=await fetch(url); const j=await r.json();
+      data=j.result&&(j.result[addr]||Object.values(j.result)[0]);
+      if(!data) throw new Error('Token not found in security database. Check the address & chain.');
+      name=(data.metadata&&(data.metadata.symbol||data.metadata.name))||'Solana token';
+      rep=buildSolReport(data);
+    } else {
+      url=GO+'/token_security/'+chain+'?contract_addresses='+encodeURIComponent(addr);
+      const r=await fetch(url); const j=await r.json();
+      const key=addr.toLowerCase();
+      data=j.result&&(j.result[key]||Object.values(j.result)[0]);
+      if(!data) throw new Error('Token not found in security database. Check the address & chain.');
+      name=data.token_symbol||data.token_name||'Token';
+      rep=buildReport(data,name);
+    }
+    renderReport(rep,name,addr);
+    setStatus('<span style="color:var(--green)">●</span> Scan complete · '+new Date().toLocaleTimeString());
+  }catch(e){
+    showErr('<b>Scan failed:</b> '+(e.message||'Unknown error')+'<br>Double-check the address and selected chain. '+
+      'If it keeps failing, the security API may be rate-limited — wait a minute and retry.');
+    setStatus('Error.','var(--red)');
+  }
+  btn.disabled=false; btn.textContent='Scan';
+}
+
+$('scan').onclick=scan;
+$('addr').addEventListener('keypress',e=>{ if(e.key==='Enter') scan(); });
+
+// URL parametreleriyle otomatik tarama (Chain Radar köprüsü)
+(function(){
+  const p=new URLSearchParams(location.search);
+  const a=p.get('address'); const c=p.get('chain');
+  if(c){
+    const map={eth:'1',base:'8453',arbitrum:'42161',bsc:'56',polygon_pos:'137',solana:'solana',robinhood:'robinhood'};
+    if(map[c]) $('chain').value=map[c];
+  }
+  if(a){ $('addr').value=a; scan(); }
+})();
+
+// donate copy
+$('dcopy').onclick=async function(){
+  const t=$('daddr').textContent;
+  try{ await navigator.clipboard.writeText(t); }catch(e){
+    const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select();
+    try{document.execCommand('copy');}catch(e2){} document.body.removeChild(ta);
+  }
+  this.textContent='COPIED ✓'; const b=this; setTimeout(()=>b.textContent='COPY',1500);
+};
+</script>
+</body>
+</html>
