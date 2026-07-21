@@ -897,8 +897,9 @@ function openDetail(sym){
     '</div>'+
     '<div class="md-flags">'+flagsHtml+'</div>'+
     '<div class="md-actions">'+
-      '<a href="'+r.poolUrl+'" target="_blank" class="md-btn">View on GeckoTerminal ↗</a>'+
+      '<a href="'+r.poolUrl+'" target="_blank" class="md-btn">GeckoTerminal ↗</a>'+
       (r.tokenAddr?'<a href="/rugcheck.html?chain='+NET+'&address='+encodeURIComponent(r.tokenAddr)+'" class="md-btn">🛡️ Rug Check</a>':'')+
+      (r.tokenAddr?'<a href="/whalewatch.html?chain='+NET+'&token='+encodeURIComponent(r.tokenAddr)+'" class="md-btn">🐋 Whale Watch</a>':'')+
       '<button class="md-btn gold" id="md-alert">🔔 Set alert</button>'+
     '</div>'+
     '<div id="md-alert-form" style="display:none;margin-top:14px"></div>'+
