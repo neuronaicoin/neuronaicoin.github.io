@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="NEURON Whale Watch — inspect any wallet: portfolio, moves, accumulation patterns. Track the smart money.">
+<title>Whale Watch — NEURON AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#07100c;--panel:#0c1a13;--panel2:#0f241a;--line:#1a3a2a;--line2:#245038;
+    --green:#2fe08a;--green2:#19b56b;--amber:#ffc24a;--red:#ff5f6d;--blue:#4aa8ff;
+    --text:#e6f5ec;--muted:#7fa38f;--faint:#4a6b58;
+  }
+  body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+    background-image:radial-gradient(ellipse at 50% -5%,rgba(47,224,138,.1),transparent 50%)}
+  .wrap{max-width:900px;margin:0 auto;padding:22px 16px 60px}
+
+  header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .ww-ic{width:44px;height:44px;border-radius:11px;background:linear-gradient(145deg,var(--green),var(--green2));
+    display:grid;place-items:center;overflow:hidden}
+  .ww-ic img{width:100%;height:100%;object-fit:cover;border-radius:11px}
+  .ww-ic span{color:#07100c;font-weight:700;font-size:20px}
+  .brand h1{font-size:20px;font-weight:700}
+  .brand h1 b{color:var(--green)}
+  .brand p{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);letter-spacing:.05em}
+  .hlinks{display:flex;gap:8px;flex-wrap:wrap}
+  .back{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);text-decoration:none;
+    border:1px solid var(--line);border-radius:9px;padding:8px 12px;transition:.15s}
+  .back:hover{color:var(--green);border-color:var(--green)}
+
+  .scan-box{background:linear-gradient(135deg,rgba(47,224,138,.07),var(--panel));border:1px solid var(--line);
+    border-radius:16px;padding:22px;margin-bottom:14px}
+  .sb-title{font-size:17px;font-weight:700;margin-bottom:4px}
+  .sb-sub{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+  .mode-seg{display:inline-flex;background:var(--bg);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:12px}
+  .mode-seg button{background:none;border:none;color:var(--muted);font-family:'Space Grotesk';font-weight:600;
+    font-size:12.5px;padding:9px 16px;cursor:pointer;transition:.15s}
+  .mode-seg button.on{background:var(--green);color:#07100c}
+  .scan-row{display:flex;gap:9px;flex-wrap:wrap}
+  .chain-pick{background:var(--bg);border:1px solid var(--line2);color:var(--text);padding:12px 14px;border-radius:10px;
+    font-family:'Space Grotesk';font-weight:600;font-size:13px;cursor:pointer;outline:none}
+  .scan-row input{flex:1;min-width:220px;background:var(--bg);border:1px solid var(--line2);border-radius:10px;
+    color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:12px 14px;outline:none}
+  .scan-row input:focus{border-color:var(--green)}
+  .scan-row input::placeholder{color:var(--faint)}
+  .scan-btn{background:var(--green);color:#07100c;border:none;border-radius:10px;padding:12px 24px;
+    font-family:'Space Grotesk';font-weight:700;font-size:14px;cursor:pointer;transition:.15s;white-space:nowrap}
+  .scan-btn:hover{background:var(--green2)}
+  .scan-btn:disabled{opacity:.55;cursor:wait}
+  .hint{margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);line-height:1.5}
+
+  /* watchlist chips */
+  .watchrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  .watchrow .wl{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--faint);letter-spacing:.06em}
+  .wchip{display:inline-flex;align-items:center;gap:7px;background:var(--panel);border:1px solid var(--line);
+    border-radius:20px;padding:6px 12px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--text);cursor:pointer;transition:.15s}
+  .wchip:hover{border-color:var(--green)}
+  .wchip .x{color:var(--faint);cursor:pointer;font-size:12px}
+  .wchip .x:hover{color:var(--red)}
+
+  .status{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);margin:12px 2px}
+  .err-box{background:rgba(255,95,109,.08);border:1px solid rgba(255,95,109,.3);border-radius:12px;padding:16px 18px;
+    font-size:13px;line-height:1.6;display:none}
+  .err-box b{color:var(--red)}
+
+  /* wallet result */
+  .result{display:none}
+  .w-head{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:12px;
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .w-emoji{font-size:34px}
+  .w-hinfo{flex:1;min-width:200px}
+  .w-addr{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--text);word-break:break-all;font-weight:600}
+  .w-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;padding:3px 9px;border-radius:6px;margin-top:6px;margin-right:5px}
+  .t-grn{background:rgba(47,224,138,.13);color:var(--green)}
+  .t-amb{background:rgba(255,194,74,.12);color:var(--amber)}
+  .t-red{background:rgba(255,95,109,.13);color:var(--red)}
+  .t-blu{background:rgba(74,168,255,.13);color:var(--blue)}
+  .t-mut{background:var(--panel2);color:var(--muted)}
+  .star-btn{background:none;border:1px solid var(--line);border-radius:9px;color:var(--faint);cursor:pointer;
+    font-size:16px;padding:8px 12px;transition:.15s}
+  .star-btn.on,.star-btn:hover{color:var(--amber);border-color:var(--amber)}
+  .ext{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;border:1px solid var(--line);
+    border-radius:9px;padding:9px 12px}
+  .ext:hover{color:var(--green);border-color:var(--green)}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .card .l{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+  .card .v{font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:600}
+  .card .s{font-size:11px;color:var(--muted);margin-top:2px}
+
+  /* insights */
+  .insights{background:linear-gradient(135deg,rgba(47,224,138,.06),var(--panel));border:1px solid var(--line);
+    border-radius:14px;padding:16px 18px;margin-bottom:12px}
+  .in-title{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--green);letter-spacing:.08em;font-weight:600;margin-bottom:10px}
+  .in-obs{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;line-height:1.5;margin:7px 0}
+  .in-obs .dot{width:7px;height:7px;border-radius:50%;margin-top:6px;flex-shrink:0}
+  .in-obs.ok .dot{background:var(--green)}
+  .in-obs.mid .dot{background:var(--amber)}
+  .in-obs.bad .dot{background:var(--red)}
+  .in-obs.info .dot{background:var(--blue)}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px}
+  .p-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+  .p-title .cnt{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint)}
+
+  /* portfolio table */
+  .pf-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(26,58,42,.5);
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px}
+  .pf-row:last-child{border-bottom:none}
+  .pf-sym{font-family:'Space Grotesk';font-weight:600;font-size:13.5px;min-width:90px;color:var(--text)}
+  .pf-amt{color:var(--muted)}
+  .pf-usd{margin-left:auto;font-weight:600;color:var(--text)}
+  .pf-share{width:64px;text-align:right;color:var(--faint);font-size:11px}
+  .pf-bar{width:90px;height:6px;background:var(--panel2);border-radius:4px;overflow:hidden}
+  .pf-fill{height:100%;background:var(--green2)}
+
+  /* moves */
+  .mv-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(26,58,42,.5);
+    font-family:'IBM Plex Mono',monospace;font-size:12px}
+  .mv-row:last-child{border-bottom:none}
+  .mv-dir{width:44px;text-align:center;font-weight:700;font-size:11px;padding:4px 0;border-radius:6px}
+  .mv-in{background:rgba(47,224,138,.13);color:var(--green)}
+  .mv-out{background:rgba(255,95,109,.13);color:var(--red)}
+  .mv-sym{font-family:'Space Grotesk';font-weight:600;font-size:13px;min-width:80px;color:var(--text)}
+  .mv-amt{color:var(--muted)}
+  .mv-time{margin-left:auto;color:var(--faint);font-size:11px}
+
+  /* holders */
+  .h-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(26,58,42,.5);
+    font-family:'IBM Plex Mono',monospace;font-size:12px;cursor:pointer;transition:.1s}
+  .h-row:hover{background:rgba(47,224,138,.04)}
+  .h-row:last-child{border-bottom:none}
+  .h-rank{width:28px;color:var(--faint)}
+  .h-addr{color:var(--text);font-weight:600}
+  .h-bar{flex:1;height:6px;background:var(--panel2);border-radius:4px;overflow:hidden;max-width:160px}
+  .h-fill{height:100%;background:var(--green2)}
+  .h-pct{width:60px;text-align:right;font-weight:600}
+  .h-hint{font-size:10px;color:var(--faint)}
+
+  .disclaimer{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);line-height:1.6;text-align:center;margin-top:18px}
+
+  .donate{margin-top:26px;padding:18px 20px;background:linear-gradient(135deg,rgba(47,224,138,.06),var(--panel));
+    border:1px solid var(--line);border-radius:14px;text-align:center}
+  .donate h3{font-size:15px;font-weight:700;margin-bottom:5px}
+  .donate p{font-size:12px;color:var(--muted);margin-bottom:13px;line-height:1.5}
+  .addr-row{display:inline-flex;align-items:center;gap:9px;background:var(--bg);border:1.5px solid var(--green);
+    border-radius:11px;padding:8px 8px 8px 13px;flex-wrap:wrap;justify-content:center;max-width:100%}
+  .addr-row code{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--text);word-break:break-all}
+  .copy-btn{background:var(--green);color:#07100c;border:none;border-radius:8px;padding:8px 14px;
+    font-family:'Space Grotesk';font-weight:700;font-size:12px;cursor:pointer}
+  .net-warn{margin-top:9px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#07100c;background:var(--amber);
+    border-radius:8px;padding:7px 12px;font-weight:600;display:inline-block}
+  @media(max-width:640px){ .pf-bar{display:none} .pf-share{width:auto} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="ww-ic"><img src="logo.png" alt="N" onerror="this.style.display='none';this.parentNode.innerHTML='<span>🐋</span>'"></div>
+      <div>
+        <h1>Whale <b>Watch</b></h1>
+        <p>wallet intelligence · by NEURON AI</p>
+      </div>
+    </div>
+    <div class="hlinks">
+      <a class="back" href="/chainradar.html">📡 Chain Radar</a>
+      <a class="back" href="/rugcheck.html">🛡️ Rug Check</a>
+    </div>
+  </header>
+
+  <div class="scan-box">
+    <div class="sb-title">🐋 Follow the smart money</div>
+    <div class="sb-sub">Inspect any wallet: portfolio, recent moves, accumulation patterns. Or load a token's top holders and dive into each whale.</div>
+    <div class="mode-seg">
+      <button id="m-wallet" class="on">Inspect wallet</button>
+      <button id="m-holders">Token top holders</button>
+    </div>
+    <div class="scan-row">
+      <select id="chain" class="chain-pick">
+        <option value="robinhood" selected>Robinhood Chain</option>
+        <option value="eth">Ethereum</option>
+        <option value="base">Base</option>
+        <option value="arbitrum">Arbitrum</option>
+        <option value="polygon">Polygon</option>
+      </select>
+      <input type="text" id="addr" placeholder="Paste wallet address (0x…)" autocomplete="off" spellcheck="false">
+      <button class="scan-btn" id="go">Watch</button>
+    </div>
+    <div class="hint" id="hint">Find whale addresses in any token's top holders (switch mode above), on Blockscout, or from onchain sleuths on X.</div>
+  </div>
+
+  <div class="watchrow" id="watchrow" style="display:none">
+    <span class="wl">MY WHALES:</span>
+    <span id="wchips"></span>
+  </div>
+
+  <div class="status" id="status">Ready.</div>
+  <div class="err-box" id="errbox"></div>
+
+  <div class="result" id="result"></div>
+
+  <div class="donate">
+    <h3>Support us to build more tools 🙏</h3>
+    <p>Whale Watch is free and will stay free. Your USDT donation helps us build and add new tools.</p>
+    <div class="addr-row">
+      <code id="daddr">0xD20DC98870a1731b287f9C16ba8FB0AaA448fbDA</code>
+      <button class="copy-btn" id="dcopy">COPY</button>
+    </div>
+    <div><span class="net-warn">⚠️ USDT on ARBITRUM ONE network only</span></div>
+  </div>
+
+  <div class="disclaimer">Data from public Blockscout explorers. Balances & prices can lag; not all tokens have USD rates.<br>Informational only. Not financial advice. Always DYOR.</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const BS={
+  robinhood:'https://robinhoodchain.blockscout.com',
+  eth:'https://eth.blockscout.com',
+  base:'https://base.blockscout.com',
+  arbitrum:'https://arbitrum.blockscout.com',
+  polygon:'https://polygon.blockscout.com'
+};
+const CHAIN_LABEL={robinhood:'Robinhood Chain',eth:'Ethereum',base:'Base',arbitrum:'Arbitrum',polygon:'Polygon'};
+let mode='wallet';
+
+function setStatus(t,c){ $('status').innerHTML=t; $('status').style.color=c||'var(--muted)'; }
+function showErr(h){ $('errbox').innerHTML=h; $('errbox').style.display='block'; $('result').style.display='none'; }
+function hideErr(){ $('errbox').style.display='none'; }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function short(a){ return a? a.slice(0,6)+'…'+a.slice(-4):''; }
+function fmtN(n){ if(n==null||isNaN(n))return '—';
+  if(Math.abs(n)>=1e9)return (n/1e9).toFixed(2)+'B'; if(Math.abs(n)>=1e6)return (n/1e6).toFixed(2)+'M';
+  if(Math.abs(n)>=1e3)return (n/1e3).toFixed(1)+'K'; if(Math.abs(n)>=1)return n.toFixed(2);
+  return n.toPrecision(3); }
+function fmtUsd(n){ return n==null||isNaN(n)?'—':'$'+fmtN(n); }
+function ago(ts){ const s=(Date.now()-new Date(ts).getTime())/1000;
+  if(s<3600)return Math.max(1,Math.round(s/60))+'m ago'; if(s<86400)return Math.round(s/3600)+'h ago';
+  return Math.round(s/86400)+'d ago'; }
+
+// ── watchlist
+function getW(){ try{return JSON.parse(localStorage.getItem('ww_watch')||'[]');}catch(e){return[];} }
+function setW(a){ try{localStorage.setItem('ww_watch',JSON.stringify(a));}catch(e){} }
+function renderWatch(){
+  const w=getW();
+  $('watchrow').style.display=w.length?'flex':'none';
+  $('wchips').innerHTML=w.map((x,i)=>'<span class="wchip" data-i="'+i+'">🐋 '+short(x.addr)+
+    ' <span class="x" data-x="'+i+'">✕</span></span>').join('');
+  document.querySelectorAll('.wchip').forEach(c=>{
+    c.onclick=(e)=>{
+      if(e.target.dataset.x!=null){ const w2=getW(); w2.splice(parseInt(e.target.dataset.x),1); setW(w2); renderWatch(); return; }
+      const x=getW()[parseInt(c.dataset.i)]; if(!x)return;
+      $('chain').value=x.chain; $('addr').value=x.addr; setMode('wallet'); run();
+    };
+  });
+}
+function inW(addr){ return getW().some(x=>x.addr.toLowerCase()===addr.toLowerCase()); }
+function toggleW(addr,chain){
+  let w=getW();
+  if(inW(addr)) w=w.filter(x=>x.addr.toLowerCase()!==addr.toLowerCase());
+  else w.push({addr,chain});
+  setW(w); renderWatch();
+}
+
+// ── mode
+function setMode(m){
+  mode=m;
+  $('m-wallet').classList.toggle('on',m==='wallet');
+  $('m-holders').classList.toggle('on',m==='holders');
+  $('addr').placeholder=m==='wallet'?'Paste wallet address (0x…)':'Paste token contract address (0x…)';
+  $('hint').textContent=m==='wallet'
+    ?'Find whale addresses in any token\'s top holders (switch mode above), on Blockscout, or from onchain sleuths on X.'
+    :'Paste a token contract — we\'ll list its biggest holders. Click any holder to inspect that wallet.';
+}
+$('m-wallet').onclick=()=>setMode('wallet');
+$('m-holders').onclick=()=>setMode('holders');
+
+// ── fetch helpers
+async function bsGet(chain,path){
+  const r=await fetch(BS[chain]+'/api/v2'+path);
+  if(!r.ok) throw new Error('Explorer returned '+r.status+' — check the address & chain.');
+  return r.json();
+}
+
+// ── WALLET MODE
+async function loadWallet(chain,addr){
+  setStatus('🐋 Reading wallet on '+CHAIN_LABEL[chain]+'…');
+  const [info,balances,transfers]=await Promise.all([
+    bsGet(chain,'/addresses/'+addr).catch(()=>null),
+    bsGet(chain,'/addresses/'+addr+'/token-balances').catch(()=>[]),
+    bsGet(chain,'/addresses/'+addr+'/token-transfers?type=ERC-20').catch(()=>({items:[]}))
+  ]);
+  if(!info) throw new Error('Address not found on '+CHAIN_LABEL[chain]+'. Check the address and selected chain.');
+
+  // native balance
+  const dec=18;
+  const native=parseFloat(info.coin_balance||'0')/Math.pow(10,dec);
+  const rate=parseFloat(info.exchange_rate||'0');
+  const nativeUsd=rate? native*rate:null;
+
+  // portfolio
+  const port=(Array.isArray(balances)?balances:[]).map(b=>{
+    const t=b.token||{}; const d=parseInt(t.decimals||'18');
+    const amt=parseFloat(b.value||'0')/Math.pow(10,d);
+    const er=parseFloat(t.exchange_rate||'0');
+    return {sym:t.symbol||'?',name:t.name||'',amt,usd:er?amt*er:null,addr:t.address||t.address_hash||''};
+  }).filter(p=>p.amt>0);
+  port.sort((a,b)=>(b.usd||0)-(a.usd||0));
+  const totalUsd=port.reduce((s,p)=>s+(p.usd||0),0)+(nativeUsd||0);
+
+  // moves
+  const items=(transfers.items||[]).slice(0,25).map(tr=>{
+    const t=tr.token||{}; const d=parseInt(t.decimals||'18');
+    const amt=parseFloat(tr.total?.value||'0')/Math.pow(10,d);
+    const dirIn=(tr.to?.hash||'').toLowerCase()===addr.toLowerCase();
+    const er=parseFloat(t.exchange_rate||'0');
+    return {dirIn,sym:t.symbol||'?',amt,usd:er?amt*er:null,time:tr.timestamp};
+  });
+
+  // ── insights (kural-tabanlı zeka)
+  const obs=[];
+  const inCnt=items.filter(m=>m.dirIn).length, outCnt=items.length-inCnt;
+  let label='Balanced flow', labelCls='t-blu', emoji='🐋';
+  if(items.length>=5){
+    const inPct=Math.round(inCnt/items.length*100);
+    if(inPct>=65){ label='Accumulating'; labelCls='t-grn'; emoji='🟢🐋';
+      obs.push(['ok','Recent flow is accumulation-heavy — '+inPct+'% of the last '+items.length+' token moves are inbound.']); }
+    else if(inPct<=35){ label='Distributing'; labelCls='t-red'; emoji='🔴🐋';
+      obs.push(['bad','Recent flow is distribution-heavy — '+(100-inPct)+'% of the last '+items.length+' moves are outbound. Watch for selling pressure.']); }
+    else obs.push(['info','Flow is balanced ('+inPct+'% in / '+(100-inPct)+'% out) over the last '+items.length+' moves.']);
+  } else if(items.length>0){ obs.push(['info','Only '+items.length+' recent token moves — not enough for a flow read.']); }
+
+  // most moved token
+  if(items.length){
+    const cnt={}; items.forEach(m=>cnt[m.sym]=(cnt[m.sym]||0)+1);
+    const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
+    if(top&&top[1]>=3) obs.push(['info','Most active token: '+top[0]+' ('+top[1]+' of the last '+items.length+' moves).']);
+  }
+  // concentration
+  if(port.length&&totalUsd>0&&port[0].usd){
+    const cpct=Math.round(port[0].usd/totalUsd*100);
+    if(cpct>=70) obs.push(['mid','Portfolio is concentrated — '+port[0].sym+' is ~'+cpct+'% of tracked value.']);
+    else obs.push(['ok','Top holding '+port[0].sym+' is ~'+cpct+'% of tracked value — reasonably diversified.']);
+  }
+  // fresh wallet
+  const txc=parseInt(info.transactions_count||info.transaction_count||'0');
+  if(txc&&txc<10) obs.push(['mid','Fresh wallet — only '+txc+' transactions total. Fresh whales can be insiders or burners.']);
+  if(info.is_contract) obs.push(['info','This address is a contract, not a personal wallet.']);
+  // big move
+  const big=items.filter(m=>m.usd).sort((a,b)=>b.usd-a.usd)[0];
+  if(big&&big.usd>10000) obs.push([big.dirIn?'ok':'bad','Largest recent move: '+(big.dirIn?'bought/received ':'sent/sold ')+fmtN(big.amt)+' '+big.sym+' (~'+fmtUsd(big.usd)+').']);
+
+  // ── render
+  const starred=inW(addr);
+  let html='<div class="w-head">'+
+    '<div class="w-emoji">'+emoji+'</div>'+
+    '<div class="w-hinfo"><div class="w-addr">'+esc(addr)+'</div>'+
+      '<span class="w-tag '+labelCls+'">'+label+'</span>'+
+      '<span class="w-tag t-mut">'+CHAIN_LABEL[chain]+'</span>'+
+      (info.is_contract?'<span class="w-tag t-mut">contract</span>':'')+
+    '</div>'+
+    '<button class="star-btn'+(starred?' on':'')+'" id="wstar">'+(starred?'★':'☆')+'</button>'+
+    '<a class="ext" href="'+BS[chain]+'/address/'+addr+'" target="_blank">Explorer ↗</a>'+
+  '</div>';
+
+  html+='<div class="cards">'+
+    '<div class="card"><div class="l">Native balance</div><div class="v">'+fmtN(native)+' ETH</div><div class="s">'+(nativeUsd?fmtUsd(nativeUsd):'')+'</div></div>'+
+    '<div class="card"><div class="l">Tracked value</div><div class="v">'+(totalUsd?fmtUsd(totalUsd):'—')+'</div><div class="s">tokens w/ price data</div></div>'+
+    '<div class="card"><div class="l">Tokens held</div><div class="v">'+port.length+'</div><div class="s">with balance</div></div>'+
+    '<div class="card"><div class="l">Transactions</div><div class="v">'+(txc||'—')+'</div><div class="s">lifetime</div></div>'+
+  '</div>';
+
+  if(obs.length){
+    html+='<div class="insights"><div class="in-title">✦ NEURON READ</div>'+
+      obs.map(o=>'<div class="in-obs '+o[0]+'"><span class="dot"></span>'+o[1]+'</div>').join('')+'</div>';
+  }
+
+  if(port.length){
+    html+='<div class="panel"><div class="p-title">Portfolio <span class="cnt">'+port.length+' tokens</span></div>'+
+      port.slice(0,15).map(p=>{
+        const sh=totalUsd&&p.usd?Math.round(p.usd/totalUsd*100):null;
+        return '<div class="pf-row"><span class="pf-sym">'+esc(p.sym)+'</span>'+
+          '<span class="pf-amt">'+fmtN(p.amt)+'</span>'+
+          (sh!=null?'<div class="pf-bar"><div class="pf-fill" style="width:'+Math.min(100,sh)+'%"></div></div><span class="pf-share">'+sh+'%</span>':'')+
+          '<span class="pf-usd">'+(p.usd?fmtUsd(p.usd):'')+'</span></div>';
+      }).join('')+'</div>';
+  }
+
+  if(items.length){
+    html+='<div class="panel"><div class="p-title">Recent moves <span class="cnt">last '+items.length+'</span></div>'+
+      items.map(m=>'<div class="mv-row">'+
+        '<span class="mv-dir '+(m.dirIn?'mv-in':'mv-out')+'">'+(m.dirIn?'IN':'OUT')+'</span>'+
+        '<span class="mv-sym">'+esc(m.sym)+'</span>'+
+        '<span class="mv-amt">'+fmtN(m.amt)+(m.usd?' · '+fmtUsd(m.usd):'')+'</span>'+
+        '<span class="mv-time">'+(m.time?ago(m.time):'')+'</span></div>').join('')+'</div>';
+  } else {
+    html+='<div class="panel"><div class="p-title">Recent moves</div><div style="font-size:13px;color:var(--muted)">No recent ERC-20 transfers found.</div></div>';
+  }
+
+  $('result').innerHTML=html;
+  $('result').style.display='block';
+  $('wstar').onclick=()=>{ toggleW(addr,chain); loadWalletHeaderStar(addr); };
+  setStatus('<span style="color:var(--green)">●</span> Wallet loaded · '+new Date().toLocaleTimeString());
+}
+function loadWalletHeaderStar(addr){
+  const b=$('wstar'); if(!b)return;
+  const on=inW(addr); b.classList.toggle('on',on); b.textContent=on?'★':'☆';
+}
+
+// ── HOLDERS MODE
+async function loadHolders(chain,tokenAddr){
+  setStatus('🐋 Loading top holders on '+CHAIN_LABEL[chain]+'…');
+  const [tok,holders]=await Promise.all([
+    bsGet(chain,'/tokens/'+tokenAddr).catch(()=>null),
+    bsGet(chain,'/tokens/'+tokenAddr+'/holders').catch(()=>({items:[]}))
+  ]);
+  if(!tok) throw new Error('Token not found on '+CHAIN_LABEL[chain]+'. Check the contract address and chain.');
+  const d=parseInt(tok.decimals||'18');
+  const supply=parseFloat(tok.total_supply||'0')/Math.pow(10,d);
+  const items=(holders.items||[]).slice(0,20).map((h,i)=>{
+    const amt=parseFloat(h.value||'0')/Math.pow(10,d);
+    const pct=supply? amt/supply*100:0;
+    return {rank:i+1,addr:h.address?.hash||'',amt,pct,isC:h.address?.is_contract};
+  });
+  const top10=items.slice(0,10).reduce((s,h)=>s+h.pct,0);
+
+  let html='<div class="w-head">'+
+    '<div class="w-emoji">🪙</div>'+
+    '<div class="w-hinfo"><div class="w-addr">'+esc(tok.symbol||'?')+' · '+esc(tok.name||'')+'</div>'+
+      '<span class="w-tag t-mut">'+CHAIN_LABEL[chain]+'</span>'+
+      '<span class="w-tag '+(top10>50?'t-red':(top10>30?'t-amb':'t-grn'))+'">top 10 hold '+top10.toFixed(0)+'%</span>'+
+    '</div>'+
+    '<a class="ext" href="'+BS[chain]+'/token/'+tokenAddr+'" target="_blank">Explorer ↗</a>'+
+  '</div>';
+
+  html+='<div class="panel"><div class="p-title">Top holders <span class="cnt">click any wallet to inspect 🐋</span></div>'+
+    items.map(h=>'<div class="h-row" data-addr="'+h.addr+'">'+
+      '<span class="h-rank">#'+h.rank+'</span>'+
+      '<span class="h-addr">'+short(h.addr)+'</span>'+
+      (h.isC?'<span class="h-hint">contract</span>':'')+
+      '<div class="h-bar"><div class="h-fill" style="width:'+Math.min(100,h.pct*2)+'%"></div></div>'+
+      '<span class="h-pct">'+h.pct.toFixed(2)+'%</span></div>').join('')+'</div>';
+
+  $('result').innerHTML=html;
+  $('result').style.display='block';
+  document.querySelectorAll('.h-row').forEach(r=>{
+    r.onclick=()=>{ $('addr').value=r.dataset.addr; setMode('wallet'); run(); window.scrollTo({top:0,behavior:'smooth'}); };
+  });
+  setStatus('<span style="color:var(--green)">●</span> Holders loaded · '+new Date().toLocaleTimeString());
+}
+
+// ── run
+async function run(){
+  hideErr();
+  const chain=$('chain').value;
+  let addr=$('addr').value.trim();
+  if(!addr){ setStatus('Paste an address first.','var(--amber)'); return; }
+  // blockscout URL yapıştırıldıysa
+  const um=addr.match(/blockscout\.com\/(address|token)\/(0x[a-fA-F0-9]{40})/);
+  if(um){ addr=um[2]; $('addr').value=addr; if(um[1]==='token') setMode('holders'); }
+  const btn=$('go'); btn.disabled=true; btn.textContent='Loading…';
+  try{
+    if(mode==='wallet') await loadWallet(chain,addr);
+    else await loadHolders(chain,addr);
+  }catch(e){
+    showErr('<b>Failed:</b> '+esc(e.message||'Unknown error')+'<br>Tip: make sure the address exists on the selected chain. Public explorers can also rate-limit — wait a moment and retry.');
+    setStatus('Error.','var(--red)');
+  }
+  btn.disabled=false; btn.textContent='Watch';
+}
+$('go').onclick=run;
+$('addr').addEventListener('keypress',e=>{ if(e.key==='Enter') run(); });
+
+// URL parametreleri (Chain Radar köprüsü): ?chain=robinhood&token=0x.. → holders modu; ?chain=..&wallet=0x..
+(function(){
+  const p=new URLSearchParams(location.search);
+  const c=p.get('chain'); const t=p.get('token'); const w=p.get('wallet');
+  const map={robinhood:'robinhood',eth:'eth',base:'base',arbitrum:'arbitrum',polygon_pos:'polygon',polygon:'polygon'};
+  if(c&&map[c]) $('chain').value=map[c];
+  if(t){ setMode('holders'); $('addr').value=t; run(); }
+  else if(w){ setMode('wallet'); $('addr').value=w; run(); }
+})();
+
+renderWatch();
+
+// donate copy
+$('dcopy').onclick=async function(){
+  const t=$('daddr').textContent;
+  try{ await navigator.clipboard.writeText(t); }catch(e){
+    const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select();
+    try{document.execCommand('copy');}catch(e2){} document.body.removeChild(ta);
+  }
+  this.textContent='COPIED ✓'; const b=this; setTimeout(()=>b.textContent='COPY',1500);
+};
+</script>
+</body>
+</html>
