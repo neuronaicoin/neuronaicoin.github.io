@@ -50,6 +50,62 @@
     display:flex;align-items:center;gap:8px}
   .status .live{color:var(--green)}
 
+  /* NEURON Analyst */
+  .analyst{background:linear-gradient(135deg,rgba(47,224,138,.07),var(--panel));border:1px solid var(--line);
+    border-radius:16px;padding:20px 22px;margin-bottom:18px}
+  .an-head{margin-bottom:14px}
+  .an-badge{display:inline-flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:13px;
+    font-weight:600;color:var(--green);letter-spacing:.08em;margin-bottom:6px}
+  .an-spark{font-size:15px;animation:anpulse 2s infinite}
+  @keyframes anpulse{0%,100%{opacity:1}50%{opacity:.5}}
+  .an-tag{font-size:14px;color:var(--muted);line-height:1.4}
+  .an-input-row{display:flex;gap:9px;margin-bottom:11px}
+  .an-input-row input{flex:1;background:var(--bg);border:1px solid var(--line2);border-radius:10px;color:var(--text);
+    font-family:'Space Grotesk';font-size:15px;padding:13px 15px;outline:none}
+  .an-input-row input:focus{border-color:var(--green)}
+  .an-input-row input::placeholder{color:var(--faint)}
+  .an-btn{background:var(--green);color:#07100c;border:none;border-radius:10px;padding:13px 22px;
+    font-family:'Space Grotesk';font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;transition:.15s}
+  .an-btn:hover{background:var(--green2)}
+  .an-btn:disabled{opacity:.6;cursor:wait}
+  .an-chips{display:flex;gap:8px;flex-wrap:wrap}
+  .an-chip{background:var(--panel2);border:1px solid var(--line);color:var(--muted);border-radius:20px;
+    padding:7px 14px;font-family:'Space Grotesk';font-size:12.5px;font-weight:500;cursor:pointer;transition:.15s}
+  .an-chip:hover{border-color:var(--green);color:var(--text)}
+  .an-answer{margin-top:16px;padding:18px 20px;background:var(--bg);border:1px solid var(--line2);border-radius:12px;
+    font-size:15px;line-height:1.65;color:var(--text);white-space:pre-wrap}
+  .an-answer .an-loading{color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:13px}
+  .an-answer .an-dis{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:12px;
+    color:var(--faint);font-family:'IBM Plex Mono',monospace;line-height:1.5}
+  .an-answer .an-metrics{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+  .an-metric{font-family:'IBM Plex Mono',monospace;font-size:12px}
+  .an-metric .l{color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+  .an-metric .v{color:var(--text);font-weight:600;font-size:14px}
+  @media(max-width:820px){
+    .an-input-row{flex-direction:column}
+    .an-btn{width:100%}
+  }
+
+  /* filter bar */
+  .filterbar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+  .fb-search{flex:1;min-width:200px;display:flex;align-items:center;gap:8px;background:var(--panel);
+    border:1px solid var(--line);border-radius:9px;padding:0 12px}
+  .fb-search:focus-within{border-color:var(--green)}
+  .fb-ic{font-size:13px;opacity:.6;font-style:normal}
+  .fb-search input{flex:1;background:none;border:none;outline:none;color:var(--text);font-family:'Space Grotesk';
+    font-size:13px;padding:10px 0}
+  .fb-search input::placeholder{color:var(--faint)}
+  .fb-sel{background:var(--panel);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;
+    font-family:'Space Grotesk';font-weight:500;font-size:12px;cursor:pointer;outline:none}
+  .fb-sel:hover{border-color:var(--green)}
+  .fb-clear{background:var(--panel2);border:1px solid var(--line);color:var(--muted);padding:10px 14px;border-radius:9px;
+    font-family:'Space Grotesk';font-weight:600;font-size:12px;cursor:pointer}
+  .fb-clear:hover{color:var(--text);border-color:var(--line2)}
+  @media(max-width:820px){
+    .fb-search{min-width:100%;flex-basis:100%}
+    .fb-sel{flex:1}
+  }
+
   /* table */
   .tbl-wrap{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
   .tbl-scroll{overflow-x:auto}
@@ -109,6 +165,37 @@
   .legend .flag{display:inline-block;margin:0 2px}
   .disclaimer{margin-top:14px;font-size:11px;color:var(--faint);line-height:1.6;text-align:center;
     font-family:'IBM Plex Mono',monospace}
+
+  /* detail modal */
+  .modal-overlay{position:fixed;inset:0;z-index:1000;background:rgba(3,8,6,.82);backdrop-filter:blur(4px);
+    display:flex;align-items:center;justify-content:center;padding:20px}
+  .modal{background:var(--panel);border:1px solid var(--line);border-radius:16px;max-width:520px;width:100%;
+    max-height:85vh;overflow-y:auto;position:relative;padding:26px}
+  .modal-close{position:absolute;top:16px;right:16px;background:var(--panel2);border:1px solid var(--line);
+    color:var(--muted);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:14px}
+  .modal-close:hover{color:var(--text)}
+  .md-head{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+  .md-score{width:52px;height:52px;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:22px;font-family:'IBM Plex Mono',monospace}
+  .md-sym{font-family:'Space Grotesk';font-size:22px;font-weight:700}
+  .md-age{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--faint)}
+  .md-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:18px}
+  .md-cell{background:var(--panel);padding:13px 14px}
+  .md-cell .l{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+  .md-cell .v{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600}
+  .md-flags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+  .md-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .md-btn{flex:1;min-width:130px;text-align:center;padding:11px;border-radius:9px;font-family:'Space Grotesk';
+    font-weight:600;font-size:13px;cursor:pointer;text-decoration:none;transition:.15s;border:1px solid var(--line);
+    background:var(--panel2);color:var(--text)}
+  .md-btn:hover{border-color:var(--green)}
+  .md-btn.gold{background:var(--green);color:#07100c;border-color:var(--green)}
+  .md-note{font-size:11px;color:var(--faint);font-family:'IBM Plex Mono',monospace;line-height:1.5;margin-top:14px}
+  .alert-banner{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:2000;background:var(--amber);
+    color:#07100c;font-family:'Space Grotesk';font-weight:700;font-size:14px;padding:12px 22px;border-radius:10px;
+    box-shadow:0 8px 30px rgba(0,0,0,.4);display:none}
+  .star-btn{background:none;border:none;cursor:pointer;font-size:16px;padding:2px 5px;color:var(--faint);transition:.15s}
+  .star-btn.on{color:var(--amber)}
+  .star-btn:hover{color:var(--amber)}
 
   /* mobile cards (hidden on desktop) */
   .cards-wrap{display:none}
@@ -190,6 +277,44 @@
 
   <div class="status" id="status">Ready.</div>
 
+  <div class="analyst">
+    <div class="an-head">
+      <div class="an-badge"><span class="an-spark">✦</span> NEURON ANALYST</div>
+      <div class="an-tag">Ask about any token. Get a data-backed read — not a call.</div>
+    </div>
+    <div class="an-input-row">
+      <input type="text" id="an-input" placeholder="e.g. Is HMM safe to buy right now?" autocomplete="off">
+      <button id="an-ask" class="an-btn">Analyze</button>
+    </div>
+    <div class="an-chips">
+      <button class="an-chip" data-q="Is HMM safe to buy right now?">Is HMM safe?</button>
+      <button class="an-chip" data-q="What's the healthiest token trending right now?">Healthiest trending?</button>
+      <button class="an-chip" data-q="Which tokens have the biggest dump risk right now?">Biggest dump risk?</button>
+    </div>
+    <div id="an-answer" class="an-answer" style="display:none"></div>
+  </div>
+
+  <div class="filterbar">
+    <div class="fb-search">
+      <i class="fb-ic">🔍</i>
+      <input type="text" id="search" placeholder="Search coin (e.g. HMM, PONS)…" autocomplete="off">
+    </div>
+    <select id="filter-score" class="fb-sel">
+      <option value="0">All scores</option>
+      <option value="65">Score 65+ (healthy)</option>
+      <option value="45">Score 45+ (mid & up)</option>
+      <option value="lo">Score under 45 (risky)</option>
+    </select>
+    <select id="filter-risk" class="fb-sel">
+      <option value="all">All coins</option>
+      <option value="watch">⭐ My watchlist</option>
+      <option value="safe">Only LIQ OK</option>
+      <option value="buy">Only BUY&gt;SELL</option>
+      <option value="danger">Show risk flags</option>
+    </select>
+    <button id="clear-filters" class="fb-clear">Clear</button>
+  </div>
+
   <div class="donate donate-top">
     <h3>SUPPORT US TO BUILD MORE TOOLS 🙏</h3>
     <p>Chain Radar is free and will stay free. Your USDT donation helps us build and add new tools.</p>
@@ -228,6 +353,15 @@
   </div>
 
   <div id="cards" class="cards-wrap"></div>
+
+  <div id="alert-banner" class="alert-banner"></div>
+
+  <div id="detail-modal" class="modal-overlay" style="display:none">
+    <div class="modal">
+      <button class="modal-close" id="modal-close">✕</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
 
   <div class="legend">
     <b>How to read the signal:</b> The score (0–100) is <b>not a prediction</b> — it rates how <i>healthy</i> the activity looks right now, and how many red flags a coin has. High score = more organic activity, fewer warning signs. It does <b>not</b> mean the coin will go up.<br>
@@ -376,6 +510,7 @@ async function load(){
       };
     });
     render();
+    checkAlerts();
     $('status').innerHTML='<span class="live">●</span> '+rowsData.length+' pools · updated '+new Date().toLocaleTimeString();
   }catch(e){
     $('rows').innerHTML='<tr><td colspan="12"><div class="err"><h3>Couldn\u2019t load data</h3>'+
@@ -388,7 +523,21 @@ async function load(){
 }
 
 function render(){
-  const rows=[...rowsData].sort((a,b)=>{
+  // FILTERS
+  const q=(document.getElementById('search')?.value||'').trim().toLowerCase();
+  const fScore=document.getElementById('filter-score')?.value||'0';
+  const fRisk=document.getElementById('filter-risk')?.value||'all';
+  let filtered=rowsData.filter(r=>{
+    if(q && !(r.sym||'').toLowerCase().includes(q)) return false;
+    if(fScore==='lo'){ if(r.signal>=45) return false; }
+    else if(fScore!=='0'){ if(r.signal<parseInt(fScore,10)) return false; }
+    if(fRisk==='safe'){ if(!r.flags.some(f=>f[1]==='LIQ OK')) return false; }
+    else if(fRisk==='buy'){ if(!r.flags.some(f=>f[1]==='BUY>SELL')) return false; }
+    else if(fRisk==='danger'){ if(!r.flags.some(f=>f[0]==='bad')) return false; }
+    else if(fRisk==='watch'){ if(!inWatch(r.sym)) return false; }
+    return true;
+  });
+  const rows=filtered.sort((a,b)=>{
     let x=a[sortKey], y=b[sortKey];
     if(x==null||isNaN(x))x=-Infinity; if(y==null||isNaN(y))y=-Infinity;
     if(typeof x==='string')return sortDir*x.localeCompare(y);
@@ -402,10 +551,13 @@ function render(){
     const buyPct=tot>0?Math.round(r.buys/tot*100):50;
     const scoreCls=r.signal>=65?'hi':(r.signal>=45?'mid':'lo');
     const flagsHtml=r.flags.map(f=>'<span class="flag '+f[0]+'">'+f[1]+'</span>').join('');
-    return '<tr>'+
+    const star=inWatch(r.sym)?'★':'☆';
+    const starOn=inWatch(r.sym)?' on':'';
+    return '<tr class="coin-row" data-sym="'+r.sym+'" style="cursor:pointer">'+
       '<td><span class="score '+scoreCls+'">'+r.signal+'</span></td>'+
-      '<td><a href="'+r.poolUrl+'" target="_blank"><div class="coin"><div><div class="sym">'+r.sym+'</div>'+
-        '<div class="age">'+(r.age?ageStr(r.age)+' old':'')+'</div></div></div></a></td>'+
+      '<td><div class="coin"><button class="star-btn'+starOn+'" data-star="'+r.sym+'">'+star+'</button>'+
+        '<div><div class="sym">'+r.sym+'</div>'+
+        '<div class="age">'+(r.age?ageStr(r.age)+' old':'')+'</div></div></div></td>'+
       '<td class="num">'+fmtUsd(r.price)+'</td>'+
       '<td class="num">'+pct(r.ch5)+'</td>'+
       '<td class="num">'+pct(r.ch1)+'</td>'+
@@ -419,15 +571,19 @@ function render(){
       '<td><div class="flags">'+flagsHtml+'</div></td>'+
     '</tr>';
   }).join('');
+  bindRowEvents();
   // MOBILE CARDS
   $('cards').innerHTML=rows.map(r=>{
     const tot=r.buys+r.sells;
     const buyPct=tot>0?Math.round(r.buys/tot*100):50;
     const scoreCls=r.signal>=65?'hi':(r.signal>=45?'mid':'lo');
     const flagsHtml=r.flags.map(f=>'<span class="flag '+f[0]+'">'+f[1]+'</span>').join('');
-    return '<a class="card" href="'+r.poolUrl+'" target="_blank">'+
+    const star=inWatch(r.sym)?'★':'☆';
+    const starOn=inWatch(r.sym)?' on':'';
+    return '<div class="card coin-card" data-sym="'+r.sym+'" style="cursor:pointer">'+
       '<div class="card-top">'+
-        '<div><div class="card-sym">'+r.sym+'</div><div class="age">'+(r.age?ageStr(r.age)+' old':'')+'</div></div>'+
+        '<div style="display:flex;align-items:center;gap:8px"><button class="star-btn'+starOn+'" data-star="'+r.sym+'">'+star+'</button>'+
+        '<div><div class="card-sym">'+r.sym+'</div><div class="age">'+(r.age?ageStr(r.age)+' old':'')+'</div></div></div>'+
         '<span class="score '+scoreCls+'">'+r.signal+'</span>'+
       '</div>'+
       '<div class="card-price">'+fmtUsd(r.price)+' <span class="card-24">24h '+pct(r.ch24)+'</span></div>'+
@@ -440,8 +596,26 @@ function render(){
       '<div class="card-bs"><div class="bsbar"><div class="track"><div class="buy" style="width:'+buyPct+'%"></div></div>'+
         '<div class="lbl">'+buyPct+'% buys · '+fmtNum(r.buys)+'/'+fmtNum(r.sells)+'</div></div></div>'+
       '<div class="flags">'+flagsHtml+'</div>'+
-    '</a>';
+    '</div>';
   }).join('');
+  bindCardEvents();
+}
+
+function bindRowEvents(){
+  document.querySelectorAll('.coin-row').forEach(row=>{
+    row.onclick=(e)=>{
+      if(e.target.classList.contains('star-btn')){ e.stopPropagation(); toggleWatch(e.target.dataset.star); return; }
+      openDetail(row.dataset.sym);
+    };
+  });
+}
+function bindCardEvents(){
+  document.querySelectorAll('.coin-card').forEach(card=>{
+    card.onclick=(e)=>{
+      if(e.target.classList.contains('star-btn')){ e.stopPropagation(); toggleWatch(e.target.dataset.star); return; }
+      openDetail(card.dataset.sym);
+    };
+  });
 }
 
 // events
@@ -456,6 +630,16 @@ document.getElementById('chain-pick').onchange=function(){
   if(sub) sub.textContent=(CHAIN_NAMES[NET]||NET)+' · live scanner';
   load();
 };
+// filtreler (anında uygula, yeniden yükleme yok)
+document.getElementById('search').oninput=render;
+document.getElementById('filter-score').onchange=render;
+document.getElementById('filter-risk').onchange=render;
+document.getElementById('clear-filters').onclick=()=>{
+  document.getElementById('search').value='';
+  document.getElementById('filter-score').value='0';
+  document.getElementById('filter-risk').value='all';
+  render();
+};
 $('refresh').onclick=load;
 document.querySelectorAll('thead th[data-sort]').forEach(th=>{
   th.onclick=()=>{ const k=th.dataset.sort; if(sortKey===k)sortDir*=-1; else{sortKey=k;sortDir=-1;} render(); };
@@ -464,6 +648,199 @@ document.querySelectorAll('thead th[data-sort]').forEach(th=>{
 load();
 // auto refresh every 60s
 setInterval(load, 60000);
+
+// ============ NEURON ANALYST (Claude-powered) ============
+async function askAnalyst(question){
+  const ansEl=document.getElementById('an-answer');
+  const askBtn=document.getElementById('an-ask');
+  ansEl.style.display='block';
+  ansEl.innerHTML='<div class="an-loading">✦ NEURON is reading the chain…</div>';
+  askBtn.disabled=true; askBtn.textContent='Analyzing…';
+
+  // 1) veri hazırla — sorudaki coin(ler)i bul, yoksa tüm tabloyu özetle
+  const q=question.toLowerCase();
+  let matched=rowsData.filter(r=>q.includes((r.sym||'').toLowerCase()) && r.sym.length>1);
+  // eğer belirli coin yoksa, en alakalı 15 coini bağlam olarak ver
+  const context=(matched.length?matched:rowsData.slice(0,15)).map(r=>({
+    symbol:r.sym, score:r.signal, price:r.price, change24h:r.ch24,
+    volume24h:Math.round(r.vol||0), liquidity:Math.round(r.liq||0), mcap:Math.round(r.mcap||0),
+    buys:r.buys, sells:r.sells, ageHours: r.age? Math.round((Date.now()-new Date(r.age))/3600000):null,
+    flags:r.flags.map(f=>f[1])
+  }));
+
+  // tek coin varsa metrik kartları göster
+  let metricsHtml='';
+  if(matched.length===1){
+    const r=matched[0]; const tot=r.buys+r.sells; const bp=tot>0?Math.round(r.buys/tot*100):50;
+    metricsHtml='<div class="an-metrics">'+
+      '<div class="an-metric"><div class="l">Score</div><div class="v">'+r.signal+'</div></div>'+
+      '<div class="an-metric"><div class="l">Liquidity</div><div class="v">'+fmtUsd(r.liq)+'</div></div>'+
+      '<div class="an-metric"><div class="l">Vol 24h</div><div class="v">'+fmtUsd(r.vol)+'</div></div>'+
+      '<div class="an-metric"><div class="l">Buy pressure</div><div class="v">'+bp+'%</div></div>'+
+      '<div class="an-metric"><div class="l">24h</div><div class="v">'+pct(r.ch24)+'</div></div>'+
+    '</div>';
+  }
+
+  const chainName=CHAIN_NAMES[NET]||NET;
+  const sys="You are NEURON Analyst, an onchain intelligence assistant for "+chainName+". "+
+    "You are given REAL live pool data as JSON. Answer the user's question using ONLY this data. "+
+    "Be concise (3-5 sentences), specific, and reference the actual numbers. "+
+    "Explain what the data means for risk: low liquidity = easy to manipulate/exit hard; "+
+    "volume much higher than mcap = overheated; sell pressure or big negative 24h = distribution/dump risk; "+
+    "very new age = unproven. NEVER tell someone to buy or sell. NEVER predict price. "+
+    "Always frame as 'the data shows…'. End with a short 'Not financial advice — always DYOR.' "+
+    "If the asked token isn't in the data, say it's not currently in the scan and suggest checking the live list.";
+
+  const userMsg="Live "+chainName+" pool data (JSON):\n"+JSON.stringify(context)+
+    "\n\nUser question: "+question;
+
+  try{
+    const resp=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-6", max_tokens:1000,
+        system:sys,
+        messages:[{role:"user",content:userMsg}]
+      })
+    });
+    const data=await resp.json();
+    let text=(data.content||[]).map(i=>i.text||"").join("\n").trim();
+    if(!text) text="Couldn't generate a read right now. Try again in a moment.";
+    ansEl.innerHTML=metricsHtml+
+      '<div>'+escapeHtml(text).replace(/\n/g,'<br>')+'</div>'+
+      '<div class="an-dis">✦ NEURON Analyst · reasoning over live '+chainName+' data · informational only</div>';
+  }catch(e){
+    ansEl.innerHTML='<div>NEURON Analyst is unavailable right now (the AI service can\'t be reached from this page). '+
+      'This feature works on the live site. Error: <code>'+escapeHtml(e.message)+'</code></div>';
+  }
+  askBtn.disabled=false; askBtn.textContent='Analyze';
+}
+function escapeHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+document.getElementById('an-ask').onclick=()=>{
+  const v=document.getElementById('an-input').value.trim();
+  if(v) askAnalyst(v);
+};
+document.getElementById('an-input').addEventListener('keypress',e=>{
+  if(e.key==='Enter'){ const v=e.target.value.trim(); if(v) askAnalyst(v); }
+});
+document.querySelectorAll('.an-chip').forEach(c=>{
+  c.onclick=()=>{ document.getElementById('an-input').value=c.dataset.q; askAnalyst(c.dataset.q); };
+});
+
+
+// ============ WATCHLIST (localStorage) ============
+function getWatch(){ try{ return JSON.parse(localStorage.getItem('cr_watch')||'[]'); }catch(e){ return []; } }
+function setWatch(arr){ try{ localStorage.setItem('cr_watch', JSON.stringify(arr)); }catch(e){} }
+function inWatch(sym){ return getWatch().includes(sym); }
+function toggleWatch(sym){
+  let w=getWatch();
+  if(w.includes(sym)) w=w.filter(x=>x!==sym); else w.push(sym);
+  setWatch(w); render();
+}
+
+// ============ ALERTS (localStorage) ============
+function getAlerts(){ try{ return JSON.parse(localStorage.getItem('cr_alerts')||'[]'); }catch(e){ return []; } }
+function setAlerts(arr){ try{ localStorage.setItem('cr_alerts', JSON.stringify(arr)); }catch(e){} }
+function addAlert(sym,type,val){
+  const a=getAlerts(); a.push({sym,type,val:parseFloat(val),id:Date.now(),fired:false}); setAlerts(a);
+}
+function removeAlert(id){ setAlerts(getAlerts().filter(a=>a.id!==id)); }
+// alert kontrolü (her load'da çağrılır)
+function checkAlerts(){
+  const alerts=getAlerts(); if(!alerts.length) return;
+  let changed=false;
+  alerts.forEach(al=>{
+    if(al.fired) return;
+    const coin=rowsData.find(r=>r.sym===al.sym); if(!coin) return;
+    let hit=false;
+    if(al.type==='price_above' && coin.price>=al.val) hit=true;
+    if(al.type==='price_below' && coin.price<=al.val) hit=true;
+    if(al.type==='score_above' && coin.signal>=al.val) hit=true;
+    if(al.type==='score_below' && coin.signal<=al.val) hit=true;
+    if(hit){ al.fired=true; changed=true; fireAlert(al,coin); }
+  });
+  if(changed) setAlerts(alerts);
+}
+function fireAlert(al,coin){
+  const labels={price_above:'price ≥',price_below:'price ≤',score_above:'score ≥',score_below:'score ≤'};
+  const msg=coin.sym+' — '+labels[al.type]+' '+al.val+' hit!';
+  // görsel banner
+  const banner=document.getElementById('alert-banner');
+  if(banner){ banner.textContent='🔔 '+msg; banner.style.display='block';
+    setTimeout(()=>{banner.style.display='none';}, 8000); }
+  // ses
+  try{ const ac=new (window.AudioContext||window.webkitAudioContext)(); const o=ac.createOscillator();
+    const g=ac.createGain(); o.connect(g); g.connect(ac.destination); o.frequency.value=880;
+    g.gain.setValueAtTime(.15,ac.currentTime); o.start(); o.stop(ac.currentTime+.15); }catch(e){}
+  // tarayıcı bildirimi
+  if('Notification' in window && Notification.permission==='granted'){ new Notification('Chain Radar',{body:msg}); }
+}
+
+// ============ DETAIL MODAL ============
+function openDetail(sym){
+  const r=rowsData.find(x=>x.sym===sym); if(!r) return;
+  const tot=r.buys+r.sells; const buyPct=tot>0?Math.round(r.buys/tot*100):50;
+  const scoreCls=r.signal>=65?'hi':(r.signal>=45?'mid':'lo');
+  const starred=inWatch(r.sym);
+  const flagsHtml=r.flags.map(f=>'<span class="flag '+f[0]+'">'+f[1]+'</span>').join('');
+  const body=document.getElementById('modal-body');
+  body.innerHTML=
+    '<div class="md-head">'+
+      '<span class="md-score score '+scoreCls+'">'+r.signal+'</span>'+
+      '<div style="flex:1"><div class="md-sym">'+r.sym+' '+
+        '<button class="star-btn '+(starred?'on':'')+'" id="md-star">'+(starred?'★':'☆')+'</button></div>'+
+        '<div class="md-age">'+(r.age?ageStr(r.age)+' old':'')+' · '+(CHAIN_NAMES[NET]||NET)+'</div></div>'+
+    '</div>'+
+    '<div class="md-grid">'+
+      '<div class="md-cell"><div class="l">Price</div><div class="v">'+fmtUsd(r.price)+'</div></div>'+
+      '<div class="md-cell"><div class="l">24h change</div><div class="v">'+pct(r.ch24)+'</div></div>'+
+      '<div class="md-cell"><div class="l">Volume 24h</div><div class="v">'+fmtUsd(r.vol)+'</div></div>'+
+      '<div class="md-cell"><div class="l">Liquidity</div><div class="v">'+fmtUsd(r.liq)+'</div></div>'+
+      '<div class="md-cell"><div class="l">Market cap</div><div class="v">'+fmtUsd(r.mcap)+'</div></div>'+
+      '<div class="md-cell"><div class="l">Buy pressure</div><div class="v">'+buyPct+'% ('+fmtNum(r.buys)+'/'+fmtNum(r.sells)+')</div></div>'+
+    '</div>'+
+    '<div class="md-flags">'+flagsHtml+'</div>'+
+    '<div class="md-actions">'+
+      '<a href="'+r.poolUrl+'" target="_blank" class="md-btn">View on GeckoTerminal ↗</a>'+
+      '<button class="md-btn gold" id="md-alert">🔔 Set alert</button>'+
+    '</div>'+
+    '<div id="md-alert-form" style="display:none;margin-top:14px"></div>'+
+    '<div class="md-note">Signal score rates activity health &amp; risk flags — not a price prediction. Always DYOR.</div>';
+  document.getElementById('detail-modal').style.display='flex';
+  // star
+  document.getElementById('md-star').onclick=()=>{ toggleWatch(r.sym); openDetail(sym); };
+  // alert form
+  document.getElementById('md-alert').onclick=()=>{
+    const f=document.getElementById('md-alert-form');
+    if('Notification' in window && Notification.permission==='default') Notification.requestPermission();
+    f.style.display=f.style.display==='none'?'block':'none';
+    f.innerHTML=
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+
+      '<select id="al-type" class="fb-sel"><option value="price_above">Price ≥</option><option value="price_below">Price ≤</option>'+
+      '<option value="score_above">Score ≥</option><option value="score_below">Score ≤</option></select>'+
+      '<input id="al-val" class="fb-search" style="max-width:120px;padding:8px 12px" inputmode="decimal" placeholder="value">'+
+      '<button class="md-btn gold" style="min-width:90px;flex:0" id="al-save">Save</button></div>'+
+      '<div id="al-list" style="margin-top:12px"></div>';
+    renderAlertList(r.sym);
+    document.getElementById('al-save').onclick=()=>{
+      const t=document.getElementById('al-type').value; const v=document.getElementById('al-val').value;
+      if(v===''||isNaN(parseFloat(v))){ alert('Enter a value'); return; }
+      addAlert(r.sym,t,v); document.getElementById('al-val').value=''; renderAlertList(r.sym);
+    };
+  };
+}
+function renderAlertList(sym){
+  const el=document.getElementById('al-list'); if(!el) return;
+  const mine=getAlerts().filter(a=>a.sym===sym);
+  const labels={price_above:'Price ≥',price_below:'Price ≤',score_above:'Score ≥',score_below:'Score ≤'};
+  if(!mine.length){ el.innerHTML='<div style="font-size:11px;color:var(--faint);font-family:IBM Plex Mono,monospace">No alerts set for '+sym+' yet.</div>'; return; }
+  el.innerHTML=mine.map(a=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--panel2);border-radius:7px;margin-bottom:6px;font-family:IBM Plex Mono,monospace;font-size:12px">'+
+    '<span>'+labels[a.type]+' '+a.val+(a.fired?' <span style="color:var(--green)">✓ fired</span>':'')+'</span>'+
+    '<button onclick="removeAlert('+a.id+');renderAlertList(\''+sym+'\')" style="background:none;border:none;color:var(--faint);cursor:pointer;font-size:14px">✕</button></div>').join('');
+}
+document.getElementById('modal-close').onclick=()=>{ document.getElementById('detail-modal').style.display='none'; };
+document.getElementById('detail-modal').onclick=(e)=>{ if(e.target.id==='detail-modal') e.currentTarget.style.display='none'; };
 
 // donate copy buttons (top + bottom)
 document.querySelectorAll('.copy-addr').forEach(function(btn){
