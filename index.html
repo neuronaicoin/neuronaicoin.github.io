@@ -812,7 +812,7 @@ async function loadToday(){
     const row=p=>{
       const cls=p.score>=65?'hi':(p.score>=45?'mid':'lo');
       const fl=p.flags.slice(0,2).map(f=>'<span class="td-flag '+f[0]+'">'+f[1]+'</span>').join('');
-      return '<a class="td-row" href="/chainradar.html">'+
+      return '<a class="td-row" href="/chainradar.html?open='+encodeURIComponent(p.sym)+'">'+
         '<span class="td-score '+cls+'">'+p.score+'</span>'+
         '<div><div class="td-sym">'+p.sym+'</div><div class="td-meta">'+tdFmt(p.liq)+' liq</div></div>'+
         '<div class="td-flags">'+fl+'</div>'+
