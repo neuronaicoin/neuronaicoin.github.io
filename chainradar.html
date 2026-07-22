@@ -714,6 +714,21 @@ qbtn.onclick=()=>{ const on=localStorage.getItem('cr_quality')!=='off';
   try{localStorage.setItem('cr_quality',on?'off':'on');}catch(e){} syncQ(); render(); };
 syncQ();
 
+// URL ?open=SYM → yüklenince o coinin detayını aç
+(function(){
+  const openSym=new URLSearchParams(location.search).get('open');
+  if(openSym){
+    const t=setInterval(()=>{
+      if(rowsData.length){
+        clearInterval(t);
+        const hit=rowsData.find(r=>(r.sym||'').toLowerCase()===openSym.toLowerCase());
+        if(hit) openDetail(hit.sym);
+      }
+    },400);
+    setTimeout(()=>clearInterval(t),15000);
+  }
+})();
+
 setInterval(load, 60000);
 
 // ============ NEURON ANALYST (Claude-powered) ============
