@@ -222,7 +222,7 @@ function row(p){
   const fl=p.flags.slice(0,2).map(f=>'<span class="flag '+f[0]+'">'+f[1]+'</span>').join('');
   const sevBadge=p.severity==='critical'?'<span class="sev s-cr">🔴 CRITICAL</span>':(p.severity==='high'?'<span class="sev s-hi">🟠 HIGH</span>':'<span class="sev s-wa">🟡 WATCH</span>');
   const bounce=p.bouncing?'<span class="sev s-bn" title="down 24h but last hour shows recovery buying">🔄 bouncing</span>':'';
-  return '<a class="row" href="/chainradar.html">'+
+  return '<a class="row" href="/chainradar.html?open='+encodeURIComponent(p.sym)+'">'+
     '<span class="sc '+cls+'">'+p.score+'</span>'+
     '<div><div class="sym">'+p.sym+' '+sevBadge+bounce+'</div><div class="meta">'+fmt(p.liq)+' liq · 1h '+(p.ch1>=0?'+':'')+p.ch1.toFixed(1)+'%</div></div>'+
     '<div class="flags">'+fl+'</div>'+
