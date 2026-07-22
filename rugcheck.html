@@ -245,7 +245,26 @@ function buildReport(d, sym){
   else if(score>=50){ verdict='Caution — mixed signals'; cls='warn'; }
   else { verdict='High risk — data says stay sharp'; cls='bad'; }
 
-  return {score,verdict,cls,checks,holders:d.holders||[]};
+  // tek cümlelik insan özeti: EN ÖNEMLİ riski adlandır
+  let summary='';
+  if(critical) summary='This is a trap: you can buy, but you can not sell. Walk away.';
+  else{
+    const bads=checks.filter(c=>c[0]==='bad').map(c=>c[1]);
+    const warns=checks.filter(c=>c[0]==='warn').map(c=>c[1]);
+    if(!bads.length && !warns.length) summary='No structural red flags found. Standard market risk still applies — this rates the contract, not the price.';
+    else{
+      const main=bads.length?bads.slice(0,2):warns.slice(0,2);
+      const via = bads.some(b=>/[Ll]iquidity not locked/.test(b))?'a liquidity pull'
+        : bads.some(b=>/[Tt]ax can be changed/.test(b))?'a sudden tax hike'
+        : bads.some(b=>/[Mm]intable/.test(b))?'supply inflation'
+        : bads.some(b=>/[Tt]ransfers can be paused/.test(b))?'freezing trades'
+        : bads.some(b=>/[Cc]annot sell all/.test(b))?'blocking your exit'
+        : 'the flagged mechanics';
+      summary='Main risk: '+main.join(' + ').toLowerCase()+'. If this goes wrong, it most likely happens through '+via+'.';
+    }
+  }
+
+  return {score,verdict,cls,checks,summary,holders:d.holders||[]};
 }
 
 // ── solana raporu (alanlar farklı)
@@ -271,7 +290,11 @@ function buildSolReport(d){
   if(score>=80){ verdict='Low risk profile'; cls='ok'; }
   else if(score>=50){ verdict='Caution — mixed signals'; cls='warn'; }
   else { verdict='High risk — data says stay sharp'; cls='bad'; }
-  return {score,verdict,cls,checks,holders:d.holders||[]};
+  let summary='';
+  const badsS=checks.filter(c=>c[0]==='bad').map(c=>c[1]);
+  if(!badsS.length) summary='No structural red flags found. Standard market risk still applies.';
+  else summary='Main risk: '+badsS.slice(0,2).join(' + ').toLowerCase()+'.';
+  return {score,verdict,cls,checks,summary,holders:d.holders||[]};
 }
 
 function renderReport(rep, name, addr){
@@ -280,6 +303,9 @@ function renderReport(rep, name, addr){
   $('vname').textContent=name||'Token';
   $('vverdict').textContent=rep.verdict;
   $('vsub').textContent=addr;
+  var sEl=document.getElementById('vsummary');
+  if(!sEl){ sEl=document.createElement('div'); sEl.id='vsummary'; sEl.style.cssText='width:100%;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08);font-size:13.5px;line-height:1.55;color:var(--text)'; document.getElementById('vcard').appendChild(sEl); }
+  sEl.innerHTML=rep.summary?('💬 '+rep.summary):'';
   $('checks').innerHTML=rep.checks.map(c=>
     '<div class="check '+c[0]+'"><span class="cdot"></span><div><div class="c-title">'+c[1]+'</div><div class="c-desc">'+c[2]+'</div></div></div>'
   ).join('');
