@@ -70,6 +70,11 @@
   .flag.bad{background:rgba(255,95,109,.14);color:var(--red)}
   .flag.warn{background:rgba(255,194,74,.12);color:var(--amber)}
   .flag.ok{background:rgba(47,224,138,.12);color:var(--green)}
+  .sev{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:5px;font-weight:700;letter-spacing:.03em;margin-left:6px;vertical-align:middle}
+  .s-cr{background:rgba(255,95,109,.18);color:var(--red);border:1px solid rgba(255,95,109,.4)}
+  .s-hi{background:rgba(255,150,80,.15);color:#ff9650;border:1px solid rgba(255,150,80,.35)}
+  .s-wa{background:rgba(255,194,74,.13);color:var(--amber);border:1px solid rgba(255,194,74,.3)}
+  .s-bn{background:rgba(47,224,138,.13);color:var(--green);border:1px solid rgba(47,224,138,.35)}
   .sellbar{width:80px}
   .sb-track{height:6px;background:rgba(47,224,138,.15);border-radius:4px;overflow:hidden}
   .sb-fill{height:100%;background:var(--red)}
@@ -188,6 +193,9 @@ function scorePool(a){
   const ch24=parseFloat(a.price_change_percentage?.h24)||0;
   const buys=a.transactions?.h24?.buys||0, sells=a.transactions?.h24?.sells||0;
   const tot=buys+sells; const bp=tot>0?buys/tot:.5;
+  const ch1=parseFloat(a.price_change_percentage?.h1)||0;
+  const b1=a.transactions?.h1?.buys||0, s1=a.transactions?.h1?.sells||0;
+  const t1=b1+s1; const bp1=t1>0?b1/t1:.5;
   if(liq>=250000){s+=15;flags.push(['ok','LIQ OK']);}
   else if(liq>=50000){s-=5;flags.push(['warn','LOW LIQ']);}
   else {s-=25;flags.push(['bad','MICRO LIQ']);}
@@ -197,15 +205,26 @@ function scorePool(a){
   if(ageH<24){s-=8;flags.push(['warn','FRESH']);}
   if(mcap>0&&vol>mcap){s-=5;flags.push(['warn','HOT VOL']);}
   if(ch24<=-40){s-=15;flags.push(['bad','DUMP RISK']);}
-  return {score:Math.max(0,Math.min(100,Math.round(s))),flags,liq,ch24,sellPct:tot>0?Math.round(sells/tot*100):50};
+  // severity: düşüş şiddeti + likidite inceliği + satış baskısı birleşimi
+  let sev=0;
+  if(ch24<=-20) sev+=1;
+  if(ch24<=-50) sev+=1;
+  if(liq<50000) sev+=1;
+  if(bp<=.4) sev+=1;
+  const severity=sev>=3?'critical':(sev===2?'high':'watch');
+  // bouncing: 24h düşüşte AMA son 1 saatte fiyat toparlıyor + alım baskısı dönmüş
+  const bouncing=(ch24<-15 && ch1>3 && bp1>=.55 && t1>=10);
+  return {score:Math.max(0,Math.min(100,Math.round(s))),flags,liq,ch24,ch1,sellPct:tot>0?Math.round(sells/tot*100):50,severity,bouncing};
 }
 
 function row(p){
   const cls=p.score>=65?'hi':(p.score>=45?'mid':'lo');
   const fl=p.flags.slice(0,2).map(f=>'<span class="flag '+f[0]+'">'+f[1]+'</span>').join('');
+  const sevBadge=p.severity==='critical'?'<span class="sev s-cr">🔴 CRITICAL</span>':(p.severity==='high'?'<span class="sev s-hi">🟠 HIGH</span>':'<span class="sev s-wa">🟡 WATCH</span>');
+  const bounce=p.bouncing?'<span class="sev s-bn" title="down 24h but last hour shows recovery buying">🔄 bouncing</span>':'';
   return '<a class="row" href="/chainradar.html">'+
     '<span class="sc '+cls+'">'+p.score+'</span>'+
-    '<div><div class="sym">'+p.sym+'</div><div class="meta">'+fmt(p.liq)+' liq</div></div>'+
+    '<div><div class="sym">'+p.sym+' '+sevBadge+bounce+'</div><div class="meta">'+fmt(p.liq)+' liq · 1h '+(p.ch1>=0?'+':'')+p.ch1.toFixed(1)+'%</div></div>'+
     '<div class="flags">'+fl+'</div>'+
     '<div class="sellbar"><div class="sb-track"><div class="sb-fill" style="width:'+p.sellPct+'%"></div></div><div class="sb-lbl">'+p.sellPct+'% sells</div></div>'+
     '<span class="chg '+(p.ch24>=0?'up':'down')+'">'+(p.ch24>=0?'+':'')+p.ch24.toFixed(1)+'%</span></a>';
@@ -250,7 +269,7 @@ $('tw').onclick=async function(){
   if(!DATA.danger.length){ return; }
   const c=DATA.crash[0], d=DATA.danger[0];
   let txt='Dump Alert 🚨 '+CHAINS[net]+'\n\n';
-  if(c) txt+='📉 Biggest drop: $'+c.sym+' '+c.ch24.toFixed(1)+'% (24h)\n';
+  if(c) txt+='📉 Biggest drop: $'+c.sym+' '+c.ch24.toFixed(1)+'% (24h) — '+c.severity.toUpperCase()+'\n';
   txt+='☠️ Weakest structure: $'+d.sym+' — score '+d.score+(d.flags.length?' ('+d.flags.map(f=>f[1]).join(', ')+')':'')+'\n\n'+
     'Know what to avoid, free:\n🔗 neuronaicoin.com/dumpalert.html\n\n#DumpAlert #'+(net==='robinhood'?'RobinhoodChain':'DeFi')+' #CryptoSafety';
   try{ await navigator.clipboard.writeText(txt); }
