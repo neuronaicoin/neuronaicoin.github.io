@@ -67,6 +67,18 @@
   .c-date{font-family:'IBM Plex Mono',monospace;font-size:15px;color:#7fa38f;text-align:right;line-height:1.6}
   .c-date b{color:#2fe08a;font-size:13px;letter-spacing:.12em}
 
+  .c-mood{display:flex;align-items:center;gap:12px;background:rgba(12,26,19,.85);border:1px solid #1a3a2a;
+    border-radius:14px;padding:14px 20px;margin-bottom:18px;font-family:'IBM Plex Mono',monospace}
+  .cm-dot{width:14px;height:14px;border-radius:50%}
+  .c-mood.on .cm-dot{background:#2fe08a;box-shadow:0 0 14px rgba(47,224,138,.7)}
+  .c-mood.mix .cm-dot{background:#ffc24a;box-shadow:0 0 14px rgba(255,194,74,.6)}
+  .c-mood.off .cm-dot{background:#ff5f6d;box-shadow:0 0 14px rgba(255,95,109,.7)}
+  .cm-label{font-size:13px;color:#4a6b58;letter-spacing:.1em}
+  .cm-val{font-size:22px;font-weight:700;letter-spacing:.02em}
+  .c-mood.on .cm-val{color:#2fe08a}
+  .c-mood.mix .cm-val{color:#ffc24a}
+  .c-mood.off .cm-val{color:#ff5f6d}
+  .cm-desc{font-size:12px;color:#7fa38f;margin-left:auto}
   .c-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px}
   .c-stat{background:rgba(12,26,19,.85);border:1px solid #1a3a2a;border-radius:16px;padding:18px 20px}
   .c-stat .l{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#4a6b58;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px}
@@ -150,6 +162,13 @@
               </div>
             </div>
             <div class="c-date"><b>LIVE DATA</b><br><span id="c-date">—</span></div>
+          </div>
+
+          <div class="c-mood" id="c-mood" style="display:none">
+            <span class="cm-dot" id="cm-dot"></span>
+            <span class="cm-label">CHAIN MOOD:</span>
+            <span class="cm-val" id="cm-val">—</span>
+            <span class="cm-desc" id="cm-desc"></span>
           </div>
 
           <div class="c-stats">
@@ -236,13 +255,26 @@ function buildReport(pools){
     low:sorted.slice(-5).reverse(),
     gainer:[...pools].sort((a,b)=>b.ch24-a.ch24)[0],
     loser:[...pools].sort((a,b)=>a.ch24-b.ch24)[0],
-    hot:[...pools].sort((a,b)=>(b.vol||0)-(a.vol||0))[0]
+    hot:[...pools].sort((a,b)=>(b.vol||0)-(a.vol||0))[0],
+    mood:(function(){
+      const avg=Math.round(pools.reduce((s,p)=>s+p.score,0)/pools.length);
+      const upR=pools.filter(p=>p.ch24>0).length/pools.length;
+      // mood = ortalama sağlık + yükselen oranının birleşimi
+      const m=avg*0.6 + upR*100*0.4;
+      if(m>=58) return {k:'on',t:'RISK-ON',d:'healthy structures + broad green'};
+      if(m>=42) return {k:'mix',t:'MIXED',d:'signals split — pick spots carefully'};
+      return {k:'off',t:'RISK-OFF',d:'weak structures + broad red'};
+    })()
   };
 }
 
 function renderReport(r){
   R=r;
   $('c-date').textContent=r.date;
+  if(r.mood){
+    const cm=$('c-mood'); cm.style.display='flex'; cm.className='c-mood '+r.mood.k;
+    $('cm-val').textContent=r.mood.t; $('cm-desc').textContent=r.mood.d;
+  }
   $('s-pools').textContent=r.count;
   $('s-avg').textContent=r.avg;
   $('s-avg').className='v '+(r.avg>=65?'g':(r.avg>=45?'a':'r'));
@@ -323,7 +355,8 @@ $('dl').onclick=async function(){
 $('tw').onclick=async function(){
   if(!R){return;}
   const net=document.getElementById('chain').value;
-  const txt=CHAINS[net]+' Daily Report 📊\n\n'+
+  const moodTxt=R.mood?(R.mood.k==='on'?'🟢 ':(R.mood.k==='mix'?'🟡 ':'🔴 '))+R.mood.t:'';
+  const txt=CHAINS[net]+' Daily Report 📊\n'+(moodTxt?'Chain mood: '+moodTxt+'\n':'')+'\n'+
     '🏆 Top health: $'+R.top[0].sym+' — score '+R.top[0].score+'\n'+
     '☠️ Weakest: $'+R.low[0].sym+' — score '+R.low[0].score+'\n'+
     '📈 Biggest gainer: $'+R.gainer.sym+' +'+R.gainer.ch24.toFixed(1)+'%\n'+
