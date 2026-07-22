@@ -116,6 +116,12 @@
 
   /* filter bar */
   .filterbar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+  .qtoggle{background:rgba(47,224,138,.12);border:1px solid var(--green);color:var(--green);border-radius:9px;
+    padding:9px 14px;font-family:'Space Grotesk';font-weight:600;font-size:12.5px;cursor:pointer;transition:.15s}
+  .qtoggle.off{background:var(--panel);border-color:var(--line);color:var(--faint)}
+  .trend{font-size:13px;margin-left:5px;font-weight:700}
+  .t-up{color:var(--green)}
+  .t-dn{color:var(--red)}
   .fb-search{flex:1;min-width:200px;display:flex;align-items:center;gap:8px;background:var(--panel);
     border:1px solid var(--line);border-radius:9px;padding:0 12px}
   .fb-search:focus-within{border-color:var(--green)}
@@ -211,6 +217,17 @@
   .md-cell .l{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
   .md-cell .v{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600}
   .md-flags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+  .md-why{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+  .md-why-t{font-family:'Space Grotesk';font-weight:700;font-size:13.5px;margin-bottom:10px}
+  .md-why-s{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);font-weight:400}
+  .md-bd{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;padding:5px 0;border-bottom:1px solid rgba(26,58,42,.4)}
+  .md-bd:last-child{border-bottom:none;font-weight:700;margin-top:2px}
+  .md-bd.ok .bd-pts{color:var(--green);font-weight:700}
+  .md-bd.warn .bd-pts{color:var(--amber);font-weight:700}
+  .md-bd.bad .bd-pts{color:var(--red);font-weight:700}
+  .md-bd.base .bd-pts{color:var(--muted)}
+  .bd-txt{color:var(--text)}
+  .bd-pts{font-family:'IBM Plex Mono',monospace}
   .md-actions{display:flex;gap:8px;flex-wrap:wrap}
   .md-btn{flex:1;min-width:130px;text-align:center;padding:11px;border-radius:9px;font-family:'Space Grotesk';
     font-weight:600;font-size:13px;cursor:pointer;text-decoration:none;transition:.15s;border:1px solid var(--line);
@@ -323,6 +340,7 @@
   </div>
 
   <div class="filterbar">
+    <button id="qmode" class="qtoggle" title="Hide dead pools (under $10K liquidity or $5K volume)">✨ Quality</button>
     <div class="fb-search">
       <i class="fb-ic">🔍</i>
       <input type="text" id="search" placeholder="Search coin (e.g. HMM, PONS)…" autocomplete="off">
@@ -455,9 +473,10 @@ const ageStr=iso=>{ if(!iso)return '';
 
 // risk flags + signal score from pool attributes
 function analyze(a){
-  const flags=[];
+  const flags=[]; const bd=[['base','Starting point','50']];
   const liq=parseFloat(a.reserve_in_usd)||0;
   const vol24=parseFloat(a.volume_usd?.h24)||0;
+  const vol6=parseFloat(a.volume_usd?.h6)||0;
   const fdv=parseFloat(a.fdv_usd)||0;
   const mcap=parseFloat(a.market_cap_usd)||fdv||0;
   const ch24=parseFloat(a.price_change_percentage?.h24);
@@ -468,32 +487,41 @@ function analyze(a){
   let score=50;
 
   // liquidity
-  if(liq>=250000){ flags.push(['ok','LIQ OK']); score+=15; }
-  else if(liq>=50000){ flags.push(['warn','LOW LIQ']); score-=5; }
-  else { flags.push(['bad','MICRO LIQ']); score-=25; }
+  if(liq>=250000){ flags.push(['ok','LIQ OK']); score+=15; bd.push(['ok','Deep liquidity ($250K+)','+15']); }
+  else if(liq>=50000){ flags.push(['warn','LOW LIQ']); score-=5; bd.push(['warn','Low liquidity (under $250K)','-5']); }
+  else { flags.push(['bad','MICRO LIQ']); score-=25; bd.push(['bad','Micro liquidity (under $50K)','-25']); }
 
   // buy/sell pressure
   const tot=buys+sells;
   if(tot>0){
     const buyRatio=buys/tot;
-    if(buyRatio>=0.58){ flags.push(['ok','BUY>SELL']); score+=12; }
-    else if(buyRatio<=0.42){ flags.push(['bad','SELL>BUY']); score-=12; }
+    if(buyRatio>=0.58){ flags.push(['ok','BUY>SELL']); score+=12; bd.push(['ok','Buy pressure ('+Math.round(buyRatio*100)+'% buys)','+12']); }
+    else if(buyRatio<=0.42){ flags.push(['bad','SELL>BUY']); score-=12; bd.push(['bad','Sell pressure ('+Math.round((1-buyRatio)*100)+'% sells)','-12']); }
+    else bd.push(['base','Balanced buy/sell ('+Math.round(buyRatio*100)+'% buys)','±0']);
   }
 
   // age
-  if(ageH<24){ flags.push(['warn','FRESH']); score-=8; }
+  if(ageH<24){ flags.push(['warn','FRESH']); score-=8; bd.push(['warn','Very new pool (under 24h)','-8']); }
 
   // volume vs mcap (volatility / manipulation)
-  if(mcap>0 && vol24>mcap){ flags.push(['warn','HOT VOL']); score-=5; }
+  if(mcap>0 && vol24>mcap){ flags.push(['warn','HOT VOL']); score-=5; bd.push(['warn','Volume exceeds market cap (overheated)','-5']); }
 
   // dump risk: big negative 24h
-  if(!isNaN(ch24) && ch24<-40){ flags.push(['bad','DUMP RISK']); score-=15; }
+  if(!isNaN(ch24) && ch24<-40){ flags.push(['bad','DUMP RISK']); score-=15; bd.push(['bad','Down '+Math.abs(Math.round(ch24))+'% in 24h (active dump)','-15']); }
 
   // healthy momentum (mild positive, not insane)
-  if(!isNaN(ch24) && ch24>10 && ch24<200 && liq>=50000){ score+=8; }
+  if(!isNaN(ch24) && ch24>10 && ch24<200 && liq>=50000){ score+=8; bd.push(['ok','Healthy momentum (+'+Math.round(ch24)+'% with real liquidity)','+8']); }
+
+  // trend: son 6h hacmi 24h ortalamasına göre ısınıyor mu sönüyor mu
+  let trend='flat';
+  if(vol24>1000 && vol6>0){
+    const pace=vol6*4/vol24; // 1.0 = sabit tempo
+    if(pace>=1.25) trend='up'; else if(pace<=0.7) trend='down';
+  }
 
   score=Math.max(0,Math.min(100,Math.round(score)));
-  return {flags,score,liq,vol24,mcap:mcap||fdv,ch24,buys,sells};
+  bd.push(['base','Final score',String(score)]);
+  return {flags,score,liq,vol24,mcap:mcap||fdv,ch24,buys,sells,bd,trend};
 }
 
 async function load(){
@@ -535,6 +563,7 @@ async function load(){
         buys: an.buys, sells: an.sells,
         signal: an.score,
         flags: an.flags,
+        bd: an.bd, trend: an.trend,
         age: a.pool_created_at
       };
     });
@@ -556,7 +585,9 @@ function render(){
   const q=(document.getElementById('search')?.value||'').trim().toLowerCase();
   const fScore=document.getElementById('filter-score')?.value||'0';
   const fRisk=document.getElementById('filter-risk')?.value||'all';
+  const qMode=localStorage.getItem('cr_quality')!=='off';
   let filtered=rowsData.filter(r=>{
+    if(qMode && ((r.liq||0)<10000 || (r.vol||0)<5000)) return false;
     if(q && !(r.sym||'').toLowerCase().includes(q)) return false;
     if(fScore==='lo'){ if(r.signal>=45) return false; }
     else if(fScore!=='0'){ if(r.signal<parseInt(fScore,10)) return false; }
@@ -583,7 +614,7 @@ function render(){
     const star=inWatch(r.sym)?'★':'☆';
     const starOn=inWatch(r.sym)?' on':'';
     return '<tr class="coin-row" data-sym="'+r.sym+'" style="cursor:pointer">'+
-      '<td><span class="score '+scoreCls+'">'+r.signal+'</span></td>'+
+      '<td><span class="score '+scoreCls+'">'+r.signal+'</span>'+(r.trend==='up'?'<span class="trend t-up" title="volume heating up (6h pace above 24h avg)">↗</span>':(r.trend==='down'?'<span class="trend t-dn" title="volume cooling (6h pace below 24h avg)">↘</span>':''))+'</td>'+
       '<td><div class="coin"><button class="star-btn'+starOn+'" data-star="'+r.sym+'">'+star+'</button>'+
         '<div><div class="sym">'+r.sym+'</div>'+
         '<div class="age">'+(r.age?ageStr(r.age)+' old':'')+'</div></div></div></td>'+
@@ -676,6 +707,13 @@ document.querySelectorAll('thead th[data-sort]').forEach(th=>{
 
 load();
 // auto refresh every 60s
+// quality mode toggle
+const qbtn=document.getElementById('qmode');
+function syncQ(){ const on=localStorage.getItem('cr_quality')!=='off'; qbtn.classList.toggle('off',!on); qbtn.textContent=on?'✨ Quality':'✨ Quality: off'; }
+qbtn.onclick=()=>{ const on=localStorage.getItem('cr_quality')!=='off';
+  try{localStorage.setItem('cr_quality',on?'off':'on');}catch(e){} syncQ(); render(); };
+syncQ();
+
 setInterval(load, 60000);
 
 // ============ NEURON ANALYST (Claude-powered) ============
@@ -896,6 +934,9 @@ function openDetail(sym){
       '<div class="md-cell"><div class="l">Buy pressure</div><div class="v">'+buyPct+'% ('+fmtNum(r.buys)+'/'+fmtNum(r.sells)+')</div></div>'+
     '</div>'+
     '<div class="md-flags">'+flagsHtml+'</div>'+
+    '<div class="md-why"><div class="md-why-t">🧮 Why this score? <span class="md-why-s">— full transparency, no black box</span></div>'+
+    (r.bd||[]).map(b=>'<div class="md-bd '+b[0]+'"><span class="bd-txt">'+b[1]+'</span><span class="bd-pts">'+b[2]+'</span></div>').join('')+
+    '</div>'+
     '<div class="md-actions">'+
       '<a href="'+r.poolUrl+'" target="_blank" class="md-btn">GeckoTerminal ↗</a>'+
       (r.tokenAddr?'<a href="/rugcheck.html?chain='+NET+'&address='+encodeURIComponent(r.tokenAddr)+'" class="md-btn">🛡️ Rug Check</a>':'')+
