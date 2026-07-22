@@ -107,6 +107,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;ali
 .cf-status.ok{color:var(--grn)}
 .cf-status.err{color:#ff5f6d}
 
+/* api card identity */
+.tc-api::before{background:linear-gradient(90deg,#a78bfa,transparent)}
+.tc-api .tool-ic{border-color:rgba(167,139,250,.4);background:rgba(167,139,250,.08)}
+.tc-api.live:hover{border-color:#a78bfa}
+.tc-api .tool-foot{color:#a78bfa}
+.tc-api .tool-status.on{background:rgba(167,139,250,.12);color:#a78bfa}
+.tc-api .tool-status.on .d{background:#a78bfa}
+
 /* dump alert card identity */
 .tc-dump::before{background:linear-gradient(90deg,#ff5f6d,transparent)}
 .tc-dump .tool-ic{border-color:rgba(255,95,109,.4);background:rgba(255,95,109,.08)}
@@ -486,6 +494,17 @@ footer{position:relative;z-index:1;background:var(--bg);border-top:1px solid var
         <p>Know what to avoid. Live crash watch: the biggest 24h drops, the weakest structures and the pools where money is heading for the exit — before you walk in.</p>
         <div class="tool-tags"><span class="ttag">crash-watch</span><span class="ttag">risk</span><span class="ttag">free</span></div>
         <div class="tool-foot">Open Dump Alert →</div>
+      </a>
+
+      <a href="/api/" class="tool live rv tc-api">
+        <div class="tool-top">
+          <div class="tool-ic">🔌</div>
+          <span class="tool-status on"><span class="d"></span>LIVE</span>
+        </div>
+        <h3>NEURON API</h3>
+        <p>Our scores, machine-readable. Live token health data for bots, AI agents and builders — refreshed hourly by the autonomous NEURON Data Engine. Free, no key, no signup.</p>
+        <div class="tool-tags"><span class="ttag">for-developers</span><span class="ttag">ai-agents</span><span class="ttag">free</span></div>
+        <div class="tool-foot">Read the docs →</div>
       </a>
 
       <div class="tool soon rv">
