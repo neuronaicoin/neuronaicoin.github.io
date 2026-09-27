@@ -1,9 +1,9 @@
 {
  "project": "NEURON AI",
  "chain": "robinhood",
- "generated_at": "2026-09-27T18:21:58.023Z",
- "pool_count": 31,
- "avg_score": 51,
+ "generated_at": "2026-09-27T22:08:31.659Z",
+ "pool_count": 34,
+ "avg_score": 48,
  "docs": "https://neuronaicoin.com",
  "disclaimer": "Activity-health scores, not price predictions. Not financial advice. DYOR.",
  "pools": [
@@ -15,13 +15,13 @@
    "flags": [
     "LIQ OK"
    ],
-   "trend": "up",
-   "liq": 19855092,
-   "vol": 143898784,
-   "mcap": 3254844860,
+   "trend": "flat",
+   "liq": 19785522,
+   "vol": 145925390,
+   "mcap": 3255647024,
    "ch24": 0.1,
-   "buys": 102403,
-   "sells": 104370
+   "buys": 99271,
+   "sells": 100058
   },
   {
    "sym": "WETH",
@@ -31,31 +31,49 @@
    "flags": [
     "LIQ OK"
    ],
-   "trend": "up",
-   "liq": 30978357,
-   "vol": 43537430,
-   "mcap": 6660507684,
-   "ch24": 0.3,
-   "buys": 5806,
-   "sells": 5463
+   "trend": "flat",
+   "liq": 30769638,
+   "vol": 45036213,
+   "mcap": 6615192393,
+   "ch24": -0.4,
+   "buys": 6121,
+   "sells": 5600
   },
   {
-   "sym": "FILR",
-   "tokenAddr": "0xb6ef1b60750a7f7e3f6b075989d48e9c733dd1da",
-   "poolAddr": "0x391112331701c8e32b836712f0f7fa14072a27b662f881eccf55003d3b16520d",
-   "score": 25,
+   "sym": "SHRUB",
+   "tokenAddr": "0x5d9144d2d017386519a7134fcc7f1e4ba22f920c",
+   "poolAddr": "0x4a6a85252a6f6b383a5f747259ee157e65ff1307",
+   "score": 80,
+   "flags": [
+    "LIQ OK",
+    "BUY>SELL",
+    "HOT VOL"
+   ],
+   "trend": "up",
+   "liq": 313246,
+   "vol": 16584432,
+   "mcap": 13884250,
+   "ch24": 100.5,
+   "buys": 7953,
+   "sells": 2836
+  },
+  {
+   "sym": "VELN",
+   "tokenAddr": "0x61fcfb63902e5976908e1d7137530ffbf5df2f45",
+   "poolAddr": "0x50f084055b462da4b7639a15b67e3ee53753563a4429806878379237a115956c",
+   "score": 32,
    "flags": [
     "LOW LIQ",
-    "HOT VOL",
-    "DUMP RISK"
+    "FRESH",
+    "HOT VOL"
    ],
-   "trend": "down",
-   "liq": 83306,
-   "vol": 15544445,
-   "mcap": 835108,
-   "ch24": -65,
-   "buys": 6588,
-   "sells": 6089
+   "trend": "up",
+   "liq": 197127,
+   "vol": 16140972,
+   "mcap": 288678,
+   "ch24": 837.7,
+   "buys": 7044,
+   "sells": 6387
   },
   {
    "sym": "SI",
@@ -68,12 +86,12 @@
     "HOT VOL"
    ],
    "trend": "flat",
-   "liq": 242527,
-   "vol": 14752263,
-   "mcap": 12075186,
-   "ch24": -35.7,
-   "buys": 10505,
-   "sells": 5241
+   "liq": 223028,
+   "vol": 15064275,
+   "mcap": 9074967,
+   "ch24": -25.1,
+   "buys": 10537,
+   "sells": 5449
   },
   {
    "sym": "GOOSE",
@@ -83,92 +101,37 @@
    "flags": [
     "LIQ OK"
    ],
-   "trend": "up",
-   "liq": 12816734,
-   "vol": 13764986,
-   "mcap": 116511760,
-   "ch24": -1.5,
-   "buys": 309,
-   "sells": 307
+   "trend": "down",
+   "liq": 12880366,
+   "vol": 13765202,
+   "mcap": 113942263,
+   "ch24": -1.8,
+   "buys": 310,
+   "sells": 312
   },
   {
    "sym": "astro",
    "tokenAddr": "0x5b81efe5e0ba2b31c0ed843b908a2c45fe6e14c5",
    "poolAddr": "0x3416b8d8aa6ae642ffdc2f65165ff479d4bd3007",
-   "score": 57,
-   "flags": [
-    "LIQ OK",
-    "BUY>SELL",
-    "HOT VOL",
-    "DUMP RISK"
-   ],
-   "trend": "flat",
-   "liq": 447128,
-   "vol": 13721310,
-   "mcap": 8818464,
-   "ch24": -59.6,
-   "buys": 5363,
-   "sells": 841
-  },
-  {
-   "sym": "SHRUB",
-   "tokenAddr": "0x5d9144d2d017386519a7134fcc7f1e4ba22f920c",
-   "poolAddr": "0x4a6a85252a6f6b383a5f747259ee157e65ff1307",
-   "score": 85,
-   "flags": [
-    "LIQ OK",
-    "BUY>SELL"
-   ],
-   "trend": "up",
-   "liq": 320534,
-   "vol": 13459485,
-   "mcap": 16183467,
-   "ch24": 63.5,
-   "buys": 7101,
-   "sells": 2316
-  },
-  {
-   "sym": "DEBT",
-   "tokenAddr": "0xc261532bc770c2b4ea10f97f72328aa0fc51b0d0",
-   "poolAddr": "0xaffa3ccfee7eea8e8fe413c8aecc444acdaa885d",
-   "score": 9,
-   "flags": [
-    "MICRO LIQ",
-    "BUY>SELL",
-    "FRESH",
-    "HOT VOL",
-    "DUMP RISK"
-   ],
-   "trend": "flat",
-   "liq": 2,
-   "vol": 13043959,
-   "mcap": 29880,
-   "ch24": -93.3,
-   "buys": 15073,
-   "sells": 6018
-  },
-  {
-   "sym": "BROBIN",
-   "tokenAddr": "0x1f97391be0ba667886f57273eace827d6e79cf17",
-   "poolAddr": "0xa1662de341bbc1c062feae958d80bb342eb943cad4e8d10c768e0a007c3a9e25",
-   "score": 32,
+   "score": 37,
    "flags": [
     "LOW LIQ",
-    "FRESH",
-    "HOT VOL"
+    "BUY>SELL",
+    "HOT VOL",
+    "DUMP RISK"
    ],
    "trend": "flat",
-   "liq": 221838,
-   "vol": 11925382,
-   "mcap": 326398,
-   "ch24": 796.6,
-   "buys": 4957,
-   "sells": 4462
+   "liq": 248751,
+   "vol": 13582607,
+   "mcap": 2531415,
+   "ch24": -59.5,
+   "buys": 5247,
+   "sells": 925
   },
   {
-   "sym": "VELN",
-   "tokenAddr": "0x61fcfb63902e5976908e1d7137530ffbf5df2f45",
-   "poolAddr": "0x50f084055b462da4b7639a15b67e3ee53753563a4429806878379237a115956c",
+   "sym": "MCPLT",
+   "tokenAddr": "0x28339433485350fdbd9ae549f14a5460726c98c9",
+   "poolAddr": "0xc0c6e1b9cbbf07628e5126c8e7f6b58daadf768b84167949532d6eac351bdecb",
    "score": 52,
    "flags": [
     "LIQ OK",
@@ -176,12 +139,49 @@
     "HOT VOL"
    ],
    "trend": "up",
-   "liq": 603462,
-   "vol": 11218853,
-   "mcap": 2707218,
-   "ch24": 8693.5,
-   "buys": 4904,
-   "sells": 4395
+   "liq": 562876,
+   "vol": 13033147,
+   "mcap": 1977761,
+   "ch24": 5430.1,
+   "buys": 5527,
+   "sells": 4862
+  },
+  {
+   "sym": "BROBIN",
+   "tokenAddr": "0x1f97391be0ba667886f57273eace827d6e79cf17",
+   "poolAddr": "0xa1662de341bbc1c062feae958d80bb342eb943cad4e8d10c768e0a007c3a9e25",
+   "score": 12,
+   "flags": [
+    "MICRO LIQ",
+    "FRESH",
+    "HOT VOL"
+   ],
+   "trend": "flat",
+   "liq": 26625,
+   "vol": 11925382,
+   "mcap": 326398,
+   "ch24": 796.6,
+   "buys": 4957,
+   "sells": 4462
+  },
+  {
+   "sym": "DEBT",
+   "tokenAddr": "0xc261532bc770c2b4ea10f97f72328aa0fc51b0d0",
+   "poolAddr": "0xaffa3ccfee7eea8e8fe413c8aecc444acdaa885d",
+   "score": 17,
+   "flags": [
+    "MICRO LIQ",
+    "BUY>SELL",
+    "HOT VOL",
+    "DUMP RISK"
+   ],
+   "trend": "flat",
+   "liq": 2,
+   "vol": 10894854,
+   "mcap": 29880,
+   "ch24": -99,
+   "buys": 10592,
+   "sells": 5111
   },
   {
    "sym": "HEISENBERG",
@@ -196,12 +196,30 @@
     "DUMP RISK"
    ],
    "trend": "flat",
-   "liq": 3079,
+   "liq": 3073,
    "vol": 10021376,
    "mcap": 2730,
    "ch24": -99,
    "buys": 26119,
    "sells": 15909
+  },
+  {
+   "sym": "PEVL",
+   "tokenAddr": "0x3f5c9ae8f41a1d4a0ffd0fde4cb007c0d2034e22",
+   "poolAddr": "0xce64f07fe155eeb4380379c2b723570ab57c9234c0976f9d8e9fc79fcb6f9844",
+   "score": 52,
+   "flags": [
+    "LIQ OK",
+    "FRESH",
+    "HOT VOL"
+   ],
+   "trend": "up",
+   "liq": 292958,
+   "vol": 9427698,
+   "mcap": 587589,
+   "ch24": 1547.2,
+   "buys": 4043,
+   "sells": 3700
   },
   {
    "sym": "BTC",
@@ -213,7 +231,7 @@
     "BUY>SELL"
    ],
    "trend": "down",
-   "liq": 98240553,
+   "liq": 97960479,
    "vol": 8526927,
    "mcap": 6494246475,
    "ch24": -0.4,
@@ -221,24 +239,20 @@
    "sells": 11
   },
   {
-   "sym": "HYDX",
-   "tokenAddr": "0xe6200d65d66256f4a65d1b4177597f1f4b20e809",
-   "poolAddr": "0x786467c30accad2600a21a9630bc438203094df0",
-   "score": 9,
+   "sym": "NVDA",
+   "tokenAddr": "0xd0601ce157db5bdc3162bbac2a2c8af5320d9eec",
+   "poolAddr": "0x6444a8e0b267406a15db74ca00c4a24bdfa81ed3180f5b6d0851f8ed6f4f29c5",
+   "score": 45,
    "flags": [
-    "MICRO LIQ",
-    "BUY>SELL",
-    "FRESH",
-    "HOT VOL",
-    "DUMP RISK"
+    "LOW LIQ"
    ],
-   "trend": "flat",
-   "liq": 2716,
-   "vol": 8139133,
-   "mcap": 2739,
-   "ch24": -99.8,
-   "buys": 9239,
-   "sells": 3280
+   "trend": "up",
+   "liq": 109916,
+   "vol": 8393502,
+   "mcap": 20353458,
+   "ch24": 0.1,
+   "buys": 6293,
+   "sells": 6282
   },
   {
    "sym": "USDB",
@@ -250,12 +264,12 @@
     "BUY>SELL"
    ],
    "trend": "down",
-   "liq": 17053972,
-   "vol": 7723725,
+   "liq": 18133076,
+   "vol": 7723727,
    "mcap": 0,
-   "ch24": -0.1,
-   "buys": 19,
-   "sells": 10
+   "ch24": 0.2,
+   "buys": 20,
+   "sells": 11
   },
   {
    "sym": "PONS",
@@ -265,47 +279,50 @@
    "flags": [
     "LIQ OK"
    ],
-   "trend": "flat",
-   "liq": 1574198,
-   "vol": 7673611,
-   "mcap": 406113870,
-   "ch24": -8.3,
-   "buys": 5979,
-   "sells": 6252
-  },
-  {
-   "sym": "NVDA",
-   "tokenAddr": "0xd0601ce157db5bdc3162bbac2a2c8af5320d9eec",
-   "poolAddr": "0x6444a8e0b267406a15db74ca00c4a24bdfa81ed3180f5b6d0851f8ed6f4f29c5",
-   "score": 45,
-   "flags": [
-    "LOW LIQ"
-   ],
-   "trend": "up",
-   "liq": 84956,
-   "vol": 6783327,
-   "mcap": 20398583,
-   "ch24": 0.3,
-   "buys": 5358,
-   "sells": 5247
+   "trend": "down",
+   "liq": 1478728,
+   "vol": 6947595,
+   "mcap": 392688858,
+   "ch24": -11,
+   "buys": 5529,
+   "sells": 5875
   },
   {
    "sym": "VLTKIT",
    "tokenAddr": "0x7a3c86c8966d280ff85ebc355cbb52c46fe6fb01",
    "poolAddr": "0xdd413dea42f47a7cbf81f120f3e38d0aef5e02e2a93d429f3d202754c2db7c2b",
-   "score": 52,
+   "score": 32,
    "flags": [
-    "LIQ OK",
+    "LOW LIQ",
     "FRESH",
     "HOT VOL"
    ],
    "trend": "up",
-   "liq": 353151,
+   "liq": 235874,
    "vol": 5775842,
    "mcap": 584453,
    "ch24": 2853.8,
    "buys": 3061,
    "sells": 2941
+  },
+  {
+   "sym": "HYDX",
+   "tokenAddr": "0xe6200d65d66256f4a65d1b4177597f1f4b20e809",
+   "poolAddr": "0x786467c30accad2600a21a9630bc438203094df0",
+   "score": 17,
+   "flags": [
+    "MICRO LIQ",
+    "BUY>SELL",
+    "HOT VOL",
+    "DUMP RISK"
+   ],
+   "trend": "down",
+   "liq": 2858,
+   "vol": 5726872,
+   "mcap": 2708,
+   "ch24": -99.9,
+   "buys": 6971,
+   "sells": 2431
   },
   {
    "sym": "ROBINPEPE",
@@ -318,12 +335,12 @@
     "DUMP RISK"
    ],
    "trend": "flat",
-   "liq": 81885,
-   "vol": 3395836,
-   "mcap": 1046692,
-   "ch24": -48.8,
-   "buys": 19121,
-   "sells": 17803
+   "liq": 77240,
+   "vol": 3428502,
+   "mcap": 919927,
+   "ch24": -54.3,
+   "buys": 19658,
+   "sells": 18317
   },
   {
    "sym": "AD",
@@ -334,47 +351,64 @@
     "LOW LIQ",
     "HOT VOL"
    ],
-   "trend": "up",
-   "liq": 59987,
-   "vol": 550303,
-   "mcap": 210897,
-   "ch24": 19.4,
-   "buys": 4105,
-   "sells": 4409
+   "trend": "flat",
+   "liq": 61657,
+   "vol": 590246,
+   "mcap": 226296,
+   "ch24": 28.9,
+   "buys": 4196,
+   "sells": 4677
   },
   {
    "sym": "ROO",
    "tokenAddr": "0x3458e003f6ed93df0f537b8acac6fbe08e41247f",
    "poolAddr": "0x91e9823a895a2d05a2c853fbd1619da089b36054f0a342039a0e8046608bbece",
-   "score": 48,
+   "score": 20,
    "flags": [
-    "LOW LIQ",
+    "MICRO LIQ",
     "HOT VOL"
    ],
-   "trend": "flat",
-   "liq": 53730,
-   "vol": 1411400,
-   "mcap": 487606,
-   "ch24": 61.1,
-   "buys": 13569,
-   "sells": 12700
+   "trend": "up",
+   "liq": 47626,
+   "vol": 1437756,
+   "mcap": 387903,
+   "ch24": 77,
+   "buys": 13437,
+   "sells": 12571
+  },
+  {
+   "sym": "HOODIE",
+   "tokenAddr": "0x8f23191a2a697df832acb9fe9fcb7a23e75ca184",
+   "poolAddr": "0x9a25f2461055af82b771ed88d16a2e9245dcea344a7211aa8c147d72f9d658ec",
+   "score": 12,
+   "flags": [
+    "MICRO LIQ",
+    "FRESH",
+    "HOT VOL"
+   ],
+   "trend": "up",
+   "liq": 32886,
+   "vol": 213216,
+   "mcap": 171680,
+   "ch24": 10864.6,
+   "buys": 929,
+   "sells": 697
   },
   {
    "sym": "CASHED",
    "tokenAddr": "0x6249519883b8d7ccf915dfcd6c0442984dae9d24",
    "poolAddr": "0x43fea2e267164122909aa6336cd89142df28027aba8ed0c81d414a4e953e86e8",
-   "score": 30,
+   "score": 45,
    "flags": [
-    "LOW LIQ",
-    "DUMP RISK"
+    "LOW LIQ"
    ],
-   "trend": "flat",
-   "liq": 118446,
-   "vol": 1675263,
+   "trend": "down",
+   "liq": 120382,
+   "vol": 1154558,
    "mcap": 0,
-   "ch24": -55.3,
-   "buys": 3925,
-   "sells": 3914
+   "ch24": -34.6,
+   "buys": 3020,
+   "sells": 2946
   },
   {
    "sym": "musebook",
@@ -385,13 +419,13 @@
     "LIQ OK",
     "SELL>BUY"
    ],
-   "trend": "flat",
-   "liq": 2333542,
-   "vol": 689913,
-   "mcap": 6426469,
-   "ch24": -20.2,
-   "buys": 1131,
-   "sells": 1806
+   "trend": "down",
+   "liq": 2253196,
+   "vol": 616927,
+   "mcap": 6137287,
+   "ch24": -21,
+   "buys": 1030,
+   "sells": 1638
   },
   {
    "sym": "POTATCHI",
@@ -404,81 +438,45 @@
     "FRESH",
     "HOT VOL"
    ],
-   "trend": "flat",
-   "liq": 90080,
-   "vol": 1054210,
-   "mcap": 913860,
-   "ch24": 1369.8,
-   "buys": 7999,
-   "sells": 4251
+   "trend": "down",
+   "liq": 90965,
+   "vol": 1091236,
+   "mcap": 926629,
+   "ch24": 1390.3,
+   "buys": 8255,
+   "sells": 4449
   },
   {
    "sym": "SCROOGE",
    "tokenAddr": "0x4da3916d3ae6feece32ec8a2c4856d4abeb41bfd",
    "poolAddr": "0x487a11b00b9c552a085e126be4ad8766ac19b97289aded03525c5ba4f1f4f186",
-   "score": 40,
+   "score": 45,
    "flags": [
-    "LOW LIQ",
-    "HOT VOL"
-   ],
-   "trend": "flat",
-   "liq": 57071,
-   "vol": 557429,
-   "mcap": 349344,
-   "ch24": 252.2,
-   "buys": 2358,
-   "sells": 2160
-  },
-  {
-   "sym": "HOODS",
-   "tokenAddr": "0x28b0ed2365c8c25b4542d06725acb7662bef6edf",
-   "poolAddr": "0x3bd9c129b50f7301fb8e1abd3c36ad55f4c40589bf82d6b81de9d1fd0afd0611",
-   "score": 40,
-   "flags": [
-    "LOW LIQ",
-    "HOT VOL"
-   ],
-   "trend": "down",
-   "liq": 166030,
-   "vol": 1619387,
-   "mcap": 705768,
-   "ch24": 6858.4,
-   "buys": 3794,
-   "sells": 2907
-  },
-  {
-   "sym": "AEVA",
-   "tokenAddr": "0xe8729dc9dca85167e06b7e9c66a58b22457c5f30",
-   "poolAddr": "0x7f3a6dcfd793c2b86659587a64f2add34f5bf21dad10968abf751b69ac1ac0d4",
-   "score": 57,
-   "flags": [
-    "LOW LIQ",
-    "BUY>SELL"
-   ],
-   "trend": "flat",
-   "liq": 119279,
-   "vol": 215138,
-   "mcap": 0,
-   "ch24": -28,
-   "buys": 483,
-   "sells": 286
-  },
-  {
-   "sym": "DELTA",
-   "tokenAddr": "0xe8ffd7e24187f72afb08d75b1bb13088a989a791",
-   "poolAddr": "0xd64fbda67e1015df43fa5e49f02ca844729e5f94",
-   "score": 77,
-   "flags": [
-    "LIQ OK",
-    "BUY>SELL"
+    "LOW LIQ"
    ],
    "trend": "up",
-   "liq": 1461853,
-   "vol": 835773,
-   "mcap": 20036608,
-   "ch24": 7.3,
-   "buys": 728,
-   "sells": 455
+   "liq": 83652,
+   "vol": 475716,
+   "mcap": 809393,
+   "ch24": 326.1,
+   "buys": 1840,
+   "sells": 1728
+  },
+  {
+   "sym": "ORBIO",
+   "tokenAddr": "0xaa07a0e9209e16ac99708c3ec70159c6ef3128a3",
+   "poolAddr": "0xea9f200e13055b82f175f44f592c4c13dd8c9d9320a66487d3c5cd90d68550ef",
+   "score": 73,
+   "flags": [
+    "LIQ OK"
+   ],
+   "trend": "up",
+   "liq": 1544513,
+   "vol": 4331747,
+   "mcap": 87571147,
+   "ch24": 25.8,
+   "buys": 7171,
+   "sells": 6583
   },
   {
    "sym": "NET",
@@ -490,12 +488,45 @@
     "BUY>SELL"
    ],
    "trend": "down",
-   "liq": 763027,
-   "vol": 1130025,
-   "mcap": 2286300,
-   "ch24": -10.1,
-   "buys": 992,
-   "sells": 623
+   "liq": 782683,
+   "vol": 1022674,
+   "mcap": 2442974,
+   "ch24": -3.5,
+   "buys": 909,
+   "sells": 601
+  },
+  {
+   "sym": "CPU",
+   "tokenAddr": "0x8eaa17be69ae9616cede4671e6d837bb89491e18",
+   "poolAddr": "0xaf8aa959b7e460fbbc61d25b9896a6e3f92cbf3a2bde01fa2b5ac811f2d6a986",
+   "score": 73,
+   "flags": [
+    "LIQ OK"
+   ],
+   "trend": "up",
+   "liq": 682381,
+   "vol": 1130782,
+   "mcap": 3474829,
+   "ch24": 23.1,
+   "buys": 4426,
+   "sells": 4664
+  },
+  {
+   "sym": "WALLET",
+   "tokenAddr": "0x0339f5459fc690ac85f1782e15782a151b4a9e1b",
+   "poolAddr": "0x9501a20bedb8bea0798fe5d4c411f5e270965d49",
+   "score": 85,
+   "flags": [
+    "LIQ OK",
+    "BUY>SELL"
+   ],
+   "trend": "up",
+   "liq": 2621061,
+   "vol": 1570484,
+   "mcap": 32362360,
+   "ch24": 58.3,
+   "buys": 1657,
+   "sells": 1068
   },
   {
    "sym": "SW",
@@ -506,44 +537,64 @@
     "LOW LIQ"
    ],
    "trend": "down",
-   "liq": 71725,
-   "vol": 961310,
+   "liq": 72370,
+   "vol": 974746,
    "mcap": 0,
-   "ch24": 145.4,
-   "buys": 3589,
-   "sells": 3455
+   "ch24": 182.2,
+   "buys": 3619,
+   "sells": 3577
   },
   {
-   "sym": "ORBIO",
-   "tokenAddr": "0xaa07a0e9209e16ac99708c3ec70159c6ef3128a3",
-   "poolAddr": "0xea9f200e13055b82f175f44f592c4c13dd8c9d9320a66487d3c5cd90d68550ef",
-   "score": 73,
-   "flags": [
-    "LIQ OK"
-   ],
-   "trend": "up",
-   "liq": 917175,
-   "vol": 3326525,
-   "mcap": 90343493,
-   "ch24": 29.1,
-   "buys": 5950,
-   "sells": 5587
-  },
-  {
-   "sym": "HOOKR",
-   "tokenAddr": "0x18e674231a58c239dc7daedcffe15ec3a24cff5c",
-   "poolAddr": "0x590dcb6a87828bf688b48089a62239b693378f1fb64d2286e6a399ed8c005fdf",
+   "sym": "CASHCAT",
+   "tokenAddr": "0x020bfc650a365f8bb26819deaabf3e21291018b4",
+   "poolAddr": "0xd42a491087a15e5afd51feb3606066cc152d2b09",
    "score": 65,
    "flags": [
     "LIQ OK"
    ],
    "trend": "flat",
-   "liq": 862106,
-   "vol": 460120,
-   "mcap": 11012684,
-   "ch24": -2.1,
-   "buys": 731,
-   "sells": 762
+   "liq": 2356432,
+   "vol": 2506329,
+   "mcap": 168455073,
+   "ch24": -5.8,
+   "buys": 2580,
+   "sells": 2980
+  },
+  {
+   "sym": "HOODS",
+   "tokenAddr": "0x28b0ed2365c8c25b4542d06725acb7662bef6edf",
+   "poolAddr": "0x3bd9c129b50f7301fb8e1abd3c36ad55f4c40589bf82d6b81de9d1fd0afd0611",
+   "score": 48,
+   "flags": [
+    "LOW LIQ",
+    "HOT VOL"
+   ],
+   "trend": "down",
+   "liq": 152933,
+   "vol": 953766,
+   "mcap": 599466,
+   "ch24": 43.9,
+   "buys": 1767,
+   "sells": 1423
+  },
+  {
+   "sym": "MANSA",
+   "tokenAddr": "0x6c673ca3d3212ddd1ba355f50631c03a1887c741",
+   "poolAddr": "0x99ae8363ce07f6114bc3b8ebc953b49003ff7afd1cdfc48e751a43bffc3504da",
+   "score": 0,
+   "flags": [
+    "MICRO LIQ",
+    "FRESH",
+    "HOT VOL",
+    "DUMP RISK"
+   ],
+   "trend": "down",
+   "liq": 11472,
+   "vol": 639572,
+   "mcap": 13722,
+   "ch24": -77.8,
+   "buys": 3274,
+   "sells": 2663
   }
  ]
 }
